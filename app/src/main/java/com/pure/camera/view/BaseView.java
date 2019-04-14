@@ -49,6 +49,10 @@ public class BaseView {
         }
     }
 
+    public void toast(String msg) {
+        toast(msg, Toast.LENGTH_SHORT);
+    }
+
     public void toast(String msg, int duration) {
         if(null == mToast) {
             mToast = Toast.makeText(getContext(), "", duration);

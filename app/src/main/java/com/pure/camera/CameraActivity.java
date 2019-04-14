@@ -4,13 +4,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.pure.camera.base.BaseCameraActivity;
-import com.pure.camera.module.CameraModule;
 import com.pure.camera.module.PhotoModule;
 import com.pure.camera.view.CameraPhotoView;
 
-public class CameraActivity extends BaseCameraActivity<CameraPhotoView> {
+public class CameraActivity extends BaseCameraActivity<CameraPhotoView, PhotoModule> {
 
-    private CameraModule cameraModule;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

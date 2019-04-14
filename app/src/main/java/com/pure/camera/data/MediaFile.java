@@ -1,32 +1,62 @@
 package com.pure.camera.data;
 
 import android.content.ContentValues;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
-public class FileData {
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class MediaFile {
 
     public static final String MIME_TYPE_PHOTO = "image/jpg";
     public static final String MIME_TYPE_VIDEO = "video/mp4";
+    public static final int FILE_TYPE_IMG = 1;
+    public static final int FILE_TYPE_VIDEO = 2;
+    public static final String DEFAUT_STORAGE_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath();
+
+    public static final Uri URI_IMAGE = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public static final Uri URI_VIDEO = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+
+    public static final String FILE_HEADER = "DCIM_CAMERA_";
+    public static final String DATE_FORMATOR = "yyyy年MM月dd日";
+    public static final SimpleDateFormat FORMATOR = new SimpleDateFormat(DATE_FORMATOR);
 
     protected byte[] fileData;
     protected int fileWidth;
     protected int fileHeight;
     protected int fileOrientation;
-    protected int fileSize;
     protected String fileMimeType;
     protected String fileTitle;
     protected String fileDisplayName;
     protected String filePath;
+    protected int fileType;
 
-    public FileData() {}
+    public MediaFile() {}
 
-    public FileData(byte[] fileData, int fileWidth, int fileHeight, int fileOrientation,
-                    int fileSize, String mimeType, String title, String displayName, String filePath) {
+    public MediaFile(byte[] fileData, int fileWidth, int fileHeight, int fileOrientation,
+                     String mimeType, int fileType, String title, String rex) {
         this.fileData = fileData;
         this.fileWidth = fileWidth;
         this.fileHeight = fileHeight;
         this.fileOrientation = fileOrientation;
-        this.fileSize = fileSize;
+        this.fileMimeType = mimeType;
+        this.fileType = fileType;
+        this.fileTitle = title;
+        this.fileDisplayName = title + rex;
+        this.filePath = DEFAUT_STORAGE_LOCATION + "/" + fileDisplayName;
+    }
+
+    public MediaFile(byte[] fileData, int fileWidth, int fileHeight, int fileOrientation,
+                     String mimeType, String title, String displayName, String filePath) {
+        this.fileData = fileData;
+        this.fileWidth = fileWidth;
+        this.fileHeight = fileHeight;
+        this.fileOrientation = fileOrientation;
         this.fileMimeType = mimeType;
         this.fileTitle = title;
         this.fileDisplayName = displayName;
@@ -73,14 +103,6 @@ public class FileData {
         this.fileOrientation = fileOrientation;
     }
 
-    public int getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(int fileSize) {
-        this.fileSize = fileSize;
-    }
-
     public String getMimeType() {
         return fileMimeType;
     }
@@ -115,8 +137,20 @@ public class FileData {
 
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();
-
+        cv.put(MediaStore.Files.FileColumns.DATA, filePath);
+        cv.put(MediaStore.Files.FileColumns.DISPLAY_NAME, fileDisplayName);
+        cv.put(MediaStore.Files.FileColumns.TITLE, fileDisplayName);
+        cv.put(MediaStore.Files.FileColumns.MIME_TYPE, fileMimeType);
         return cv;
+    }
+
+    public static String gerateFileName(int fileType) {
+        Date now = new Date();
+        return FILE_HEADER + (fileType == FILE_TYPE_IMG ? "IMG" : "VIDEO") + FORMATOR.format(now);
+    }
+
+    public Uri getUri() {
+        return fileType == FILE_TYPE_IMG ? URI_IMAGE : URI_VIDEO;
     }
 
 }

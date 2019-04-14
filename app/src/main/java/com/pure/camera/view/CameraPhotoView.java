@@ -30,7 +30,6 @@ public class CameraPhotoView extends BaseView implements TextureListener,
 
     @Override
     public void onTexturePrepared(SurfaceTexture texture) {
-        Log.i("ttt", "onTexturePrepared");
         texture.setOnFrameAvailableListener(this);
         if(null != uiStateListener)
             uiStateListener.onUIPrepare(texture);
@@ -38,7 +37,6 @@ public class CameraPhotoView extends BaseView implements TextureListener,
 
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-        Log.i("ttt", "onFrameAvailable");
         cameraGLView.requestRender();
     }
 

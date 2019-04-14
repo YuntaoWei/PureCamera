@@ -31,8 +31,10 @@ import android.view.View;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.R;
+import com.pure.camera.data.PhotoFile;
 import com.pure.camera.ui.UIStateListener;
 import com.pure.camera.util.CameraSettings;
+import com.pure.camera.util.FileOperatorHelper;
 import com.pure.camera.util.LogPrinter;
 import com.pure.camera.view.CameraPhotoView;
 
@@ -55,6 +57,7 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
     private CameraCaptureSession captureSession;
     private CaptureRequest.Builder previewBuilder;
     private CaptureRequest.Builder captureBuilder;
+    private CaptureRequest previewRequest;
     private boolean uiPrepared, cameraPrepared;
     private ImageReader imageReader;
     private CameraCaptureSession.StateCallback captureStateCallback;
@@ -67,7 +70,7 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
     }
 
     private void initModule() {
-        if(cameraManager == null) {
+        if (cameraManager == null) {
             cameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
             try {
                 String[] cameraIDs = cameraManager.getCameraIdList();
@@ -114,15 +117,26 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
         imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
-                LogPrinter.i(TAG, "onImageAvailable");
+                LogPrinter.i(TAG, "onImageAvailable : " + System.currentTimeMillis() +
+                        "  " + Thread.currentThread().getName());
                 try (Image image = reader.acquireNextImage()) {
                     Image.Plane[] planes = image.getPlanes();
                     if (planes.length > 0) {
                         ByteBuffer buffer = planes[0].getBuffer();
                         byte[] data = new byte[buffer.remaining()];
                         buffer.get(data);
+                        final PhotoFile p = new PhotoFile(data, imageReader.getWidth(), imageReader.getHeight(), 0);
+                        if(FileOperatorHelper.getInstance().saveFile(p)) {
+                            cameraView.getContext().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    cameraView.toast(p.getFilePath());
+                                }
+                            });
+                        }
                     }
                 }
+                LogPrinter.i(TAG, "onImageAvailable" + System.currentTimeMillis());
             }
         }, cameraHandler);
     }
@@ -155,8 +169,8 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
     @Override
     public void pause() {
         cameraPrepared = false;
-        cameraHandler.getLooper().quitSafely();
         closeCamera();
+        cameraHandler.getLooper().quitSafely();
     }
 
     @Override
@@ -189,11 +203,11 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
 
     @Override
     protected void closeCamera() {
-        if(null != captureSession) {
+        if (null != captureSession) {
             captureSession.close();
         }
 
-        if(null != previewSession) {
+        if (null != previewSession) {
             captureSession.close();
         }
 
@@ -205,18 +219,20 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
 
     @Override
     protected void startPreview() {
-        if (!cameraPrepared || !uiPrepared)
+        if (!cameraPrepared || !uiPrepared || null == cameraDevice)
             return;
 
         try {
-            previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            previewBuilder.addTarget(previewSurface);
+            if(null == previewBuilder) {
+                previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                previewBuilder.addTarget(previewSurface);
+            }
             cameraDevice.createCaptureSession(Arrays.asList(previewSurface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {
                         previewSession = session;
-                        CaptureRequest previewRequest = previewBuilder.build();
+                        previewRequest = previewBuilder.build();
                         previewSession.setRepeatingRequest(previewRequest, null, cameraHandler);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
@@ -236,21 +252,21 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
     @Override
     public void capture() {
         try {
-            if(null != captureBuilder) {
+            if (null == captureBuilder) {
                 captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             }
             captureBuilder.addTarget(imageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             int rotation = cameraView.getContext().getResources().getConfiguration().orientation;
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CameraSettings.ORIENTATIONS.get(rotation));
-            if(null == captureStateCallback) {
+            if (null == captureStateCallback) {
                 captureStateCallback = new CameraCaptureSession.StateCallback() {
 
                     @Override
                     public void onConfigured(CameraCaptureSession session) {
                         try {
                             captureSession = session;
-                            if(null == captureCallback) {
+                            if (null == captureCallback) {
                                 captureCallback = new CameraCaptureSession.CaptureCallback() {
                                     @Override
                                     public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request, long timestamp, long frameNumber) {
@@ -265,11 +281,13 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
                                     @Override
                                     public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                                         LogPrinter.i(TAG, "onCaptureCompleted");
+                                        startPreview();
                                     }
 
                                     @Override
                                     public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
                                         LogPrinter.i(TAG, "onCaptureFailed");
+                                        startPreview();
                                     }
                                 };
                             }
