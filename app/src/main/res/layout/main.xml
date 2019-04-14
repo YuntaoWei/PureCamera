@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".CameraActivity">
+
+    <FrameLayout
+        android:id="@+id/camera_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+    <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1px"/>
+
+        <ImageView
+            android:id="@+id/recent_thumbnail"
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1px"/>
+
+
+        <ImageView
+            android:id="@+id/shutter"
+            android:src="@mipmap/shutter"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1px"/>
+
+        <ImageView
+            android:id="@+id/switcher"
+            android:src="@mipmap/switcher"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1px"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
