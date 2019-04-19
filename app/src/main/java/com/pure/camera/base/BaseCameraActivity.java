@@ -1,14 +1,17 @@
 package com.pure.camera.base;
 
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.pure.camera.module.AbstractCameraModule;
 import com.pure.camera.module.CameraModule;
 import com.pure.camera.view.BaseView;
 
-public abstract class BaseCameraActivity<V extends BaseView, M extends CameraModule> extends BasePermissionActivity {
+public abstract class BaseCameraActivity<K extends AbstractCameraModule, V extends BaseView> extends BasePermissionActivity {
 
     protected V mView;
-    protected M cameraModule;
+    protected K cameraModule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

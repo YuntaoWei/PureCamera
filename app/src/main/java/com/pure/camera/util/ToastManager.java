@@ -9,8 +9,6 @@ public class ToastManager {
     public static final int SHORT = Toast.LENGTH_SHORT;
     public static final int LONG = Toast.LENGTH_LONG;
 
-    private static ToastManager instance;
-
     private Toast toast;
 
     private ToastManager() {
@@ -29,6 +27,10 @@ public class ToastManager {
     public ToastManager setDuration(int duration) {
         toast.setDuration(duration);
         return this;
+    }
+
+    public void release() {
+        ToastManagerHolder.instance = null;
     }
 
 }

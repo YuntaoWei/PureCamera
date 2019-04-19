@@ -20,8 +20,8 @@ import java.util.List;
 public class CameraSettings {
 
     public final static String TAG = "CameraSettings";
-    private static List<CaptureResult.Key<?>> supKeys, supFrontKeys;
-    private static StreamConfigurationMap mapSize;
+    private static List<CaptureResult.Key<?>> supBackKeys, supFrontKeys;
+    private static StreamConfigurationMap backMapSize, frontMapSize;
 
     public static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -32,16 +32,25 @@ public class CameraSettings {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    public static void initialize(CameraCharacteristics parameter) {
-        supKeys = null;
-        supFrontKeys = null;
-        supKeys = parameter.getAvailableCaptureResultKeys();
-        mapSize = null;
-        mapSize = parameter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+    public static void initializeBackCameraSettings(CameraCharacteristics parameter) {
+        LogPrinter.i(TAG, "initializeBackCameraSettings");
+        supBackKeys = null;
+        supBackKeys = parameter.getAvailableCaptureResultKeys();
+        backMapSize = null;
+        backMapSize = parameter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
     }
 
-    public static Size chooseVideoSize(int width, int height, Size setSize) {
-        Size[] sizes = mapSize.getOutputSizes(MediaRecorder.class);
+    public static void initializeFrontCameraSettings(CameraCharacteristics parameter) {
+        LogPrinter.i(TAG, "initializeFrontCameraSettings");
+        supFrontKeys = null;
+        supFrontKeys = parameter.getAvailableCaptureResultKeys();
+        frontMapSize = null;
+        frontMapSize = parameter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+    }
+
+    public static Size chooseVideoSize(int width, int height, Size setSize, boolean back) {
+        Size[] sizes = back ? backMapSize.getOutputSizes(MediaRecorder.class) :
+                frontMapSize.getOutputSizes(MediaRecorder.class);
         List<Size> bigEnough = new ArrayList<Size>();
         int w = setSize.getWidth();
         int h = setSize.getHeight();
@@ -60,8 +69,9 @@ public class CameraSettings {
         }
     }
 
-    public static Size choosePictureSize(int width, int height, Size setSize) {
-        Size[] sizes = mapSize.getOutputSizes(ImageReader.class);
+    public static Size choosePictureSize(int width, int height, Size setSize, boolean back) {
+        Size[] sizes = back ? backMapSize.getOutputSizes(ImageReader.class) :
+                frontMapSize.getOutputSizes(ImageReader.class);
         List<Size> bigEnough = new ArrayList<Size>();
         for (Size size : sizes) {
             Log.i(TAG, "------" + size);
@@ -84,8 +94,10 @@ public class CameraSettings {
         }
     }
 
-    public static Size choosePreviewSize(Size setSize) {
-        Size[] sizes = mapSize.getOutputSizes(SurfaceTexture.class);
+    public static Size choosePreviewSize(Size setSize, boolean back) {
+        Log.i(TAG, "choosePreviewSize");
+        Size[] sizes = back ? backMapSize.getOutputSizes(SurfaceTexture.class) :
+                frontMapSize.getOutputSizes(SurfaceTexture.class);
         List<Size> bigEnough = new ArrayList<Size>();
         int w = setSize.getWidth();
         int h = setSize.getHeight();
@@ -104,8 +116,8 @@ public class CameraSettings {
         }
     }
 
-    public static boolean isSupport(CaptureResult.Key<?> key) {
-        return supKeys.contains(key);
+    public static boolean isSupport(CaptureResult.Key<?> key, boolean back) {
+        return back ? supBackKeys.contains(key) : supFrontKeys.contains(key);
     }
 
     /**
@@ -123,9 +135,9 @@ public class CameraSettings {
     }
 
     public static void printSupportSize() {
-        Size[] videoSizes = mapSize.getOutputSizes(MediaRecorder.class);
-        Size[] pictureSizes = mapSize.getOutputSizes(ImageFormat.JPEG);
-        Size[] previewSizes = mapSize.getOutputSizes(SurfaceTexture.class);
+        Size[] videoSizes = backMapSize.getOutputSizes(MediaRecorder.class);
+        Size[] pictureSizes = backMapSize.getOutputSizes(ImageFormat.JPEG);
+        Size[] previewSizes = backMapSize.getOutputSizes(SurfaceTexture.class);
         Log.i(TAG, "-------support video size---------");
         for (Size size : videoSizes) {
             Log.i(TAG + "a", "videoSizes---" + size);

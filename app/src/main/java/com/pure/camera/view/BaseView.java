@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-public class BaseView {
+import com.pure.camera.util.ToastManager;
+
+public abstract class BaseView {
 
     private SparseArray<View> childViews = new SparseArray<>();
     private View rootView;
-    private Toast mToast;
+    private ToastManager toastManager;
 
     public View onCreateView(LayoutInflater inflater, int layout, ViewGroup group) {
         rootView = inflater.inflate(layout, group);
@@ -53,23 +55,30 @@ public class BaseView {
         toast(msg, Toast.LENGTH_SHORT);
     }
 
-    public void toast(String msg, int duration) {
-        if(null == mToast) {
-            mToast = Toast.makeText(getContext(), "", duration);
+    public void toast(final String msg, final int duration) {
+        if(null == toastManager) {
+            toastManager = ToastManager.ToastManagerHolder.instance;
         }
 
-        mToast.setText(msg);
-        mToast.setDuration(duration);
-        mToast.show();
+        if(Thread.currentThread().getName().equals("main")) {
+            toastManager.setDuration(duration).show(msg);
+        } else {
+            getContext().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toastManager.setDuration(duration).show(msg);
+                }
+            });
+        }
     }
 
-    public void resume() {}
+    public abstract void resume();
 
-    public void pause() {}
+    public abstract void pause();
 
     public void destroy() {
         childViews.clear();
         rootView = null;
-        mToast = null;
+        toastManager = null;
     }
 }

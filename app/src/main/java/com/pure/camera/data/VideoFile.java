@@ -1,6 +1,7 @@
 package com.pure.camera.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.provider.MediaStore;
 
 public class VideoFile extends MediaFile {
@@ -12,6 +13,10 @@ public class VideoFile extends MediaFile {
                 MIME_TYPE_VIDEO,
                 FILE_TYPE_VIDEO, FILE_HEADER + gerateFileName(FILE_TYPE_VIDEO),
                 VIDEO_REX);
+    }
+
+    public static VideoFile createVideoFile(int width, int height) {
+        return new VideoFile(width, height, 0);
     }
 
     @Override

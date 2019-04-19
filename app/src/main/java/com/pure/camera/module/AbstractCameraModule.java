@@ -8,6 +8,8 @@ public abstract class AbstractCameraModule implements CameraModule {
 
     protected abstract void closeCamera();
 
+    protected abstract void switchCamera();
+
     //开始预览
     protected abstract void startPreview();
 

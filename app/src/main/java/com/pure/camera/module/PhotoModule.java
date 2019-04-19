@@ -1,7 +1,6 @@
 package com.pure.camera.module;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -27,7 +26,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
-import android.view.View;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.R;
@@ -36,42 +34,37 @@ import com.pure.camera.ui.UIStateListener;
 import com.pure.camera.util.CameraSettings;
 import com.pure.camera.util.FileOperatorHelper;
 import com.pure.camera.util.LogPrinter;
-import com.pure.camera.view.CameraPhotoView;
+import com.pure.camera.view.CameraView;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class PhotoModule extends AbstractCameraModule implements View.OnClickListener {
+public class PhotoModule extends BaseCameraModule {
 
     private static final String TAG = "PhotoModule";
 
-    private CameraActivity mContext;
-    private CameraManager cameraManager;
-    private CameraPhotoView cameraView;
-    private String currentCamera;
     private Size previewSize = new Size(1280, 960);
-    private Handler cameraHandler;
-    private CameraDevice cameraDevice;
-    private Surface previewSurface;
+    private Size pictureSize = new Size(1280, 960);
     private CameraCaptureSession previewSession;
     private CameraCaptureSession captureSession;
     private CaptureRequest.Builder previewBuilder;
     private CaptureRequest.Builder captureBuilder;
     private CaptureRequest previewRequest;
-    private boolean uiPrepared, cameraPrepared;
     private ImageReader imageReader;
-    private CameraCaptureSession.StateCallback captureStateCallback;
     private CameraCaptureSession.CaptureCallback captureCallback;
+    protected CameraCaptureSession.StateCallback captureStateCallback;
 
-    public PhotoModule(CameraActivity ctx, CameraPhotoView view) {
-        mContext = ctx;
-        cameraView = view;
-        initCameraUI(view);
+    private Size screenSize;
+
+    public PhotoModule(CameraActivity ctx, CameraView view) {
+        super(ctx, view);
+        initCameraUI();
     }
 
-    private void initModule() {
+    @Override
+    protected void initModule() {
         if (cameraManager == null) {
-            cameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
+            cameraManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
             try {
                 String[] cameraIDs = cameraManager.getCameraIdList();
                 if (cameraIDs.length <= 0)
@@ -80,22 +73,26 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
                     CameraCharacteristics parameters = cameraManager.getCameraCharacteristics(s);
                     if (parameters.get(CameraCharacteristics.LENS_FACING) ==
                             CameraCharacteristics.LENS_FACING_BACK) {
+                        BACK_CAMERA = s;
                         currentCamera = s;
-                        CameraSettings.initialize(parameters);
-                        break;
+                        CameraSettings.initializeBackCameraSettings(parameters);
+                    } else if (parameters.get(CameraCharacteristics.LENS_FACING) ==
+                            CameraCharacteristics.LENS_FACING_FRONT) {
+                        FRONT_CAMERA = s;
+                        CameraSettings.initializeFrontCameraSettings(parameters);
                     }
                 }
 
                 if (TextUtils.isEmpty(currentCamera)) {
                     currentCamera = cameraIDs[0];
                     CameraCharacteristics parameters = cameraManager.getCameraCharacteristics(currentCamera);
-                    CameraSettings.initialize(parameters);
+                    CameraSettings.initializeBackCameraSettings(parameters);
                 }
 
 
                 DisplayMetrics dm = new DisplayMetrics();
-                mContext.getWindowManager().getDefaultDisplay().getMetrics(dm);
-                previewSize = CameraSettings.choosePreviewSize(new Size(dm.widthPixels, dm.heightPixels));
+                mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+                screenSize = new Size(dm.widthPixels, dm.heightPixels);
                 LogPrinter.i(TAG, "Preview size : " +
                         previewSize.getWidth() + "x" + previewSize.getHeight());
             } catch (CameraAccessException e) {
@@ -103,6 +100,7 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
             }
         }
 
+        resetCameraPreviewParemeters(true);
         HandlerThread handlerThread = new HandlerThread("CameraThread");
         handlerThread.start();
         cameraHandler = new Handler(handlerThread.getLooper()) {
@@ -111,43 +109,16 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
 
             }
         };
-
-        imageReader = ImageReader.newInstance(previewSize.getWidth(), previewSize.getHeight(),
-                ImageFormat.JPEG, 1);
-        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-            @Override
-            public void onImageAvailable(ImageReader reader) {
-                LogPrinter.i(TAG, "onImageAvailable : " + System.currentTimeMillis() +
-                        "  " + Thread.currentThread().getName());
-                try (Image image = reader.acquireNextImage()) {
-                    Image.Plane[] planes = image.getPlanes();
-                    if (planes.length > 0) {
-                        ByteBuffer buffer = planes[0].getBuffer();
-                        byte[] data = new byte[buffer.remaining()];
-                        buffer.get(data);
-                        final PhotoFile p = new PhotoFile(data, imageReader.getWidth(), imageReader.getHeight(), 0);
-                        if(FileOperatorHelper.getInstance().saveFile(p)) {
-                            cameraView.getContext().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    cameraView.toast(p.getFilePath());
-                                }
-                            });
-                        }
-                    }
-                }
-                LogPrinter.i(TAG, "onImageAvailable" + System.currentTimeMillis());
-            }
-        }, cameraHandler);
     }
 
-    private void initCameraUI(CameraPhotoView main) {
+    private void initCameraUI() {
         cameraView.setStateListener(new UIStateListener() {
             @Override
             public void onUIPrepare(SurfaceTexture texture) {
                 uiPrepared = true;
-                texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-                previewSurface = new Surface(texture);
+                previewSurfaceTexture = texture;
+                previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+                previewSurface = new Surface(previewSurfaceTexture);
                 startPreview();
             }
         });
@@ -157,64 +128,23 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
     }
 
     @Override
-    public void resume() {
-        initModule();
-        try {
-            openCamera();
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void pause() {
-        cameraPrepared = false;
-        closeCamera();
-        cameraHandler.getLooper().quitSafely();
-    }
-
-    @Override
-    protected void openCamera() throws CameraAccessException {
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        cameraManager.openCamera(currentCamera, new CameraDevice.StateCallback() {
-            @Override
-            public void onOpened(final CameraDevice camera) {
-                cameraPrepared = true;
-                cameraDevice = camera;
-                startPreview();
-            }
-
-            @Override
-            public void onDisconnected(CameraDevice camera) {
-                camera.close();
-                cameraDevice = null;
-            }
-
-            @Override
-            public void onError(CameraDevice camera, int error) {
-                camera.close();
-                cameraDevice = null;
-            }
-        }, cameraHandler);
-    }
-
-    @Override
     protected void closeCamera() {
         if (null != captureSession) {
             captureSession.close();
+            captureSession = null;
         }
 
         if (null != previewSession) {
-            captureSession.close();
+            previewSession.close();
+            previewSession = null;
         }
 
         if (null != cameraDevice) {
             cameraDevice.close();
             cameraDevice = null;
         }
+
+        cameraPrepared = false;
     }
 
     @Override
@@ -223,7 +153,7 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
             return;
 
         try {
-            if(null == previewBuilder) {
+            if (null == previewBuilder) {
                 previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                 previewBuilder.addTarget(previewSurface);
             }
@@ -255,9 +185,11 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
             if (null == captureBuilder) {
                 captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             }
+
             captureBuilder.addTarget(imageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             int rotation = cameraView.getContext().getResources().getConfiguration().orientation;
+            Log.i("ttt", rotation + " " + CameraSettings.ORIENTATIONS.get(rotation));
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CameraSettings.ORIENTATIONS.get(rotation));
             if (null == captureStateCallback) {
                 captureStateCallback = new CameraCaptureSession.StateCallback() {
@@ -312,32 +244,68 @@ public class PhotoModule extends AbstractCameraModule implements View.OnClickLis
 
     @Override
     public void switchCamera() {
+        if (TextUtils.isEmpty(BACK_CAMERA) || TextUtils.isEmpty(FRONT_CAMERA))
+            return;
 
+        boolean isBack = currentCamera.equals(BACK_CAMERA);
+        currentCamera = isBack ? FRONT_CAMERA : BACK_CAMERA;
+        isBack = !isBack;
+        closeCamera();
+        resetCameraPreviewParemeters(isBack);
+        openCamera();
+    }
+
+    private void resetCameraPreviewParemeters(boolean back) {
+        previewSize = CameraSettings.choosePreviewSize(screenSize, back);
+        pictureSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), pictureSize, back);
+        createImageReader(pictureSize);
+        if (null != previewSurfaceTexture)
+            previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+    }
+
+    /**
+     * 创建拍照时接收数据的ImageReader.
+     * @param size 拍照尺寸
+     */
+    private void createImageReader(Size size) {
+        if (null != imageReader) {
+            imageReader.close();
+            imageReader = null;
+        }
+
+        imageReader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
+        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader reader) {
+                LogPrinter.i(TAG, "onImageAvailable : " + System.currentTimeMillis() +
+                        "  " + Thread.currentThread().getName());
+                try (Image image = reader.acquireLatestImage()) {
+                    Image.Plane[] planes = image.getPlanes();
+                    if (planes.length > 0) {
+                        ByteBuffer buffer = planes[0].getBuffer();
+                        byte[] data = new byte[buffer.remaining()];
+                        buffer.get(data);
+                        final PhotoFile p = new PhotoFile(data, imageReader.getWidth(), imageReader.getHeight(), 0);
+                        if (FileOperatorHelper.getInstance().saveFile(p)) {
+                            LogPrinter.i(TAG, "Save photo success!");
+                            cameraView.getContext().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    cameraView.toast(p.getFilePath());
+                                }
+                            });
+                        } else {
+                            LogPrinter.e(TAG, "Save photo failed!");
+                        }
+                    }
+                }
+                LogPrinter.i(TAG, "onImageAvailable" + System.currentTimeMillis());
+            }
+        }, cameraHandler);
     }
 
     @Override
     public boolean isProgressing() {
         return false;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.shutter:
-                //拍照
-                capture();
-                break;
-
-            case R.id.switcher:
-                //前后摄切换
-                switchCamera();
-                break;
-
-            case R.id.recent_thumbnail:
-                //打开最近拍摄的图片
-
-                break;
-        }
     }
 }

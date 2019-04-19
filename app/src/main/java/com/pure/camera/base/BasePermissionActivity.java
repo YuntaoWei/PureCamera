@@ -20,6 +20,7 @@ public abstract class BasePermissionActivity extends AppCompatActivity {
 
     public static String[] REQUIRE_PERMISSIONS = {
             Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
