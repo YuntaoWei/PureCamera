@@ -1,5 +1,7 @@
 package com.pure.camera.view;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -7,13 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.pure.camera.util.ToastManager;
+import com.pure.camera.common.ToastManager;
 
 public abstract class BaseView {
 
     private SparseArray<View> childViews = new SparseArray<>();
     private View rootView;
     private ToastManager toastManager;
+    protected Handler mainHandler;
 
     public View onCreateView(LayoutInflater inflater, int layout, ViewGroup group) {
         rootView = inflater.inflate(layout, group);
@@ -24,8 +27,18 @@ public abstract class BaseView {
         return (T) rootView.getContext();
     }
 
+    public LayoutInflater getLayoutInflater() {
+        return getContext().getLayoutInflater();
+    }
+
     public View getRootView() {
         return rootView;
+    }
+
+    public void setRootView(View view) {
+        if(null != view) {
+            rootView = view;
+        }
     }
 
     private <T extends View>T bindView(int id) {
@@ -36,6 +49,20 @@ public abstract class BaseView {
         }
 
         return v;
+    }
+
+    public void runOnUiThread(Runnable r) {
+        if(null == mainHandler) {
+            mainHandler = new Handler(Looper.getMainLooper());
+        }
+        mainHandler.post(r);
+    }
+
+    public void runOnUiThreadDelay(Runnable r, int delay) {
+        if(null == mainHandler) {
+            mainHandler = new Handler(Looper.getMainLooper());
+        }
+        mainHandler.postDelayed(r, delay);
     }
 
     public <T extends View>T getView(int id) {
@@ -63,7 +90,7 @@ public abstract class BaseView {
         if(Thread.currentThread().getName().equals("main")) {
             toastManager.setDuration(duration).show(msg);
         } else {
-            getContext().runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     toastManager.setDuration(duration).show(msg);

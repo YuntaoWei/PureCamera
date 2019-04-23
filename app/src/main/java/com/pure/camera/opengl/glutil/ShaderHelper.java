@@ -1,4 +1,4 @@
-package com.pure.camera.util;
+package com.pure.camera.opengl.glutil;
 
 import android.util.Log;
 

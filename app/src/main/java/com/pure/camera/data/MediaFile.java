@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import java.io.File;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,13 +18,16 @@ public class MediaFile {
     public static final String MIME_TYPE_VIDEO = "video/mp4";
     public static final int FILE_TYPE_IMG = 1;
     public static final int FILE_TYPE_VIDEO = 2;
-    public static final String DEFAUT_STORAGE_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath();
+    public static final String DIR_NAME = "PureCamera";
+    public static final String DEFAUT_STORAGE_LOCATION =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() +
+                    File.separator + DIR_NAME;
 
     public static final Uri URI_IMAGE = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     public static final Uri URI_VIDEO = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
     public static final String FILE_HEADER = "DCIM_CAMERA_";
-    public static final String DATE_FORMATOR = "yyyy年MM月dd日";
+    public static final String DATE_FORMATOR = "yyyy_MM_dd_HH_mm_ss";
     public static final SimpleDateFormat FORMATOR = new SimpleDateFormat(DATE_FORMATOR);
 
     protected byte[] fileData;

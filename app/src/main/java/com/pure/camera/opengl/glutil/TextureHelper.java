@@ -1,9 +1,10 @@
-package com.pure.camera.util;
+package com.pure.camera.opengl.glutil;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLES30;
+
+import com.pure.camera.common.LogPrinter;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES20.GL_CLAMP_TO_EDGE;

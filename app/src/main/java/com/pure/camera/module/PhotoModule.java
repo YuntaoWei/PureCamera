@@ -1,8 +1,6 @@
 package com.pure.camera.module;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -20,20 +18,17 @@ import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.R;
+import com.pure.camera.common.FileOperatorHelper;
+import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.PhotoFile;
-import com.pure.camera.ui.UIStateListener;
-import com.pure.camera.util.CameraSettings;
-import com.pure.camera.util.FileOperatorHelper;
-import com.pure.camera.util.LogPrinter;
+import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.view.CameraView;
 
 import java.nio.ByteBuffer;
@@ -94,7 +89,7 @@ public class PhotoModule extends BaseCameraModule {
                 mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
                 screenSize = new Size(dm.widthPixels, dm.heightPixels);
                 LogPrinter.i(TAG, "Preview size : " +
-                        previewSize.getWidth() + "x" + previewSize.getHeight());
+                        previewSize.getWidth() + "x" + previewSize.getHeight() + "  screen size : " + screenSize);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -188,9 +183,11 @@ public class PhotoModule extends BaseCameraModule {
 
             captureBuilder.addTarget(imageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            int rotation = cameraView.getContext().getResources().getConfiguration().orientation;
-            Log.i("ttt", rotation + " " + CameraSettings.ORIENTATIONS.get(rotation));
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CameraSettings.ORIENTATIONS.get(rotation));
+            int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
+            LogPrinter.i(TAG, "orientation set : device orientation = " + orientation + " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(orientation));
+            orientation = CameraSettings.getJpegOrientation(cameraManager.getCameraCharacteristics(currentCamera), orientation);
+            //captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CameraSettings.ORIENTATIONS.get(orientation));
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation);
             if (null == captureStateCallback) {
                 captureStateCallback = new CameraCaptureSession.StateCallback() {
 
@@ -255,9 +252,15 @@ public class PhotoModule extends BaseCameraModule {
         openCamera();
     }
 
+    /**
+     * 重置Camera Parameter，在这里可以重新设置Camera的各项参数.
+     * 设置改变，前后摄切换等，都会调用此方法进行Camera的重新设置.
+     * @param back 是否是后摄.
+     */
     private void resetCameraPreviewParemeters(boolean back) {
         previewSize = CameraSettings.choosePreviewSize(screenSize, back);
         pictureSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), pictureSize, back);
+        LogPrinter.i(TAG, "resetCameraPreviewParemeters : preview size = " + previewSize + " , picture size : " + pictureSize);
         createImageReader(pictureSize);
         if (null != previewSurfaceTexture)
             previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
@@ -277,7 +280,8 @@ public class PhotoModule extends BaseCameraModule {
         imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
-                LogPrinter.i(TAG, "onImageAvailable : " + System.currentTimeMillis() +
+                long t = System.currentTimeMillis();
+                LogPrinter.i(TAG, "onImageAvailable : " + t +
                         "  " + Thread.currentThread().getName());
                 try (Image image = reader.acquireLatestImage()) {
                     Image.Plane[] planes = image.getPlanes();
@@ -288,18 +292,14 @@ public class PhotoModule extends BaseCameraModule {
                         final PhotoFile p = new PhotoFile(data, imageReader.getWidth(), imageReader.getHeight(), 0);
                         if (FileOperatorHelper.getInstance().saveFile(p)) {
                             LogPrinter.i(TAG, "Save photo success!");
-                            cameraView.getContext().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    cameraView.toast(p.getFilePath());
-                                }
-                            });
+                            cameraView.toast(p.getFilePath());
                         } else {
+                            cameraView.toast("Save file failed!");
                             LogPrinter.e(TAG, "Save photo failed!");
                         }
                     }
                 }
-                LogPrinter.i(TAG, "onImageAvailable" + System.currentTimeMillis());
+                LogPrinter.i(TAG, "onImageAvailable : save file take time : " + (System.currentTimeMillis() - t));
             }
         }, cameraHandler);
     }

@@ -1,8 +1,6 @@
 package com.pure.camera.module;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -18,19 +16,17 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.R;
 import com.pure.camera.data.VideoFile;
-import com.pure.camera.ui.UIStateListener;
-import com.pure.camera.util.CameraSettings;
-import com.pure.camera.util.LogPrinter;
+import com.pure.camera.opengl.UIStateListener;
+import com.pure.camera.common.LogPrinter;
+import com.pure.camera.ui.VideoTipsView;
 import com.pure.camera.view.CameraView;
 
 import java.io.IOException;
@@ -153,6 +149,9 @@ public class VideoModule extends BaseCameraModule {
         }
 
         cameraPrepared = false;
+        if(null != videoTipsView) {
+            cameraView.removeRecordTips(videoTipsView.getTipsView());
+        }
     }
 
     @Override
@@ -178,26 +177,27 @@ public class VideoModule extends BaseCameraModule {
         @Override
         public void onCaptureStarted(CameraCaptureSession session,
                                      CaptureRequest request, long timestamp, long frameNumber) {
-            super.onCaptureStarted(session, request, timestamp, frameNumber);
+            LogPrinter.i(TAG, "----VideoModule onCaptureStarted----");
         }
 
         @Override
         public void onCaptureProgressed(CameraCaptureSession session,
                                         CaptureRequest request, CaptureResult partialResult) {
-            super.onCaptureProgressed(session, request, partialResult);
+            LogPrinter.i(TAG, "----VideoModule onCaptureProgressed----");
         }
 
         @Override
         public void onCaptureCompleted(CameraCaptureSession session,
                                        CaptureRequest request, TotalCaptureResult result) {
-            super.onCaptureCompleted(session, request, result);
+            LogPrinter.i(TAG, "----VideoModule onCaptureCompleted----");
+            //startPreview();
         }
 
         @Override
         public void onCaptureFailed(CameraCaptureSession session,
                                     CaptureRequest request, CaptureFailure failure) {
-            super.onCaptureFailed(session, request, failure);
-            Log.i(TAG, "onCaptureFailed");
+            LogPrinter.i(TAG, "----VideoModule onCaptureFailed----");
+            //startPreview();
         }
     }
 
@@ -215,9 +215,12 @@ public class VideoModule extends BaseCameraModule {
             mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             mCaptureRequest = mPreviewBuilder.build();
             try {
-                if (mCaptureCallBack == null)
-                    mCaptureCallBack = new CaptureCallBack();
-                previewSession.setRepeatingRequest(mCaptureRequest, mCaptureCallBack, cameraHandler);
+                //在视频模块中不需要传递capture call back，因为预览帧即是视频帧.
+                // 所以每一帧都会回调无任何意义.
+                //if (mCaptureCallBack == null)
+                //    mCaptureCallBack = new CaptureCallBack();
+                //previewSession.setRepeatingRequest(mCaptureRequest, mCaptureCallBack, cameraHandler);
+                previewSession.setRepeatingRequest(mCaptureRequest, null, cameraHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -225,7 +228,6 @@ public class VideoModule extends BaseCameraModule {
 
         @Override
         public void onConfigureFailed(CameraCaptureSession session) {
-
         }
     }
 
@@ -294,6 +296,7 @@ public class VideoModule extends BaseCameraModule {
 
     private void startVideoRecord() {
         mMediaRecorder.start();
+        showRecordView();
     }
 
     private void stopVideoRecord() {
@@ -310,6 +313,42 @@ public class VideoModule extends BaseCameraModule {
         if (null != mActivity) {
             cameraView.toast(currentFile.getFilePath());
         }
+
+        hideRecordView(false);
         startPreview();
     }
+
+    private VideoTipsView videoTipsView;
+    private int time = 0;
+    private Runnable updateDuration = new Runnable() {
+        @Override
+        public void run() {
+            if(null != videoTipsView) {
+                time ++;
+                videoTipsView.setDuration(time);
+                cameraView.runOnUiThreadDelay(updateDuration, 1000);
+            }
+        }
+    };
+    private void showRecordView() {
+        if(null == videoTipsView) {
+            videoTipsView = VideoTipsView.getTipsView(cameraView.getContext(), cameraView.getLayoutInflater());
+        }
+        cameraView.showRecordTipView(videoTipsView.getTipsView(), videoTipsView.getTipsLayoutParams());
+        cameraView.runOnUiThreadDelay(updateDuration, 1000);
+    }
+
+    private void hideRecordView(boolean remove) {
+        if(null != videoTipsView) {
+            if(remove) {
+                cameraView.removeRecordTips(videoTipsView.getTipsView());
+            } else {
+                cameraView.hideRecordTipView(videoTipsView.getTipsView());
+            }
+        }
+
+        time = 0;
+        cameraHandler.removeCallbacks(updateDuration);
+    }
+
 }

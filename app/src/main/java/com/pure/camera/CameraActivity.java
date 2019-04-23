@@ -12,7 +12,6 @@ import com.pure.camera.view.CameraView;
 
 public class CameraActivity extends BaseCameraActivity<BaseCameraModule, CameraView> implements View.OnClickListener {
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +43,14 @@ public class CameraActivity extends BaseCameraActivity<BaseCameraModule, CameraV
 
     @Override
     public void onGetPermissionSuccess() {
+        //成功获取到了所需的所有权限
         gotAllPermission = true;
         init();
     }
 
     @Override
     public void onGetPermissionFailure() {
+        //没有取得所需的所有的权限
         gotAllPermission = false;
     }
 

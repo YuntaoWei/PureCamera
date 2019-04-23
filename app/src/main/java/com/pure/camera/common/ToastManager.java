@@ -1,4 +1,4 @@
-package com.pure.camera.util;
+package com.pure.camera.common;
 
 import android.widget.Toast;
 

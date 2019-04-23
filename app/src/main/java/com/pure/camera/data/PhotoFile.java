@@ -10,7 +10,7 @@ public class PhotoFile extends MediaFile {
     public PhotoFile(byte[] fileData, int fileWidth, int fileHeight, int fileOrientation) {
         super(fileData, fileWidth, fileHeight, fileOrientation,
                 MIME_TYPE_PHOTO,
-                FILE_TYPE_IMG, FILE_HEADER + gerateFileName(FILE_TYPE_IMG),
+                FILE_TYPE_IMG, gerateFileName(FILE_TYPE_IMG),
                 PHOTO_REX);
     }
 

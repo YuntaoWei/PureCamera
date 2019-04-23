@@ -1,4 +1,4 @@
-package com.pure.camera.util;
+package com.pure.camera.common;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -36,6 +36,7 @@ public class FileOperatorHelper {
         File localFile = new File(MediaFile.DEFAUT_STORAGE_LOCATION, file.getDisplayName());
         if(!localFile.exists()) {
             try {
+                localFile.getParentFile().mkdirs();
                 localFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -53,7 +54,8 @@ public class FileOperatorHelper {
             return false;
         }
 
-        return updateDataBase(file) == null;
+        updateDataBase(file);
+        return true;
     }
 
     public Uri updateDataBase(MediaFile file) {

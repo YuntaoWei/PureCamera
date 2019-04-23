@@ -2,8 +2,8 @@ package com.pure.camera.opengl.program;
 
 import android.content.Context;
 
-import com.pure.camera.util.ShaderHelper;
-import com.pure.camera.util.TextResourceReader;
+import com.pure.camera.opengl.glutil.ShaderHelper;
+import com.pure.camera.opengl.glutil.TextResourceReader;
 
 import static android.opengl.GLES20.glUseProgram;
 

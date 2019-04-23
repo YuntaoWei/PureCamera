@@ -1,4 +1,4 @@
-package com.pure.camera.ui;
+package com.pure.camera.opengl;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -9,7 +9,7 @@ import com.pure.camera.Constants;
 import com.pure.camera.R;
 import com.pure.camera.opengl.data.VertexArray;
 import com.pure.camera.opengl.program.CameraShaderProgram;
-import com.pure.camera.util.TextureHelper;
+import com.pure.camera.opengl.glutil.TextureHelper;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
