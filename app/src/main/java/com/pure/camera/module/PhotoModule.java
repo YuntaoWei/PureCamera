@@ -41,11 +41,9 @@ public class PhotoModule extends BaseCameraModule {
     private Size previewSize = new Size(1280, 960);
     private Size pictureSize = new Size(1280, 960);
     private CameraCaptureSession previewSession;
-    private CameraCaptureSession captureSession;
     private CaptureRequest.Builder previewBuilder;
-    private CaptureRequest.Builder captureBuilder;
     private CaptureRequest previewRequest;
-    private ImageReader imageReader;
+    private ImageReader captureImageReader;
     private CameraCaptureSession.CaptureCallback captureCallback;
     protected CameraCaptureSession.StateCallback captureStateCallback;
 
@@ -124,11 +122,6 @@ public class PhotoModule extends BaseCameraModule {
 
     @Override
     protected void closeCamera() {
-        if (null != captureSession) {
-            captureSession.close();
-            captureSession = null;
-        }
-
         if (null != previewSession) {
             previewSession.close();
             previewSession = null;
@@ -137,6 +130,11 @@ public class PhotoModule extends BaseCameraModule {
         if (null != cameraDevice) {
             cameraDevice.close();
             cameraDevice = null;
+        }
+
+        if (null != captureImageReader) {
+            captureImageReader.close();
+            captureImageReader = null;
         }
 
         cameraPrepared = false;
@@ -177,24 +175,21 @@ public class PhotoModule extends BaseCameraModule {
     @Override
     public void capture() {
         try {
-            if (null == captureBuilder) {
-                captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            }
-
-            captureBuilder.addTarget(imageReader.getSurface());
+            final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            captureBuilder.addTarget(previewSurface);
+            captureBuilder.addTarget(captureImageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
             LogPrinter.i(TAG, "orientation set : device orientation = " + orientation + " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(orientation));
-            orientation = CameraSettings.getJpegOrientation(cameraManager.getCameraCharacteristics(currentCamera), orientation);
-            //captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CameraSettings.ORIENTATIONS.get(orientation));
+            orientation = CameraSettings.getModifyOrientation(cameraManager.getCameraCharacteristics(currentCamera), orientation);
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation);
+
             if (null == captureStateCallback) {
                 captureStateCallback = new CameraCaptureSession.StateCallback() {
 
                     @Override
                     public void onConfigured(CameraCaptureSession session) {
                         try {
-                            captureSession = session;
                             if (null == captureCallback) {
                                 captureCallback = new CameraCaptureSession.CaptureCallback() {
                                     @Override
@@ -210,17 +205,19 @@ public class PhotoModule extends BaseCameraModule {
                                     @Override
                                     public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                                         LogPrinter.i(TAG, "onCaptureCompleted");
+                                        session.close();
                                         startPreview();
                                     }
 
                                     @Override
                                     public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
                                         LogPrinter.i(TAG, "onCaptureFailed");
+                                        session.close();
                                         startPreview();
                                     }
                                 };
                             }
-                            captureSession.capture(captureBuilder.build(), captureCallback, cameraHandler);
+                            session.capture(captureBuilder.build(), captureCallback, cameraHandler);
                         } catch (CameraAccessException e) {
                             e.printStackTrace();
                         }
@@ -233,7 +230,9 @@ public class PhotoModule extends BaseCameraModule {
 
                 };
             }
-            cameraDevice.createCaptureSession(Arrays.asList(imageReader.getSurface()), captureStateCallback, cameraHandler);
+
+            cameraDevice.createCaptureSession(Arrays.asList(previewSurface, captureImageReader.getSurface()),
+                    captureStateCallback, cameraHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -244,7 +243,7 @@ public class PhotoModule extends BaseCameraModule {
         if (TextUtils.isEmpty(BACK_CAMERA) || TextUtils.isEmpty(FRONT_CAMERA))
             return;
 
-        boolean isBack = currentCamera.equals(BACK_CAMERA);
+        boolean isBack = isBack();
         currentCamera = isBack ? FRONT_CAMERA : BACK_CAMERA;
         isBack = !isBack;
         closeCamera();
@@ -252,9 +251,14 @@ public class PhotoModule extends BaseCameraModule {
         openCamera();
     }
 
+    private boolean isBack() {
+        return currentCamera.equals(BACK_CAMERA);
+    }
+
     /**
      * 重置Camera Parameter，在这里可以重新设置Camera的各项参数.
      * 设置改变，前后摄切换等，都会调用此方法进行Camera的重新设置.
+     *
      * @param back 是否是后摄.
      */
     private void resetCameraPreviewParemeters(boolean back) {
@@ -268,16 +272,12 @@ public class PhotoModule extends BaseCameraModule {
 
     /**
      * 创建拍照时接收数据的ImageReader.
+     *
      * @param size 拍照尺寸
      */
     private void createImageReader(Size size) {
-        if (null != imageReader) {
-            imageReader.close();
-            imageReader = null;
-        }
-
-        imageReader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
-        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+        captureImageReader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
+        captureImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
                 long t = System.currentTimeMillis();
@@ -289,7 +289,7 @@ public class PhotoModule extends BaseCameraModule {
                         ByteBuffer buffer = planes[0].getBuffer();
                         byte[] data = new byte[buffer.remaining()];
                         buffer.get(data);
-                        final PhotoFile p = new PhotoFile(data, imageReader.getWidth(), imageReader.getHeight(), 0);
+                        final PhotoFile p = new PhotoFile(data, captureImageReader.getWidth(), captureImageReader.getHeight(), 0);
                         if (FileOperatorHelper.getInstance().saveFile(p)) {
                             LogPrinter.i(TAG, "Save photo success!");
                             cameraView.toast(p.getFilePath());

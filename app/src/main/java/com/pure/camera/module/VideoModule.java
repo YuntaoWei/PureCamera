@@ -23,12 +23,13 @@ import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.R;
+import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.VideoFile;
 import com.pure.camera.opengl.UIStateListener;
-import com.pure.camera.common.LogPrinter;
 import com.pure.camera.ui.VideoTipsView;
 import com.pure.camera.view.CameraView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -132,10 +133,25 @@ public class VideoModule extends BaseCameraModule {
             previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
     }
 
+    private void releaseRecorder() {
+        if(null != mMediaRecorder) {
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+        }
+
+        //MediaRecorder在prepare阶段是会创建一个空文件的，在start后才会写入
+        //如果只是开启了预览，并没有录制，则要删除prepare时创建的空文件
+        File f = new File(currentFile.getFilePath());
+        if(f.exists() && f.length() == 0)
+            f.delete();
+    }
+
     @Override
     protected void closeCamera() {
         if (isRecording) {
             stopVideoRecord();
+        } else {
+            releaseRecorder();
         }
 
         if (null != previewSession) {
@@ -235,7 +251,7 @@ public class VideoModule extends BaseCameraModule {
      * 初始化MediaRecorder，设置相关参数
      */
     private void configMediaRecorder() {
-        mVideoSize = CameraSettings.chooseVideoSize(1280, 960, new Size(1280, 960), true);
+        mVideoSize = CameraSettings.chooseVideoSize(screenSize.getWidth(), screenSize.getHeight(), new Size(1280, 960), true);
         currentFile = new VideoFile(mVideoSize.getWidth(), mVideoSize.getHeight(),
                 mActivity.getResources().getConfiguration().orientation);
 
@@ -248,9 +264,16 @@ public class VideoModule extends BaseCameraModule {
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        int rotation = mActivity.getWindowManager().getDefaultDisplay().getRotation();
-        int orientation = ORIENTATIONS.get(rotation);
+        int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
+        try {
+            CameraCharacteristics p = cameraManager.getCameraCharacteristics(currentCamera);
+            orientation = CameraSettings.getModifyOrientation(p, orientation);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+            orientation = ORIENTATIONS.get(orientation);
+        }
         mMediaRecorder.setOrientationHint(orientation);
+
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -306,9 +329,9 @@ public class VideoModule extends BaseCameraModule {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+
         mMediaRecorder.stop();
-        mMediaRecorder.reset();
-        mMediaRecorder = null;
+        releaseRecorder();
         isRecording = false;
         if (null != mActivity) {
             cameraView.toast(currentFile.getFilePath());

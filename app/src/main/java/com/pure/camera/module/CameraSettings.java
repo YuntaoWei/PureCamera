@@ -108,7 +108,12 @@ public class CameraSettings {
         }
         int w = setSize.getWidth();
         int h = setSize.getHeight();
+        float screenRatio = (float) h / (float)w;
         for (Size option : sizes) {
+            float ratio = (float)option.getWidth() / (float)option.getHeight();
+            if(screenRatio == ratio)
+                return option;
+
             if (option.getHeight() == option.getWidth() * h / w &&
                     option.getWidth() >= width && option.getHeight() >= height) {
                 bigEnough.add(option);
@@ -135,10 +140,15 @@ public class CameraSettings {
         Log.i(TAG, "choosePreviewSize : " + back);
         Size[] sizes = back ? backMapSize.getOutputSizes(SurfaceTexture.class) :
                 frontMapSize.getOutputSizes(SurfaceTexture.class);
-        List<Size> bigEnough = new ArrayList<Size>();
+        List<Size> bigEnough = new ArrayList();
         int w = setSize.getWidth();
         int h = setSize.getHeight();
+        float screenRatio = (float) h / (float)w;
+
         for (Size option : sizes) {
+            float ratio = (float)option.getWidth() / (float)option.getHeight();
+            if(screenRatio == ratio)
+                return option;
             if (option.getHeight() == option.getWidth() * h / w &&
                     option.getWidth() >= w && option.getHeight() >= h) {
                 bigEnough.add(option);
@@ -201,8 +211,13 @@ public class CameraSettings {
         }
     }
 
-
-    public static int getJpegOrientation(CameraCharacteristics c, int deviceOrientation) {
+    /**
+     * 获取与预览一直的照片/视频方向，避免拍摄结果与预览不一致的问题
+     * @param c 当前打开的摄像头的参数
+     * @param deviceOrientation 当前设备的方向
+     * @return
+     */
+    public static int getModifyOrientation(CameraCharacteristics c, int deviceOrientation) {
         if (deviceOrientation == android.view.OrientationEventListener.ORIENTATION_UNKNOWN) return 0;
         int sensorOrientation = c.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
