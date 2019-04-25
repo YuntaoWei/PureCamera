@@ -42,7 +42,6 @@ public class PhotoModule extends BaseCameraModule {
     private Size pictureSize = new Size(1280, 960);
     private CameraCaptureSession previewSession;
     private CaptureRequest.Builder previewBuilder;
-    private CaptureRequest previewRequest;
     private ImageReader captureImageReader;
     private CameraCaptureSession.CaptureCallback captureCallback;
     protected CameraCaptureSession.StateCallback captureStateCallback;
@@ -148,15 +147,15 @@ public class PhotoModule extends BaseCameraModule {
         try {
             if (null == previewBuilder) {
                 previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                previewBuilder.addTarget(previewSurface);
             }
-            cameraDevice.createCaptureSession(Arrays.asList(previewSurface), new CameraCaptureSession.StateCallback() {
+
+            cameraDevice.createCaptureSession(Arrays.asList(previewSurface, captureImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {
+                        previewBuilder.addTarget(previewSurface);
                         previewSession = session;
-                        previewRequest = previewBuilder.build();
-                        previewSession.setRepeatingRequest(previewRequest, null, cameraHandler);
+                        previewSession.setRepeatingRequest(previewBuilder.build(), null, cameraHandler);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
@@ -179,60 +178,41 @@ public class PhotoModule extends BaseCameraModule {
             captureBuilder.addTarget(previewSurface);
             captureBuilder.addTarget(captureImageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            byte a = 90;
+            captureBuilder.set(CaptureRequest.JPEG_QUALITY, new Byte(a));
             int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
             LogPrinter.i(TAG, "orientation set : device orientation = " + orientation + " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(orientation));
             orientation = CameraSettings.getModifyOrientation(cameraManager.getCameraCharacteristics(currentCamera), orientation);
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation);
 
-            if (null == captureStateCallback) {
-                captureStateCallback = new CameraCaptureSession.StateCallback() {
-
+            if (null == captureCallback) {
+                captureCallback = new CameraCaptureSession.CaptureCallback() {
                     @Override
-                    public void onConfigured(CameraCaptureSession session) {
-                        try {
-                            if (null == captureCallback) {
-                                captureCallback = new CameraCaptureSession.CaptureCallback() {
-                                    @Override
-                                    public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request, long timestamp, long frameNumber) {
-                                        LogPrinter.i(TAG, "onCaptureStarted");
-                                    }
-
-                                    @Override
-                                    public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request, CaptureResult partialResult) {
-                                        LogPrinter.i(TAG, "onCaptureProgressed");
-                                    }
-
-                                    @Override
-                                    public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-                                        LogPrinter.i(TAG, "onCaptureCompleted");
-                                        session.close();
-                                        startPreview();
-                                    }
-
-                                    @Override
-                                    public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
-                                        LogPrinter.i(TAG, "onCaptureFailed");
-                                        session.close();
-                                        startPreview();
-                                    }
-                                };
-                            }
-                            session.capture(captureBuilder.build(), captureCallback, cameraHandler);
-                        } catch (CameraAccessException e) {
-                            e.printStackTrace();
-                        }
+                    public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request, long timestamp, long frameNumber) {
+                        LogPrinter.i(TAG, "onCaptureStarted");
                     }
 
                     @Override
-                    public void onConfigureFailed(CameraCaptureSession session) {
-
+                    public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request, CaptureResult partialResult) {
+                        LogPrinter.i(TAG, "onCaptureProgressed");
                     }
 
+                    @Override
+                    public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                        LogPrinter.i(TAG, "onCaptureCompleted");
+                        session.close();
+                        startPreview();
+                    }
+
+                    @Override
+                    public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
+                        LogPrinter.i(TAG, "onCaptureFailed");
+                        session.close();
+                        startPreview();
+                    }
                 };
             }
-
-            cameraDevice.createCaptureSession(Arrays.asList(previewSurface, captureImageReader.getSurface()),
-                    captureStateCallback, cameraHandler);
+            previewSession.capture(captureBuilder.build(), captureCallback, cameraHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
