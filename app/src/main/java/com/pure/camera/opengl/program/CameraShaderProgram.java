@@ -84,8 +84,7 @@ public class CameraShaderProgram extends Program {
         }
     }
 
-    public void setUniformInt(int value) {
+    public void setFilterType(int value) {
         glUniform1i(filterHandler, value);
     }
-
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.pure.camera.R;
+import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.opengl.CameraGLView;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
@@ -112,6 +113,22 @@ public class CameraView extends BaseView implements TextureListener,
     }
 
     /**
+     * 为测试而添加的接口，实际的滤镜切换，只在view内部进行，不对外开放
+     */
+    public void setGrayFilterForDebug() {
+        setFilter(CameraFilterManager.FILTER_NAME_GRAY);
+    }
+
+    /**
+     * 实际的滤镜切换接口.
+     * @param filterName 更新的滤镜的名字.
+     */
+    private void setFilter(String filterName) {
+        cameraGLView.getCameraRenderer().updateFilter(
+                CameraFilterManager.getInstance().getFilter(filterName));
+    }
+
+    /**
      * 添加布局初始化完成的回调，主要传递创建好的SurfaceTexture.
      * @param l
      */
@@ -147,5 +164,4 @@ public class CameraView extends BaseView implements TextureListener,
         super.destroy();
         cameraGLViewAttached = false;
     }
-
 }

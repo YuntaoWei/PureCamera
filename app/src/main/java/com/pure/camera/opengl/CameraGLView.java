@@ -30,4 +30,13 @@ public class CameraGLView extends GLSurfaceView {
         cameraRenderer.setTextureListener(l);
     }
 
+
+    public CameraRenderer getCameraRenderer() {
+        return cameraRenderer;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 }
