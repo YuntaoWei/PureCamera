@@ -24,7 +24,6 @@ import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
-import com.pure.camera.R;
 import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.PhotoFile;
@@ -116,7 +115,7 @@ public class PhotoModule extends BaseCameraModule {
         });
 
         cameraView.addCameraGLView();
-        cameraView.setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher);
+        cameraView.setCameraOperation(this);
     }
 
     @Override

@@ -34,6 +34,10 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
         previewController.setFilter(filter);
     }
 
+    public void showFilterPreview(boolean flag) {
+        previewController.showFilter(true);
+    }
+
     public void updateTexture(int w, int h) {
         previewController.updateTextureSize(w, h);
     }

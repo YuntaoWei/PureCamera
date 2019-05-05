@@ -8,4 +8,17 @@ public class PreviewSize {
         width = w;
         height = h;
     }
+
+    public float getAspectRatio() {
+        return (float) width / (float) height;
+    }
+
+    public float getAspectRatioReverse() {
+        return (float) height / (float) width;
+    }
+
+    @Override
+    public String toString() {
+        return width + "x" + height;
+    }
 }

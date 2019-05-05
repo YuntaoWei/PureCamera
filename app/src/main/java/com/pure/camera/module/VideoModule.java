@@ -22,7 +22,6 @@ import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
-import com.pure.camera.R;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.VideoFile;
 import com.pure.camera.opengl.UIStateListener;
@@ -66,7 +65,7 @@ public class VideoModule extends BaseCameraModule {
         });
 
         cameraView.addCameraGLView();
-        cameraView.setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher);
+        cameraView.setCameraOperation(this);
     }
 
     /**

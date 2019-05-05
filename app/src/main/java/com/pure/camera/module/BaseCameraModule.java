@@ -19,7 +19,7 @@ import com.pure.camera.R;
 import com.pure.camera.data.MediaFile;
 import com.pure.camera.view.CameraView;
 
-public class BaseCameraModule extends AbstractCameraModule implements View.OnClickListener {
+public class BaseCameraModule extends AbstractCameraModule implements CameraOperation {
 
     protected static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -105,28 +105,6 @@ public class BaseCameraModule extends AbstractCameraModule implements View.OnCli
         closeCamera();
         cameraHandler.getLooper().quitSafely();
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.shutter:
-                //录像
-                capture();
-                break;
-
-            case R.id.switcher:
-                //前后摄切换
-                switchCamera();
-                break;
-
-            case R.id.recent_thumbnail:
-                //打开最近拍摄的图片
-
-                break;
-        }
-    }
-
     protected void initModule() {}
 
     @Override
@@ -140,4 +118,21 @@ public class BaseCameraModule extends AbstractCameraModule implements View.OnCli
 
     @Override
     public void capture() {}
+
+    @Override
+    public void onShutterClicked() {
+        //快门按下，进行相关拍照/摄像操作
+        capture();
+    }
+
+    @Override
+    public void onSwitchCamera() {
+        //前后摄切换
+        switchCamera();
+    }
+
+    @Override
+    public void startToGallery() {
+        //打开最近拍摄的图片
+    }
 }

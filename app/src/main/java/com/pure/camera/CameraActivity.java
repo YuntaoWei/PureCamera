@@ -3,6 +3,7 @@ package com.pure.camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.pure.camera.base.BaseCameraActivity;
 import com.pure.camera.module.BaseCameraModule;
@@ -17,6 +18,7 @@ public class CameraActivity extends BaseCameraActivity implements View.OnClickLi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mView.setOnClickListener(this, R.id.mode_switch);
         cameraModule = new PhotoModule(this, mView);
     }

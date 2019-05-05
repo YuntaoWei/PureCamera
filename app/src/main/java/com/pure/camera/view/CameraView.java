@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import com.pure.camera.R;
 import com.pure.camera.common.Assert;
 import com.pure.camera.filter.CameraFilterManager;
+import com.pure.camera.module.CameraOperation;
 import com.pure.camera.opengl.CameraGLView;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
@@ -19,6 +20,8 @@ public class CameraView extends BaseView implements TextureListener,
     private UIStateListener uiStateListener;
     private boolean cameraGLViewAttached;
     private FrameLayout cameraGroupView;
+
+    protected CameraOperation cameraOperation;
 
     /**
      * 添加CameraGLView，用于预览显示Camera画面
@@ -41,7 +44,7 @@ public class CameraView extends BaseView implements TextureListener,
      * @param view 子View.
      * @param layoutParams 布局属性。
      */
-    protected void addView(View view, ViewGroup.LayoutParams layoutParams) {
+    private void addView(View view, ViewGroup.LayoutParams layoutParams) {
         checkRoot();
         cameraGroupView.addView(view, layoutParams);
     }
@@ -89,11 +92,22 @@ public class CameraView extends BaseView implements TextureListener,
     }
 
     /**
+     * 显示所有filter的预览
+     */
+    protected void showFilterPreview(boolean flag) {
+        cameraGLView.getCameraRenderer().showFilterPreview(flag);
+    }
+
+    /**
      * 添加布局初始化完成的回调，主要传递创建好的SurfaceTexture.
      * @param l
      */
     public void setStateListener(UIStateListener l) {
         uiStateListener = l;
+    }
+
+    public void setCameraOperation(CameraOperation co) {
+        cameraOperation = co;
     }
 
     public void updatePreviewSize(int w, int h) {
@@ -105,7 +119,15 @@ public class CameraView extends BaseView implements TextureListener,
         texture.setOnFrameAvailableListener(this);
         if(null != uiStateListener)
             uiStateListener.onUIPrepare(texture);
+
+        onOpenGLPrepared();
     }
+
+    /**
+     * 有些UI设置操作依赖于整个环境就绪才能进行
+     * 在这里回调之后，可以进行filter，texture size等元素的设定
+     */
+    protected void onOpenGLPrepared() {}
 
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {

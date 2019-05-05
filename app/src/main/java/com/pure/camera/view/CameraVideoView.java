@@ -3,11 +3,20 @@ package com.pure.camera.view;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CameraVideoView extends CameraView {
+import com.pure.camera.R;
+
+public class CameraVideoView extends CameraView implements View.OnClickListener {
 
     @Override
     public void addCameraGLView() {
         super.addCameraGLView();
+
+        setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher);
+    }
+
+    @Override
+    protected void onOpenGLPrepared() {
+        //TODO 录像模式默认不设置任何滤镜效果
         setFilter(null);
     }
 
@@ -38,4 +47,23 @@ public class CameraVideoView extends CameraView {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        if(null == cameraOperation)
+            return;
+
+        switch (v.getId()) {
+            case R.id.shutter:
+                cameraOperation.onShutterClicked();
+                break;
+
+            case R.id.switcher:
+                cameraOperation.onSwitchCamera();
+                break;
+
+            case R.id.recent_thumbnail:
+                cameraOperation.startToGallery();
+                break;
+        }
+    }
 }

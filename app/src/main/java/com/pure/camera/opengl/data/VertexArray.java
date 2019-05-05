@@ -9,6 +9,7 @@
 package com.pure.camera.opengl.data;
 
 import com.pure.camera.Constants;
+import com.pure.camera.common.LogPrinter;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -49,6 +50,14 @@ public class VertexArray {
 
     public Buffer getBuffer() {
         return floatBuffer;
+    }
+
+    public void reset(float[] newArray) {
+        floatBuffer.position(0);
+        if(newArray.length != floatBuffer.remaining())
+            return;
+
+        floatBuffer.put(newArray, 0, newArray.length);
     }
 
 }

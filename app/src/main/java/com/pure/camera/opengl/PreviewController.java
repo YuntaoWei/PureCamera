@@ -28,8 +28,6 @@ public class PreviewController {
     private float[] textureMatrix;
     private int textureID;
     private SurfaceTexture surfaceTexture;
-    private CameraFilterShaderProgram filterShaderProgram;
-
     private FullPreview fullPreview;
     private SmallFilterPreview smallFilterPreview;
 
@@ -49,12 +47,6 @@ public class PreviewController {
      * @param mListener
      */
     public void onDrawPrepare(Context mContext, TextureListener mListener) {
-        textureID = TextureHelper.generateOESExternalTexture();
-        if (null != mListener && textureID > 0) {
-            surfaceTexture = new SurfaceTexture(textureID);
-            mListener.onTexturePrepared(surfaceTexture);
-        }
-
         CameraShaderProgram previewShaderProgram = new CameraShaderProgram(mContext, R.raw.camera_preview_vertex,
                 R.raw.camera_preview_fragment);
         fullPreview = new FullPreview(previewShaderProgram);
@@ -62,6 +54,12 @@ public class PreviewController {
         CameraFilterShaderProgram filterShaderProgram = new CameraFilterShaderProgram(mContext, R.raw.small_camera_preview_vertex,
                 R.raw.small_camera_preview_fragment);
         smallFilterPreview = new SmallFilterPreview(filterShaderProgram);
+
+        textureID = TextureHelper.generateOESExternalTexture();
+        if (null != mListener && textureID > 0) {
+            surfaceTexture = new SurfaceTexture(textureID);
+            mListener.onTexturePrepared(surfaceTexture);
+        }
     }
 
     public void setFilter(BaseFilter filter) {
@@ -70,6 +68,7 @@ public class PreviewController {
 
     public void updateTextureSize(int w, int h) {
         fullPreview.setPreviewSize(w, h);
+        smallFilterPreview.setPreviewSize(w, h);
     }
 
     /**
@@ -85,7 +84,7 @@ public class PreviewController {
         if(!showFilter)
             return;
         //绘制全部的filter预览效果
-        filterShaderProgram.useProgram();
+        smallFilterPreview.draw(textureID, textureMatrix);
     }
 
 }
