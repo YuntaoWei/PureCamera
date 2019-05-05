@@ -246,8 +246,10 @@ public class PhotoModule extends BaseCameraModule {
         pictureSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), pictureSize, back);
         LogPrinter.i(TAG, "resetCameraPreviewParemeters : preview size = " + previewSize + " , picture size : " + pictureSize);
         createImageReader(pictureSize);
-        if (null != previewSurfaceTexture)
+        if (null != previewSurfaceTexture) {
             previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+            cameraView.updatePreviewSize(previewSize.getWidth(), previewSize.getHeight());
+        }
     }
 
     /**

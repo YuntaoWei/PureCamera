@@ -8,8 +8,11 @@ import com.pure.camera.R;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.BaseFilter;
 import com.pure.camera.filter.CameraFilterManager;
+import com.pure.camera.opengl.data.FullPreview;
+import com.pure.camera.opengl.data.SmallFilterPreview;
 import com.pure.camera.opengl.data.VertexArray;
 import com.pure.camera.opengl.glutil.TextureHelper;
+import com.pure.camera.opengl.program.CameraFilterShaderProgram;
 import com.pure.camera.opengl.program.CameraShaderProgram;
 
 import static android.opengl.GLES20.GL_TRIANGLES;
@@ -22,44 +25,22 @@ public class PreviewController {
 
     private static final String TAG = "PreviewController";
 
-    //vertex coordinate(x, y)  -  texture coordinate(s, t)
-    private final float[] VERTEX_COORDINATES = {
-            //x, y, s, t
-            1f, 1f, 1f, 1f,
-            -1f, 1f, 0f, 1f,
-            -1f, -1f, 0f, 0f,
-            1f, 1f, 1f, 1f,
-            -1f, -1f, 0f, 0f,
-            1f, -1f, 1f, 0f
-    };
-
-    private final float[] SMALL_VERTEX_COORDINATES = {
-            0.5f, -0.5f, 0f, 1f,
-            1f, -0.5f, 1f, 1f,
-            0.5f, -1f, 0f, 0f,
-            1f, -1f, 1f, 0f
-    };
-
-    private final float[] SMALL_VERTEX_COORDINATES_T = {
-            -1f, -0.5f, 0f, 1f,
-            -0.5f, -0.5f, 1f, 1f,
-            -1f, -1f, 0f, 0f,
-            -0.5f, -1f, 1f, 0f
-    };
-
     private float[] textureMatrix;
-    private VertexArray previewVertexArray;
     private int textureID;
     private SurfaceTexture surfaceTexture;
-    private CameraShaderProgram glEsPrograml;
+    private CameraFilterShaderProgram filterShaderProgram;
 
-    private BaseFilter cameraFilter;
+    private FullPreview fullPreview;
+    private SmallFilterPreview smallFilterPreview;
+
+    private boolean showFilter;
 
     public PreviewController() {
         textureMatrix = new float[16];
-        previewVertexArray = new VertexArray(VERTEX_COORDINATES);
-        cameraFilter = CameraFilterManager.getInstance().getFilter(CameraFilterManager.FILTER_NAME_MOSAIC);
-        LogPrinter.i(TAG, "PreviewController Create filter : " + cameraFilter);
+    }
+
+    public void showFilter(boolean show) {
+        showFilter = show;
     }
 
     /**
@@ -74,43 +55,37 @@ public class PreviewController {
             mListener.onTexturePrepared(surfaceTexture);
         }
 
-        glEsPrograml = new CameraShaderProgram(mContext, R.raw.camera_preview_vertex,
+        CameraShaderProgram previewShaderProgram = new CameraShaderProgram(mContext, R.raw.camera_preview_vertex,
                 R.raw.camera_preview_fragment);
+        fullPreview = new FullPreview(previewShaderProgram);
+
+        CameraFilterShaderProgram filterShaderProgram = new CameraFilterShaderProgram(mContext, R.raw.small_camera_preview_vertex,
+                R.raw.small_camera_preview_fragment);
+        smallFilterPreview = new SmallFilterPreview(filterShaderProgram);
     }
 
-    /**
-     * 更新当前应用的滤镜.
-     * @param filter 新的滤镜.
-     */
     public void setFilter(BaseFilter filter) {
-        if(cameraFilter == filter)
-            return;
+        fullPreview.setCameraPreviewFilter(filter);
+    }
 
-        cameraFilter = filter;
+    public void updateTextureSize(int w, int h) {
+        fullPreview.setPreviewSize(w, h);
     }
 
     /**
      * 绘制预览界面
      */
     public void drawPreviewFrame() {
-        glEsPrograml.useProgram();
         surfaceTexture.updateTexImage();
         surfaceTexture.getTransformMatrix(textureMatrix);
 
-        previewVertexArray.setVertexAttribPointer(0, glEsPrograml.getVPositionHandler(),
-                2, 4 * Constants.BYTES_PER_FLOAT);
-        previewVertexArray.setVertexAttribPointer(2, glEsPrograml.getVtPositionHandler(),
-                2, 4 * Constants.BYTES_PER_FLOAT);
-        glEsPrograml.setMatrixUniform(textureMatrix);
-        glEsPrograml.setTextureUniformExternal(textureID);
+        //绘制大的预览界面
+        fullPreview.draw(textureID, textureMatrix);
 
-        //这里作滤镜的特殊处理，如果为空，则表示原始的图像，没有滤镜效果
-        if(null != cameraFilter) {
-            cameraFilter.doFilter(glEsPrograml);
-            LogPrinter.i(TAG, "do filter : " + cameraFilter.toString());
-        }
-
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        if(!showFilter)
+            return;
+        //绘制全部的filter预览效果
+        filterShaderProgram.useProgram();
     }
 
 }

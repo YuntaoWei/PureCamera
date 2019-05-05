@@ -1,17 +1,14 @@
 package com.pure.camera.base;
 
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
-import com.pure.camera.module.AbstractCameraModule;
-import com.pure.camera.module.CameraModule;
-import com.pure.camera.view.BaseView;
+import com.pure.camera.module.BaseCameraModule;
+import com.pure.camera.view.CameraView;
 
-public abstract class BaseCameraActivity<K extends AbstractCameraModule, V extends BaseView> extends BasePermissionActivity {
+public abstract class BaseCameraActivity extends BasePermissionActivity {
 
-    protected V mView;
-    protected K cameraModule;
+    protected CameraView mView;
+    protected BaseCameraModule cameraModule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +34,7 @@ public abstract class BaseCameraActivity<K extends AbstractCameraModule, V exten
         mView.destroy();
     }
 
-    protected abstract Class<V> getViewClass();
+    protected abstract Class<? extends CameraView> getViewClass();
 
     public abstract int getLayoutID();
 

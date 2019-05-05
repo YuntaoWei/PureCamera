@@ -34,8 +34,8 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
         previewController.setFilter(filter);
     }
 
-    public void pause() {
-        //在这里需要通知PreviewController释放资源，比如texture，VBO,VAO,EBO等
+    public void updateTexture(int w, int h) {
+        previewController.updateTextureSize(w, h);
     }
 
     @Override
@@ -53,6 +53,10 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         glClear(GL_COLOR_BUFFER_BIT);
         previewController.drawPreviewFrame();
+    }
+
+    public void pause() {
+        //在这里需要通知PreviewController释放资源，比如texture，VBO,VAO,EBO等
     }
 
 }

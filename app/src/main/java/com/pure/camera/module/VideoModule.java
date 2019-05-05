@@ -27,6 +27,7 @@ import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.VideoFile;
 import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.ui.VideoTipsView;
+import com.pure.camera.view.CameraVideoView;
 import com.pure.camera.view.CameraView;
 
 import java.io.File;
@@ -40,7 +41,6 @@ public class VideoModule extends BaseCameraModule {
     private CaptureRequest.Builder mPreviewBuilder;
     private CameraCaptureSession previewSession;
     private CaptureRequest mCaptureRequest;
-    private CaptureCallBack mCaptureCallBack;
     private MediaRecorder mMediaRecorder;
     private Size screenSize, previewSize, mVideoSize;
     private boolean isRecording = false;
@@ -129,8 +129,10 @@ public class VideoModule extends BaseCameraModule {
     private void resetCameraPreviewParemeters(boolean backCamera) {
         previewSize = CameraSettings.choosePreviewSize(screenSize, backCamera);
         mVideoSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), screenSize, backCamera);
-        if (uiPrepared && null != previewSurfaceTexture)
+        if (uiPrepared && null != previewSurfaceTexture) {
             previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+            cameraView.updatePreviewSize(previewSize.getWidth(), previewSize.getHeight());
+        }
     }
 
     private void releaseRecorder() {
@@ -166,7 +168,7 @@ public class VideoModule extends BaseCameraModule {
 
         cameraPrepared = false;
         if(null != videoTipsView) {
-            cameraView.removeRecordTips(videoTipsView.getTipsView());
+            ((CameraVideoView)cameraView).removeRecordTips(videoTipsView.getTipsView());
         }
     }
 
@@ -357,16 +359,16 @@ public class VideoModule extends BaseCameraModule {
         if(null == videoTipsView) {
             videoTipsView = VideoTipsView.getTipsView(cameraView.getContext(), cameraView.getLayoutInflater());
         }
-        cameraView.showRecordTipView(videoTipsView.getTipsView(), videoTipsView.getTipsLayoutParams());
+        ((CameraVideoView)cameraView).showRecordTipView(videoTipsView.getTipsView(), videoTipsView.getTipsLayoutParams());
         cameraView.runOnUiThreadDelay(updateDuration, 1000);
     }
 
     private void hideRecordView(boolean remove) {
         if(null != videoTipsView) {
             if(remove) {
-                cameraView.removeRecordTips(videoTipsView.getTipsView());
+                ((CameraVideoView)cameraView).removeRecordTips(videoTipsView.getTipsView());
             } else {
-                cameraView.hideRecordTipView(videoTipsView.getTipsView());
+                ((CameraVideoView)cameraView).hideRecordTipView(videoTipsView.getTipsView());
             }
         }
 
