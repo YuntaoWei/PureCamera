@@ -7,8 +7,8 @@ public class LogPrinter {
     public static final boolean DEBUG = true;
     public static final int LEVEL_VERBOSE = 1;
     public static final int LEVEL_INFO = 2;
-    public static final int LEVEL_WARNING = 3;
-    public static final int LEVEL_DEBUG = 4;
+    public static final int LEVEL_DEBUG = 3;
+    public static final int LEVEL_WARNING = 4;
     public static final int LEVEL_ERROR = 5;
 
     public static final int DEFAULT_LEVEL = 2;

@@ -7,7 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import com.pure.camera.common.LogPrinter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public abstract class BasePermissionActivity extends AppCompatActivity {
 
     private void requirePermission() {
         String[] permissions = checkPermission();
-        Log.i(TAG, "requirePermission : " +
+        LogPrinter.i(TAG, "requirePermission : " +
                 (permissions == null ?
                         "got all permission" :
                         (permissions.length + " permissions need grant!")));

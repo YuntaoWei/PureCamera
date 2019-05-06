@@ -1,20 +1,27 @@
 package com.pure.camera.view;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.pure.camera.R;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.CameraFilterManager;
+import com.pure.camera.opengl.data.PreviewSize;
 
 public class CameraPhotoView extends CameraView implements View.OnClickListener {
 
     private static final String TAG = "CameraPhotoView";
     private static final int FILTER_PREVIEW_BUTTON = 0x123;
-    ImageView filterPreviewButton;
+    private ImageView filterPreviewButton;
+    private boolean showFilter;
+    private PreviewSize screenSize;
 
     @Override
     public void addCameraGLView() {
@@ -25,13 +32,19 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
     @Override
     public void resume() {
         super.resume();
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dp = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dp);
+        screenSize = new PreviewSize(dp.widthPixels, dp.heightPixels);
+        LogPrinter.i(TAG, "screen size : " + screenSize);
+        cameraGLView.setScreenSize(screenSize);
         initPhotoView();
     }
 
     @Override
     protected void onOpenGLPrepared() {
         //TODO 测试先行把拍照模式的滤镜设置为gray
-        setFilter(CameraFilterManager.FILTER_NAME_GRAY);
+        setFilter(null);
     }
 
     @Override
@@ -83,9 +96,9 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
                 break;
 
             case FILTER_PREVIEW_BUTTON:
-                showFilterPreview(true);
+                showFilter = !showFilter;
+                showFilterPreview(showFilter);
                 break;
         }
     }
-
 }

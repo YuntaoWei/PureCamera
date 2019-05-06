@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.pure.camera.base.BaseCameraActivity;
-import com.pure.camera.module.BaseCameraModule;
 import com.pure.camera.module.PhotoModule;
 import com.pure.camera.module.VideoModule;
 import com.pure.camera.view.CameraPhotoView;

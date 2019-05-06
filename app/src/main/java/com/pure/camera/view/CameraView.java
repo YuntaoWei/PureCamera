@@ -1,6 +1,7 @@
 package com.pure.camera.view;
 
 import android.graphics.SurfaceTexture;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -9,17 +10,21 @@ import com.pure.camera.R;
 import com.pure.camera.common.Assert;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.CameraOperation;
-import com.pure.camera.opengl.CameraGLView;
+import com.pure.camera.opengl.glview.CameraFilterGLView;
+import com.pure.camera.opengl.glview.CameraGLView;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
 
 public class CameraView extends BaseView implements TextureListener,
         SurfaceTexture.OnFrameAvailableListener {
 
-    private CameraGLView cameraGLView;
+    protected CameraGLView cameraGLView;
+    private CameraFilterGLView cameraFilterGLView;
     private UIStateListener uiStateListener;
     private boolean cameraGLViewAttached;
     private FrameLayout cameraGroupView;
+    private SurfaceTexture surfaceTexture;
+    private int textureID;
 
     protected CameraOperation cameraOperation;
 
@@ -96,6 +101,15 @@ public class CameraView extends BaseView implements TextureListener,
      */
     protected void showFilterPreview(boolean flag) {
         cameraGLView.getCameraRenderer().showFilterPreview(flag);
+
+        /*if(null == cameraFilterGLView) {
+            cameraFilterGLView = new CameraFilterGLView(getContext());
+            cameraFilterGLView.setTexture(surfaceTexture, textureID);
+        }
+
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(760, 360);
+        addViewIfNeed(cameraFilterGLView, lp);
+        cameraFilterGLView.onResume();*/
     }
 
     /**
@@ -115,7 +129,9 @@ public class CameraView extends BaseView implements TextureListener,
     }
 
     @Override
-    public void onTexturePrepared(SurfaceTexture texture) {
+    public void onTexturePrepared(SurfaceTexture texture, int id) {
+        //surfaceTexture = texture;
+        //textureID = id;
         texture.setOnFrameAvailableListener(this);
         if(null != uiStateListener)
             uiStateListener.onUIPrepare(texture);
@@ -132,6 +148,9 @@ public class CameraView extends BaseView implements TextureListener,
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
         cameraGLView.requestRender();
+
+        //if(null != cameraFilterGLView)
+        //    cameraFilterGLView.requestRender();
     }
 
     @Override

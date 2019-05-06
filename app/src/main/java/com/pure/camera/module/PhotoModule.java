@@ -80,7 +80,6 @@ public class PhotoModule extends BaseCameraModule {
                     CameraSettings.initializeBackCameraSettings(parameters);
                 }
 
-
                 DisplayMetrics dm = new DisplayMetrics();
                 mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
                 screenSize = new Size(dm.widthPixels, dm.heightPixels);

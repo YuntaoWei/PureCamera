@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.pure.camera.common.ToastManager;
+import com.pure.camera.opengl.data.PreviewSize;
 
 public abstract class BaseView {
 

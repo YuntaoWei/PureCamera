@@ -4,6 +4,6 @@ import android.graphics.SurfaceTexture;
 
 public interface TextureListener {
 
-    void onTexturePrepared(SurfaceTexture texture);
+    void onTexturePrepared(SurfaceTexture texture, int id);
 
 }

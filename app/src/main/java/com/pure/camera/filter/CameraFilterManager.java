@@ -5,9 +5,9 @@ import android.text.TextUtils;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.engine.GrayFilter;
 import com.pure.camera.filter.engine.MosaicFilter;
+import com.pure.camera.filter.engine.NoFilter;
 import com.pure.camera.filter.engine.ReliefFilter;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CameraFilterManager {
     public static final String FILTER_NAME_GRAY = GrayFilter.NAME;
     public static final String FILTER_NAME_RELIF = ReliefFilter.NAME;
     public static final String FILTER_NAME_MOSAIC = MosaicFilter.NAME;
-    public static final String FILTER_NAME_ORIGINAL = "OriginalFilter";
+    public static final String FILTER_NAME_ORIGINAL = NoFilter.NAME;
 
     public static final String[] ALL_FILTER_NAME = {
             FILTER_NAME_GRAY,
@@ -50,6 +50,13 @@ public class CameraFilterManager {
         }
 
         return filters;
+    }
+
+    public BaseFilter getFilterByIndex(int index) {
+        if(filters.size() < index)
+            return null;
+
+        return filters.get(ALL_FILTER_NAME[index]);
     }
 
     public BaseFilter getFilter(String filterName) {

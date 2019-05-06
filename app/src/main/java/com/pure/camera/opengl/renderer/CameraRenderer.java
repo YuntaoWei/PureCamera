@@ -1,9 +1,11 @@
-package com.pure.camera.opengl;
+package com.pure.camera.opengl.renderer;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
 import com.pure.camera.filter.BaseFilter;
+import com.pure.camera.opengl.PreviewController;
+import com.pure.camera.opengl.TextureListener;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -35,7 +37,7 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
     }
 
     public void showFilterPreview(boolean flag) {
-        previewController.showFilter(true);
+        previewController.showFilter(flag);
     }
 
     public void updateTexture(int w, int h) {
@@ -61,6 +63,10 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
 
     public void pause() {
         //在这里需要通知PreviewController释放资源，比如texture，VBO,VAO,EBO等
+    }
+
+    public int isCovered(float x, float y) {
+        return previewController.isCovered(x, y);
     }
 
 }
