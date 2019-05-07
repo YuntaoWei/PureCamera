@@ -1,8 +1,10 @@
 package com.pure.camera.filter.engine;
 
-import com.pure.camera.filter.BaseFilter;
 import com.pure.camera.opengl.program.CameraShaderProgram;
 
+/**
+ * 黑白滤镜
+ */
 public class GrayFilter extends AbstractFilter {
 
     public final static String NAME = "GrayFilter";

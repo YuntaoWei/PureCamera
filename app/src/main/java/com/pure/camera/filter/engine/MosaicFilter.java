@@ -2,6 +2,9 @@ package com.pure.camera.filter.engine;
 
 import com.pure.camera.opengl.program.CameraShaderProgram;
 
+/**
+ * 马赛克滤镜
+ */
 public class MosaicFilter extends AbstractFilter {
 
     public final static String NAME = "MosaicFilter";

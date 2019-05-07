@@ -2,6 +2,9 @@ package com.pure.camera.filter.engine;
 
 import com.pure.camera.opengl.program.CameraShaderProgram;
 
+/**
+ * 浮雕滤镜
+ */
 public class ReliefFilter extends AbstractFilter {
 
     public final static String NAME = "ReliefFilter";
