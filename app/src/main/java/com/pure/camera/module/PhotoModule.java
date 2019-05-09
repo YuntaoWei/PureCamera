@@ -27,13 +27,16 @@ import com.pure.camera.CameraActivity;
 import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.PhotoFile;
+import com.pure.camera.filter.BaseFilter;
+import com.pure.camera.filter.engine.NoFilter;
 import com.pure.camera.opengl.UIStateListener;
+import com.pure.camera.view.CameraPhotoView;
 import com.pure.camera.view.CameraView;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class PhotoModule extends BaseCameraModule {
+public class PhotoModule extends BaseCameraModule implements OnFilterChangeListener {
 
     private static final String TAG = "PhotoModule";
 
@@ -43,9 +46,9 @@ public class PhotoModule extends BaseCameraModule {
     private CaptureRequest.Builder previewBuilder;
     private ImageReader captureImageReader;
     private CameraCaptureSession.CaptureCallback captureCallback;
-    protected CameraCaptureSession.StateCallback captureStateCallback;
 
     private Size screenSize;
+    private BaseFilter currentFilter;
 
     public PhotoModule(CameraActivity ctx, CameraView view) {
         super(ctx, view);
@@ -115,6 +118,7 @@ public class PhotoModule extends BaseCameraModule {
 
         cameraView.addCameraGLView();
         cameraView.setCameraOperation(this);
+        ((CameraPhotoView) cameraView).setFilterChangeListener(this);
     }
 
     @Override
@@ -176,7 +180,7 @@ public class PhotoModule extends BaseCameraModule {
             captureBuilder.addTarget(previewSurface);
             captureBuilder.addTarget(captureImageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            byte a = 90;
+            byte a = 100;
             captureBuilder.set(CaptureRequest.JPEG_QUALITY, new Byte(a));
             int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
             LogPrinter.i(TAG, "orientation set : device orientation = " + orientation + " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(orientation));
@@ -250,6 +254,15 @@ public class PhotoModule extends BaseCameraModule {
         }
     }
 
+    private void reCreateImageReader() {
+        if (null != captureImageReader) {
+            captureImageReader.close();
+            captureImageReader = null;
+        }
+
+        createImageReader(pictureSize);
+    }
+
     /**
      * 创建拍照时接收数据的ImageReader.
      *
@@ -269,8 +282,11 @@ public class PhotoModule extends BaseCameraModule {
                         ByteBuffer buffer = planes[0].getBuffer();
                         byte[] data = new byte[buffer.remaining()];
                         buffer.get(data);
+                        LogPrinter.i(TAG, "onImageAvailable : " + data.length + "   " +
+                                reader.getWidth() + " x " + reader.getHeight() + "   " +
+                                (reader.getWidth() * reader.getHeight()));
                         final PhotoFile p = new PhotoFile(data, captureImageReader.getWidth(), captureImageReader.getHeight(), 0);
-                        if (FileOperatorHelper.getInstance().saveFile(p)) {
+                        if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {
                             LogPrinter.i(TAG, "Save photo success!");
                             cameraView.toast(p.getFilePath());
                         } else {
@@ -287,5 +303,15 @@ public class PhotoModule extends BaseCameraModule {
     @Override
     public boolean isProgressing() {
         return false;
+    }
+
+    @Override
+    public void onFilterChange(BaseFilter filter) {
+        currentFilter = filter;
+        reCreateImageReader();
+    }
+
+    private boolean requestJpegData() {
+        return (currentFilter == null || currentFilter instanceof NoFilter);
     }
 }

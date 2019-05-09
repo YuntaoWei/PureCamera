@@ -21,4 +21,8 @@ public class MosaicFilter extends AbstractFilter {
         program.setUniform(program.getMosaicSizeHandler(), MOSAIC_DEFAULT_SQUARE);
     }
 
+    @Override
+    public byte[] getFilterImage(byte[] pixels, int w, int h) {
+        return NativeFilter.getInstance().doFilterMosaic(pixels, w, h, (int)MOSAIC_DEFAULT_SQUARE);
+    }
 }

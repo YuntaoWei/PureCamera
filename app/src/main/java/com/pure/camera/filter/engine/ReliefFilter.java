@@ -18,4 +18,9 @@ public class ReliefFilter extends AbstractFilter {
     protected void doFilterImpl(CameraShaderProgram program) {
         program.setFilterType(TYPE);
     }
+
+    @Override
+    public byte[] getFilterImage(byte[] pixels, int w, int h) {
+        return NativeFilter.getInstance().doFilterRelief(pixels, w, h);
+    }
 }

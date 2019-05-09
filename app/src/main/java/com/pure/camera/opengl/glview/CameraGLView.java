@@ -9,6 +9,7 @@ import android.view.View;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.BaseFilter;
 import com.pure.camera.filter.CameraFilterManager;
+import com.pure.camera.module.OnFilterChangeListener;
 import com.pure.camera.opengl.data.PreviewSize;
 import com.pure.camera.opengl.glutil.NormalizeUtil;
 import com.pure.camera.opengl.renderer.CameraRenderer;
@@ -19,6 +20,7 @@ public class CameraGLView extends GLSurfaceView implements View.OnTouchListener 
     private static final String TAG = "CameraGLView";
     private Context mContext;
     private CameraRenderer cameraRenderer;
+    private OnFilterChangeListener filterChangeListener;
 
     public CameraGLView(Context context) {
         this(context, null);
@@ -79,6 +81,9 @@ public class CameraGLView extends GLSurfaceView implements View.OnTouchListener 
                     if(index != -1) {
                         BaseFilter filter = CameraFilterManager.getInstance().getFilterByIndex(index);
                         cameraRenderer.updateFilter(filter);
+                        if(null != filterChangeListener) {
+                            filterChangeListener.onFilterChange(filter);
+                        }
                     }
                 }
                 isMove = false;
@@ -87,4 +92,9 @@ public class CameraGLView extends GLSurfaceView implements View.OnTouchListener 
 
         return true;
     }
+
+    public void setOnFilterChangeListener(OnFilterChangeListener l) {
+        filterChangeListener = l;
+    }
+
 }

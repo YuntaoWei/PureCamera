@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.pure.camera.R;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.CameraFilterManager;
+import com.pure.camera.module.OnFilterChangeListener;
 import com.pure.camera.opengl.data.PreviewSize;
 
 public class CameraPhotoView extends CameraView implements View.OnClickListener {
@@ -75,6 +76,10 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
         if(null != filterPreviewButton) {
             ((ViewGroup)filterPreviewButton.getParent()).removeView(filterPreviewButton);
         }
+    }
+
+    public void setFilterChangeListener(OnFilterChangeListener l) {
+        cameraGLView.setOnFilterChangeListener(l);
     }
 
     @Override

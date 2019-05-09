@@ -17,4 +17,9 @@ public class NoFilter extends AbstractFilter {
     protected void doFilterImpl(CameraShaderProgram program) {
         program.setFilterType(0);
     }
+
+    @Override
+    public byte[] getFilterImage(byte[] pixels, int w, int h) {
+        return pixels;
+    }
 }

@@ -1,7 +1,6 @@
 package com.pure.camera.view;
 
 import android.graphics.SurfaceTexture;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -10,16 +9,14 @@ import com.pure.camera.R;
 import com.pure.camera.common.Assert;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.CameraOperation;
-import com.pure.camera.opengl.glview.CameraFilterGLView;
-import com.pure.camera.opengl.glview.CameraGLView;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
+import com.pure.camera.opengl.glview.CameraGLView;
 
 public class CameraView extends BaseView implements TextureListener,
         SurfaceTexture.OnFrameAvailableListener {
 
     protected CameraGLView cameraGLView;
-    private CameraFilterGLView cameraFilterGLView;
     private UIStateListener uiStateListener;
     private boolean cameraGLViewAttached;
     private FrameLayout cameraGroupView;
