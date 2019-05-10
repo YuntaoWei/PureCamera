@@ -127,7 +127,7 @@ public class VideoModule extends BaseCameraModule {
      */
     private void resetCameraPreviewParemeters(boolean backCamera) {
         previewSize = CameraSettings.choosePreviewSize(screenSize, backCamera);
-        mVideoSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), screenSize, backCamera);
+        mVideoSize = CameraSettings.chooseVideoSize(screenSize.getWidth(), screenSize.getHeight(), screenSize, backCamera);
         if (uiPrepared && null != previewSurfaceTexture) {
             previewSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
             cameraView.updatePreviewSize(previewSize.getWidth(), previewSize.getHeight());

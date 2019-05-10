@@ -2,7 +2,9 @@ package com.pure.camera.module;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -20,10 +22,12 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
+import com.pure.camera.common.ImageUtil;
 import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.PhotoFile;
@@ -33,7 +37,9 @@ import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.view.CameraPhotoView;
 import com.pure.camera.view.CameraView;
 
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class PhotoModule extends BaseCameraModule implements OnFilterChangeListener {
@@ -46,6 +52,8 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
     private CaptureRequest.Builder previewBuilder;
     private ImageReader captureImageReader;
     private CameraCaptureSession.CaptureCallback captureCallback;
+    private int defaultFormat = ImageFormat.YUV_420_888;
+    //private int defaultFormat = ImageFormat.JPEG;
 
     private Size screenSize;
     private BaseFilter currentFilter;
@@ -64,6 +72,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
                 if (cameraIDs.length <= 0)
                     throw new RuntimeException("Can not find camera on this device!");
                 for (String s : cameraIDs) {
+                    LogPrinter.i("mm", "camera id : " + s);
                     CameraCharacteristics parameters = cameraManager.getCameraCharacteristics(s);
                     if (parameters.get(CameraCharacteristics.LENS_FACING) ==
                             CameraCharacteristics.LENS_FACING_BACK) {
@@ -244,8 +253,10 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
      * @param back 是否是后摄.
      */
     private void resetCameraPreviewParemeters(boolean back) {
+        CameraSettings.printSupportSize();
         previewSize = CameraSettings.choosePreviewSize(screenSize, back);
-        pictureSize = CameraSettings.choosePictureSize(screenSize.getWidth(), screenSize.getHeight(), pictureSize, back);
+        pictureSize = CameraSettings.choosePictureSize(screenSize.getWidth(),
+                screenSize.getHeight(), pictureSize, back, defaultFormat);
         LogPrinter.i(TAG, "resetCameraPreviewParemeters : preview size = " + previewSize + " , picture size : " + pictureSize);
         createImageReader(pictureSize);
         if (null != previewSurfaceTexture) {
@@ -269,7 +280,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
      * @param size 拍照尺寸
      */
     private void createImageReader(Size size) {
-        captureImageReader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
+        captureImageReader = ImageReader.newInstance(size.getWidth(), size.getHeight(), defaultFormat, 1);
         captureImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
@@ -277,23 +288,34 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
                 LogPrinter.i(TAG, "onImageAvailable : " + t +
                         "  " + Thread.currentThread().getName());
                 try (Image image = reader.acquireLatestImage()) {
-                    Image.Plane[] planes = image.getPlanes();
-                    if (planes.length > 0) {
-                        ByteBuffer buffer = planes[0].getBuffer();
-                        byte[] data = new byte[buffer.remaining()];
-                        buffer.get(data);
-                        LogPrinter.i(TAG, "onImageAvailable : " + data.length + "   " +
-                                reader.getWidth() + " x " + reader.getHeight() + "   " +
-                                (reader.getWidth() * reader.getHeight()));
-                        final PhotoFile p = new PhotoFile(data, captureImageReader.getWidth(), captureImageReader.getHeight(), 0);
-                        if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {
-                            LogPrinter.i(TAG, "Save photo success!");
-                            cameraView.toast(p.getFilePath());
-                        } else {
-                            cameraView.toast("Save file failed!");
-                            LogPrinter.e(TAG, "Save photo failed!");
-                        }
+                    /*long t1 = System.currentTimeMillis();
+                    byte[] data = ImageUtil.getYUVDataFromImageAsType(image, ImageUtil.YUV420SP);
+                    Log.i(TAG, "start get data : " + (System.currentTimeMillis() - t1));
+                    final PhotoFile p = new PhotoFile(data, image.getWidth(), image.getHeight(), 0);
+                    if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {
+                        LogPrinter.i(TAG, "Save photo success!");
+                        cameraView.toast(p.getFilePath());
+                    } else {
+                        cameraView.toast("Save file failed!");
+                        LogPrinter.e(TAG, "Save photo failed!");
+                    }*/
+
+                    YuvImage yuvImage = ImageUtil.getYuvImage(image);
+                    final PhotoFile p = new PhotoFile(yuvImage.getYuvData(), image.getWidth(), image.getHeight(), 0);
+                    String filePath = p.getFilePath();
+                    File f = new File(filePath);
+                    if(!f.exists()) {
+                        f.getParentFile().mkdirs();
+                        f.createNewFile();
                     }
+
+                    FileOutputStream fops = new FileOutputStream(f);
+                    boolean result = yuvImage.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, fops);
+                    if(result) {
+                        cameraView.toast(p.getFilePath());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 LogPrinter.i(TAG, "onImageAvailable : save file take time : " + (System.currentTimeMillis() - t));
             }
@@ -308,7 +330,6 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
     @Override
     public void onFilterChange(BaseFilter filter) {
         currentFilter = filter;
-        reCreateImageReader();
     }
 
     private boolean requestJpegData() {
