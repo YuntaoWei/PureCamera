@@ -20,7 +20,7 @@ public class ReliefFilter extends AbstractFilter {
     }
 
     @Override
-    public byte[] getFilterImage(byte[] pixels, int w, int h) {
-        return NativeFilter.getInstance().doFilterRelief(pixels, w, h);
+    public boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath) {
+        return NativeFilter.getInstance().doFilterRelief(pixels, w, h, orientation, filePath);
     }
 }

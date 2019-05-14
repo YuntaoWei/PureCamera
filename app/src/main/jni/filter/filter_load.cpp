@@ -19,7 +19,7 @@ extern "C"
 
 #define JAVA_CLASS "com/pure/camera/filter/engine/NativeFilter"
 
-jbyteArray do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h) {
+jboolean do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
     LOGI("do_filter_gray!");
     jbyte *cbuf;
     cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
@@ -27,13 +27,9 @@ jbyteArray do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h)
         return 0;
     }
 
-    //Mat imgData(h, w, CV_8UC4, (unsigned char *) cbuf);
-    Mat yuv(h + h / 2, w, CV_8UC1, (uchar *)cbuf);
-    Mat imgData;
-    cvtColor(yuv, imgData, CV_YUV2BGR_I420);
+    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV420p2BGRA);
 
-    uchar *ptr = imgData.ptr(0);
-    imgData.data;
+    uchar *ptr = bgr.ptr(0);
     for (int i = 0; i < w * h; i++) {
         int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
                                ptr[4 * i + 0] * 0.114);
@@ -42,22 +38,61 @@ jbyteArray do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h)
         ptr[4 * i + 0] = grayScale;
     }
 
-    int size = w * h;
-    jbyteArray result = env->NewByteArray(size);
-    env->SetByteArrayRegion(result, 0, size, cbuf);
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    Mat result = rotate_mat(bgr, orientation);
+    bool success = imwrite(file_Path, result);;
+
     env->ReleaseByteArrayElements(buf, cbuf, 0);
-    return result;
+    env->ReleaseStringUTFChars(file, file_Path);
+    bgr.release();
+    result.release();
+
+    return success;
 }
 
-jbyteArray do_filter_mosaic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int square) {
-    LOGI("test print log!");
+jboolean do_filter_mosaic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int square, int orientation, jstring file) {
+    LOGI("do_filter_mosaic  square : %d, orientation : %d.", square, orientation);
     jbyte *cbuf;
     cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
     if (cbuf == NULL) {
         return 0;
     }
 
-    Mat imgData(h, w, CV_8UC4, (unsigned char *) cbuf);
+    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV420p2BGRA);
+    LOGI("do_filter_mosaic  1");
+    Mat tmp;
+    if(square % 2 == 0)
+        square += 1;
+
+
+    //GaussianBlur(bgr, tmp, Size(square, square), 0, 0);
+    blur(bgr, tmp, Size(square, square), Point(-1, -1), BORDER_CONSTANT);
+    LOGI("do_filter_mosaic  2");
+
+    Mat result;
+    result = rotate_mat(bgr, orientation);
+    LOGI("do_filter_mosaic  3");
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    bool success = imwrite(file_Path, result);
+
+    result.release();
+    bgr.release();
+    tmp.release();
+
+    env->ReleaseByteArrayElements(buf, cbuf, 0);
+    env->ReleaseStringUTFChars(file, file_Path);
+    return success;
+}
+
+jboolean do_filter_relief(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
+    LOGI("do_filter_relief");
+    jbyte *cbuf;
+    cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
+    if (cbuf == NULL) {
+        return 0;
+    }
+
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV420p2BGRA);
 
     uchar *ptr = imgData.ptr(0);
     for (int i = 0; i < w * h; i++) {
@@ -68,48 +103,22 @@ jbyteArray do_filter_mosaic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int 
         ptr[4 * i + 0] = grayScale;
     }
 
-    Mat dst(h, w, CV_8UC4);
-    cvtColor(imgData, dst, CV_YUV2BGR_I420);
+    Mat result;
+    result = rotate_mat(imgData, orientation);
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    bool success = imwrite(file_Path, result);
 
-    int size = w * h;
-    jbyteArray result = env->NewByteArray(size);
-    env->SetByteArrayRegion(result, 0, size, reinterpret_cast<const jbyte *>(dst.ptr(0)));
     env->ReleaseByteArrayElements(buf, cbuf, 0);
-    dst.release();
+    env->ReleaseStringUTFChars(file, file_Path);
+    result.release();
     imgData.release();
-    return result;
-}
-
-jbyteArray do_filter_relief(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h) {
-    LOGI("test print log!");
-    jbyte *cbuf;
-    cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
-    if (cbuf == NULL) {
-        return 0;
-    }
-
-    Mat imgData(h, w, CV_8UC4, (unsigned char *) cbuf);
-
-    uchar *ptr = imgData.ptr(0);
-    for (int i = 0; i < w * h; i++) {
-        int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
-                               ptr[4 * i + 0] * 0.114);
-        ptr[4 * i + 1] = grayScale;
-        ptr[4 * i + 2] = grayScale;
-        ptr[4 * i + 0] = grayScale;
-    }
-
-    int size = w * h;
-    jbyteArray result = env->NewByteArray(size);
-    env->SetByteArrayRegion(result, 0, size, cbuf);
-    env->ReleaseByteArrayElements(buf, cbuf, 0);
-    return result;
+    return success;
 }
 
 static JNINativeMethod gMethods[] = {
-        {"doFilterGray",   "([BII)[B",  (void *) do_filter_gray},
-        {"doFilterMosaic", "([BIII)[B", (void *) do_filter_mosaic},
-        {"doFilterRelief", "([BII)[B",  (void *) do_filter_relief},
+        {"doFilterGray",   "([BIIILjava/lang/String;)Z",  (void *) do_filter_gray},
+        {"doFilterMosaic", "([BIIIILjava/lang/String;)Z", (void *) do_filter_mosaic},
+        {"doFilterRelief", "([BIIILjava/lang/String;)Z",  (void *) do_filter_relief},
 };
 
 static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods,

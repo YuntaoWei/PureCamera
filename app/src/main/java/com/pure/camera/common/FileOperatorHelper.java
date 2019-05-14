@@ -16,7 +16,7 @@ import java.io.IOException;
 public class FileOperatorHelper {
 
     private static FileOperatorHelper mInstance;
-    private final static boolean DEBUG_YUV = true;
+    private final static boolean DEBUG_YUV = false;
 
     private FileOperatorHelper() {}
 
@@ -33,16 +33,9 @@ public class FileOperatorHelper {
         return mInstance;
     }
 
-    public boolean saveFile(MediaFile file, BaseFilter filter) {
+    public boolean saveFile(MediaFile file) {
         byte[] data = file.getFileData();
-
-        if(!DEBUG_YUV && filter != null && !(filter instanceof NoFilter)) {
-            //需要做滤镜处理，将原始camera数据进行相应的处理
-            LogPrinter.i("test", "Do filter before!");
-            data = filter.getFilterImage(data, file.getFileWidth(), file.getFileHeight());
-        }
-
-        File localFile = new File(MediaFile.DEFAUT_STORAGE_LOCATION, DEBUG_YUV ? "purecamera_test.yuv" : file.getDisplayName());
+        File localFile = new File(MediaFile.DEFAUT_STORAGE_LOCATION, file.getDisplayName());
         if(!localFile.exists()) {
             try {
                 localFile.getParentFile().mkdirs();
@@ -63,10 +56,24 @@ public class FileOperatorHelper {
             return false;
         }
 
-        if(!DEBUG_YUV) {
-            updateDataBase(file);
-        }
+        updateDataBase(file);
         return true;
+    }
+
+    public boolean saveFile(MediaFile file, BaseFilter filter) {
+        byte[] data = file.getFileData();
+
+        boolean fileProcessed = false;
+        if(!DEBUG_YUV && filter != null && !(filter instanceof NoFilter)) {
+            //需要做滤镜处理，将原始camera数据进行相应的处理
+            LogPrinter.i("test", "orientation : " + file.getFileOrientation());
+            fileProcessed = filter.getFilterImage(data, file.getFileWidth(), file.getFileHeight(),
+                    file.getFileOrientation(), file.getFilePath());
+        }
+
+        if(fileProcessed)
+            updateDataBase(file);
+        return fileProcessed;
     }
 
     public Uri updateDataBase(MediaFile file) {

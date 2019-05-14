@@ -156,5 +156,4 @@ public class MediaFile {
     public Uri getUri() {
         return fileType == FILE_TYPE_IMG ? URI_IMAGE : URI_VIDEO;
     }
-
 }

@@ -1,17 +1,36 @@
 //
-// Created by ubt on 2019/5/8.
+// Created by wyt on 2019/5/8.
 //
-#include "convert.h"
 
 #define DEBUG
-#define LOG_TAG "convert"
-#include "jni_log.h"
+#include "convert.h"
 
-uchar* yuv420_to_bgr(uchar* yuv, int w, int h) {
+
+Mat yuv420_to_bgr_mat(uchar* yuv, int w, int h, int type) {
     LOGI("yuv420_to_bgr");
     Mat yuvMat(h + h / 2, w, CV_8UC1, yuv);
-    Mat dstMat(h, w, CV_8UC3);
-    cvtColor(yuvMat, dstMat, CV_YUV420p2BGR);
-    return dstMat.data;
+    Mat bgr;
+    cvtColor(yuvMat, bgr, type);
+    yuvMat.release();
+    return bgr;
 }
+
+Mat rotate_mat(Mat src, int orientation) {
+    LOGI("rotate_mat angle : %d", orientation);
+    RotateFlags  f;
+    if(orientation == 90) {
+        f = ROTATE_90_CLOCKWISE;
+    } else if(orientation == 180) {
+        f = ROTATE_180;
+    } else if(orientation == 270){
+        f = ROTATE_90_COUNTERCLOCKWISE;
+    } else {
+        return src;
+    }
+
+    Mat result;
+    rotate(src, result, f);
+    return result;
+}
+
 

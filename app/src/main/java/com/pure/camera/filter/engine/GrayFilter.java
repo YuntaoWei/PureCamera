@@ -1,6 +1,12 @@
 package com.pure.camera.filter.engine;
 
+import android.graphics.Bitmap;
+
 import com.pure.camera.opengl.program.CameraShaderProgram;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * 黑白滤镜
@@ -20,7 +26,7 @@ public class GrayFilter extends AbstractFilter {
     }
 
     @Override
-    public byte[] getFilterImage(byte[] pixels, int w, int h) {
-        return NativeFilter.getInstance().doFilterGray(pixels, w, h);
+    public boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath) {
+        return NativeFilter.getInstance().doFilterGray(pixels, w, h, orientation, filePath);
     }
 }

@@ -4,13 +4,26 @@ import android.graphics.ImageFormat;
 import android.graphics.YuvImage;
 import android.media.Image;
 
+import com.pure.camera.data.MediaFile;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class ImageUtil {
 
+    //存储格式为YYYY...UUUUU...VVVV...
     public static final int YUV420P = 0;
+    //存储格式为YYYY...UVUVUVUV...或YYYY...VUVUVUVU...
     public static final int YUV420SP = 1;
+    //存储格式为YYYY...VUVUVUVU....
     public static final int NV21 = 2;
+    //存储格式为YYYY...UVUVUVUV...
+    public static final int NV12 = 3;
     private static final String TAG = "ImageUtil";
 
     public static int[] byteArray2IntArray(byte[] src) {
@@ -23,51 +36,31 @@ public class ImageUtil {
         return dst;
     }
 
-    public static YuvImage getYuvImage(Image image) {
-        Image.Plane[] planes = image.getPlanes();
-        ByteBuffer yBuffer = planes[0].getBuffer();
-        int yRowStride = planes[0].getRowStride();
-        int yPixelStride = planes[0].getPixelStride();
-
-        ByteBuffer uBuffer = planes[1].getBuffer();
-        int uRowStride = planes[1].getRowStride();
-        int uPixelStride = planes[1].getPixelStride();
-
-        ByteBuffer vBuffer = planes[2].getBuffer();
-        int vRowStride = planes[2].getRowStride();
-        int vPixelStride = planes[2].getPixelStride();
-
-        LogPrinter.i("data", "Y : " + yRowStride + "  " + yPixelStride + "  U : " +
-                uRowStride + "  " + uPixelStride + "  V : " +
-                vRowStride + "  " + vPixelStride);
-
-        byte[] yuvData = new byte[yBuffer.capacity() + uBuffer.capacity() + vBuffer.capacity()];
-        byte[] yData = new byte[yBuffer.capacity()];
-        yBuffer.get(yData);
-
-        byte[] uData = new byte[uBuffer.capacity()];
-        uBuffer.get(uData);
-
-        byte[] vData = new byte[vBuffer.capacity()];
-        vBuffer.get(vData);
-
-        int i = 0;
-        for (int j = 0; j < yData.length; j++) {
-            yuvData[i++] = yData[j++];
+    public static byte[] getCamera2YUVData(Image image, int type) {
+        if(type < NV21) {
+            LogPrinter.e(TAG, "Only support NV12 and NV21 format!");
+            return null;
         }
 
-        for (int j = 0; j < uData.length; j++) {
-            yuvData[i++] = uData[j++];
+        Image.Plane planes[] = image.getPlanes();
+        if(planes.length == 3) {
+            Buffer yBuffer = planes[0].getBuffer();
+            Buffer uvBuffer = planes[1].getBuffer();
+            Buffer vuBuffer = planes[2].getBuffer();
+
+            byte[] data = new byte[yBuffer.remaining() + uvBuffer.remaining()];
+            if(type == NV21) {
+                ((ByteBuffer) yBuffer).get(data, 0, yBuffer.remaining());
+                ((ByteBuffer) vuBuffer).get(data, yBuffer.remaining(), vuBuffer.remaining());
+            } else {
+                ((ByteBuffer) yBuffer).get(data, 0, yBuffer.remaining());
+                ((ByteBuffer) uvBuffer).get(data, yBuffer.remaining(), uvBuffer.remaining());
+            }
+
+            return data;
         }
 
-        for (int j = 0; j < vData.length; j++) {
-            yuvData[i++] = vData[j++];
-        }
-
-        YuvImage yuvImage = new YuvImage(yuvData, ImageFormat.NV21, image.getWidth(), image.getHeight()
-                , new int[]{yRowStride, uRowStride, vRowStride});
-
-        return yuvImage;
+        return null;
     }
 
     public static byte[] getYUVDataFromImageAsType(Image image, int type) {
@@ -210,4 +203,105 @@ public class ImageUtil {
         return rgb;
     }
 
+    public static void debugYuvData(Image image) {
+        Image.Plane[] planes = image.getPlanes();
+        for (int i = 0; i < planes.length; i++) {
+            ByteBuffer iBuffer = planes[i].getBuffer();
+            int iSize = iBuffer.remaining();
+            LogPrinter.i(TAG, "pixelStride  " + planes[i].getPixelStride());
+            LogPrinter.i(TAG, "rowStride   " + planes[i].getRowStride());
+            LogPrinter.i(TAG, "width  " + image.getWidth());
+            LogPrinter.i(TAG, "height  " + image.getHeight());
+            LogPrinter.i(TAG, "bufferSize  " + iSize);
+            LogPrinter.i(TAG, "Finished reading data from plane  " + i);
+        }
+
+        LogPrinter.i(TAG, "\nAll pixel count : " + image.getWidth() * image.getHeight());
+    }
+
+    public static void debugYUV(Image image) {
+        Image.Plane[] planes = image.getPlanes();
+        // Y-buffer
+        ByteBuffer yBuffer = planes[0].getBuffer();
+        int ySize = yBuffer.remaining();
+        byte[] yBytes = new byte[ySize];
+        yBuffer.get(yBytes);
+
+        // U-buffer
+        ByteBuffer uBuffer = planes[1].getBuffer();
+        int uSize = uBuffer.remaining();
+        byte[] uBytes = new byte[uSize];
+        uBuffer.get(uBytes);
+
+        // V-buffer
+        ByteBuffer vBuffer = planes[2].getBuffer();
+        int vSize = vBuffer.remaining();
+        byte[] vBytes = new byte[vSize];
+        vBuffer.get(vBytes);
+
+        String yFileName = "Y";
+        String uFileName = "U";
+        String vFileName = "V";
+
+        // 保存目录
+        File dir = new File(MediaFile.DEFAUT_STORAGE_LOCATION + File.separator + "YUVV");
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        // 文件名
+        File yFile = new File(dir.getAbsolutePath() + File.separator + yFileName + ".yuv");
+        File uFile = new File(dir.getAbsolutePath() + File.separator + uFileName + ".yuv");
+        File vFile = new File(dir.getAbsolutePath() + File.separator + vFileName + ".yuv");
+
+
+        try {
+
+            // 以字符方式书写
+            Writer yW = new FileWriter(yFile);
+            Writer uW = new FileWriter(uFile);
+            Writer vW = new FileWriter(vFile);
+
+            for (int i = 0; i < ySize; i++) {
+
+                String preValue = Integer.toHexString(yBytes[i]); // 转为16进制
+                // 因为byte[] 元素是一个字节，这里只取16进制的最后一个字节
+                String lastValue = preValue.length() > 2 ? preValue.substring(preValue.length() - 2) : preValue;
+                yW.write(" " + lastValue + " "); // 写入文件
+                if ((i + 1) % 20 == 0) {  // 每行20个
+                    yW.write("\n");
+                }
+            }
+            yW.close();
+
+
+            for (int i = 0; i < uSize; i++) {
+                String preValue = Integer.toHexString(uBytes[i]);
+                String lastValue = preValue.length() > 2 ? preValue.substring(preValue.length() - 2) : preValue;
+                uW.write(" " + lastValue + " ");
+                if ((i + 1) % 20 == 0) {
+                    uW.write("\n");
+                }
+            }
+            uW.close();
+
+
+            for (int i = 0; i < vSize; i++) {
+                String preValue = Integer.toHexString(vBytes[i]);
+                String lastValue = preValue.length() > 2 ? preValue.substring(preValue.length() - 2) : preValue;
+                vW.write(" " + lastValue + " ");
+                if ((i + 1) % 20 == 0) {
+                    vW.write("\n");
+                }
+            }
+            vW.close();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

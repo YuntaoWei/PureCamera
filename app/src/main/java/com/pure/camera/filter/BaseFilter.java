@@ -10,6 +10,6 @@ public interface BaseFilter {
 
     void doFilter(CameraShaderProgram program);
 
-    byte[] getFilterImage(byte[] pixels, int w, int h);
+    boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath);
 
 }

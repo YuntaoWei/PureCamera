@@ -22,7 +22,7 @@ public class MosaicFilter extends AbstractFilter {
     }
 
     @Override
-    public byte[] getFilterImage(byte[] pixels, int w, int h) {
-        return NativeFilter.getInstance().doFilterMosaic(pixels, w, h, (int)MOSAIC_DEFAULT_SQUARE);
+    public boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath) {
+        return NativeFilter.getInstance().doFilterMosaic(pixels, w, h, (int)MOSAIC_DEFAULT_SQUARE, orientation, filePath);
     }
 }

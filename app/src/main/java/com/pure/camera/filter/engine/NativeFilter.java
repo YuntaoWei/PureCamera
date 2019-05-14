@@ -18,8 +18,8 @@ public class NativeFilter {
         return INSTANCE;
     }
 
-    public native byte[] doFilterGray(byte[] pixels, int w, int h);
-    public native byte[] doFilterMosaic(byte[] pixels, int w, int h, int square);
-    public native byte[] doFilterRelief(byte[] pixels, int w, int h);
+    public native boolean doFilterGray(byte[] pixels, int w, int h, int orientation, String savePath);
+    public native boolean doFilterMosaic(byte[] pixels, int w, int h, int square, int orientation, String savePath);
+    public native boolean doFilterRelief(byte[] pixels, int w, int h, int orientation, String savePath);
 
 }

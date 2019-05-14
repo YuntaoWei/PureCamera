@@ -1,7 +1,6 @@
 package com.pure.camera;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -15,7 +14,7 @@ import com.pure.camera.view.CameraView;
 public class CameraActivity extends BaseCameraActivity implements View.OnClickListener {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mView.setOnClickListener(this, R.id.mode_switch);

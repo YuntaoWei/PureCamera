@@ -19,7 +19,7 @@ public class NoFilter extends AbstractFilter {
     }
 
     @Override
-    public byte[] getFilterImage(byte[] pixels, int w, int h) {
-        return pixels;
+    public boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath) {
+        return true;
     }
 }

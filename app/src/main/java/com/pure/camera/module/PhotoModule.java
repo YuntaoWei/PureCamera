@@ -55,6 +55,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
     private int defaultFormat = ImageFormat.YUV_420_888;
     //private int defaultFormat = ImageFormat.JPEG;
 
+    private int cameraOrientation;
     private Size screenSize;
     private BaseFilter currentFilter;
 
@@ -189,12 +190,15 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
             captureBuilder.addTarget(previewSurface);
             captureBuilder.addTarget(captureImageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            byte a = 100;
-            captureBuilder.set(CaptureRequest.JPEG_QUALITY, new Byte(a));
-            int orientation = cameraView.getContext().getResources().getConfiguration().orientation;
-            LogPrinter.i(TAG, "orientation set : device orientation = " + orientation + " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(orientation));
-            orientation = CameraSettings.getModifyOrientation(cameraManager.getCameraCharacteristics(currentCamera), orientation);
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation);
+            cameraOrientation = cameraView.getContext().getResources().getConfiguration().orientation;
+            cameraOrientation = CameraSettings.getModifyOrientation(cameraManager.getCameraCharacteristics(currentCamera), cameraOrientation);
+            if(defaultFormat == ImageFormat.JPEG) {
+                byte a = 100;
+                captureBuilder.set(CaptureRequest.JPEG_QUALITY, new Byte(a));
+                captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, cameraOrientation);
+                LogPrinter.i(TAG, "orientation set : device orientation = " + cameraOrientation +
+                        " jpeg orientation = " + CameraSettings.ORIENTATIONS.get(cameraOrientation));
+            }
 
             if (null == captureCallback) {
                 captureCallback = new CameraCaptureSession.CaptureCallback() {
@@ -286,36 +290,31 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
             public void onImageAvailable(ImageReader reader) {
                 long t = System.currentTimeMillis();
                 LogPrinter.i(TAG, "onImageAvailable : " + t +
-                        "  " + Thread.currentThread().getName());
+                        "  " + Thread.currentThread().getName() + "  " + reader.getWidth() + "x" + reader.getHeight());
                 try (Image image = reader.acquireLatestImage()) {
-                    /*long t1 = System.currentTimeMillis();
-                    byte[] data = ImageUtil.getYUVDataFromImageAsType(image, ImageUtil.YUV420SP);
-                    Log.i(TAG, "start get data : " + (System.currentTimeMillis() - t1));
-                    final PhotoFile p = new PhotoFile(data, image.getWidth(), image.getHeight(), 0);
-                    if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {
-                        LogPrinter.i(TAG, "Save photo success!");
-                        cameraView.toast(p.getFilePath());
+                    if(defaultFormat == ImageFormat.JPEG) {
+                        Image.Plane p[] = image.getPlanes();
+                        byte[] data = new byte[p[0].getBuffer().remaining()];
+                        p[0].getBuffer().get(data);
+                        final PhotoFile photo = new PhotoFile(data, image.getWidth(), image.getHeight(), 0);
+                        if (FileOperatorHelper.getInstance().saveFile(photo)) {
+                            LogPrinter.i(TAG, "Save photo success!");
+                            cameraView.toast(photo.getFilePath());
+                        } else {
+                            cameraView.toast("Save file failed!");
+                        }
                     } else {
-                        cameraView.toast("Save file failed!");
-                        LogPrinter.e(TAG, "Save photo failed!");
-                    }*/
-
-                    YuvImage yuvImage = ImageUtil.getYuvImage(image);
-                    final PhotoFile p = new PhotoFile(yuvImage.getYuvData(), image.getWidth(), image.getHeight(), 0);
-                    String filePath = p.getFilePath();
-                    File f = new File(filePath);
-                    if(!f.exists()) {
-                        f.getParentFile().mkdirs();
-                        f.createNewFile();
+                        long t1 = System.currentTimeMillis();
+                        byte[] data = ImageUtil.getYUVDataFromImageAsType(image, ImageUtil.YUV420P);
+                        Log.i(TAG, "start get data : " + (System.currentTimeMillis() - t1));
+                        final PhotoFile p = new PhotoFile(data, image.getWidth(), image.getHeight(), cameraOrientation);
+                        if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {
+                            LogPrinter.i(TAG, "Save photo success!");
+                            cameraView.toast(p.getFilePath());
+                        } else {
+                            cameraView.toast("Save file failed!");
+                        }
                     }
-
-                    FileOutputStream fops = new FileOutputStream(f);
-                    boolean result = yuvImage.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, fops);
-                    if(result) {
-                        cameraView.toast(p.getFilePath());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
                 LogPrinter.i(TAG, "onImageAvailable : save file take time : " + (System.currentTimeMillis() - t));
             }
