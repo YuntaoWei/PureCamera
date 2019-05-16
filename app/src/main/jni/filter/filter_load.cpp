@@ -123,7 +123,7 @@ jboolean do_yuv2rgb(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int o
         return 0;
     }
 
-    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV420p2BGRA);
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV2BGR_I420);
     Mat result;
     result = rotate_mat(imgData, orientation);
     char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);

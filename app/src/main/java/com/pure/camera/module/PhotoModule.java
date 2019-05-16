@@ -308,7 +308,9 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
                         }
                     } else {
                         long t1 = System.currentTimeMillis();
-                        byte[] data = ImageUtil.getYUVDataFromImageAsType(image, ImageUtil.YUV420P);
+                        //byte[] data = ImageUtil.getYUVDataFromImageAsType(image, ImageUtil.YUV420P);
+                        //byte[] data = ImageUtil.getCamera2YUVData(image, ImageUtil.NV12);
+                        byte[] data = ImageUtil.getYUV420Data(image, ImageUtil.YUV420P);
                         Log.i(TAG, "start get data : " + (System.currentTimeMillis() - t1));
                         final PhotoFile p = new PhotoFile(data, image.getWidth(), image.getHeight(), cameraOrientation);
                         if (FileOperatorHelper.getInstance().saveFile(p, currentFilter)) {

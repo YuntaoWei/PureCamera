@@ -43,16 +43,18 @@ public class ImageUtil {
         }
 
         Image.Plane planes[] = image.getPlanes();
+        int w = image.getWidth();
+        int h = image.getHeight();
         if(planes.length == 3) {
             Buffer yBuffer = planes[0].getBuffer();
             Buffer uvBuffer = planes[1].getBuffer();
             Buffer vuBuffer = planes[2].getBuffer();
 
-            byte[] data = new byte[yBuffer.remaining() + uvBuffer.remaining()];
+            byte[] data = new byte[w * h * 3 / 2];
             if(type == NV21) {
                 ((ByteBuffer) yBuffer).get(data, 0, yBuffer.remaining());
                 ((ByteBuffer) vuBuffer).get(data, yBuffer.remaining(), vuBuffer.remaining());
-            } else {
+            } else if(type == NV12) {
                 ((ByteBuffer) yBuffer).get(data, 0, yBuffer.remaining());
                 ((ByteBuffer) uvBuffer).get(data, yBuffer.remaining(), uvBuffer.remaining());
             }
