@@ -20,6 +20,6 @@ public class NoFilter extends AbstractFilter {
 
     @Override
     public boolean getFilterImage(byte[] pixels, int w, int h, int orientation, String filePath) {
-        return true;
+        return NativeFilter.getInstance().doYuv2RGB(pixels, w, h, orientation, filePath);
     }
 }

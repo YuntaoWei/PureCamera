@@ -140,16 +140,19 @@ public class ImageUtil {
             //根据要求的结果类型进行填充
             switch (type) {
                 case YUV420P:
+                    //存储格式：YYYY...UUUU...VVVV
                     System.arraycopy(uBytes, 0, yuvBytes, dstIndex, uBytes.length);
                     System.arraycopy(vBytes, 0, yuvBytes, dstIndex + uBytes.length, vBytes.length);
                     break;
                 case YUV420SP:
+                    //存储格式：YYYY...UVUVUVUV....
                     for (int i = 0; i < vBytes.length; i++) {
                         yuvBytes[dstIndex++] = uBytes[i];
                         yuvBytes[dstIndex++] = vBytes[i];
                     }
                     break;
                 case NV21:
+                    //存储格式：YYYY...VUVUVUVU....
                     for (int i = 0; i < vBytes.length; i++) {
                         yuvBytes[dstIndex++] = vBytes[i];
                         yuvBytes[dstIndex++] = uBytes[i];
@@ -161,6 +164,84 @@ public class ImageUtil {
             e.printStackTrace();
             LogPrinter.i("data", e.toString());
         }
+        return null;
+    }
+
+    public static byte[] getYUV420Data(Image image, int type) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        byte[] uBytes = null;
+        byte[] vBytes = null;
+        Image.Plane[] planes = image.getPlanes();
+        byte[] yuvBytes = new byte[width * height * 3 / 2];
+
+        for (int i = 0; i < planes.length; i++) {
+            int offset = planes[i].getRowStride();
+            int cols = planes[i].getPixelStride();
+            ByteBuffer bf = planes[i].getBuffer();
+            if(i == 0) {
+                //Y data
+                bf.get(yuvBytes, 0, width * height);
+            } else if(i == 1) {
+                //U data
+                int size;
+                int capacity = bf.capacity();
+                if(capacity % 2 == 1) {
+                    size = (capacity + 1) / 2;
+                } else {
+                    size = capacity / 2;
+                }
+                uBytes = new byte[size];
+                int x = 0;
+                for(int j = 0; j < capacity;) {
+                    uBytes[x++] = bf.get(j);
+                    j += 2;
+                }
+            } else if(i == 2) {
+                //V data
+                int size;
+                int capacity = bf.capacity();
+                if(capacity % 2 == 1) {
+                    size = (capacity + 1) / 2;
+                } else {
+                    size = capacity / 2;
+                }
+                vBytes = new byte[size];
+                int x = 0;
+                for(int j = 0; j < capacity;) {
+                    vBytes[x++] = bf.get(j);
+                    j += 2;
+                }
+            }
+        }
+
+        int dstIndex = width * height;
+        if(Assert.objectNotNull(uBytes, vBytes)) {
+            switch (type) {
+                case YUV420P:
+                    //存储格式：YYYY...UUUU...VVVV
+                    System.arraycopy(uBytes, 0, yuvBytes, dstIndex, uBytes.length);
+                    System.arraycopy(vBytes, 0, yuvBytes, dstIndex + uBytes.length, vBytes.length);
+                    break;
+                case YUV420SP:
+                    //存储格式：YYYY...UVUVUVUV....
+                    for (int i = 0; i < vBytes.length; i++) {
+                        yuvBytes[dstIndex++] = uBytes[i];
+                        yuvBytes[dstIndex++] = vBytes[i];
+                    }
+                    break;
+                case NV21:
+                    //存储格式：YYYY...VUVUVUVU....
+                    for (int i = 0; i < vBytes.length; i++) {
+                        yuvBytes[dstIndex++] = vBytes[i];
+                        yuvBytes[dstIndex++] = uBytes[i];
+                    }
+                    break;
+            }
+
+            return yuvBytes;
+        }
+
         return null;
     }
 

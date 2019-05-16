@@ -64,7 +64,7 @@ public class FileOperatorHelper {
         byte[] data = file.getFileData();
 
         boolean fileProcessed = false;
-        if(!DEBUG_YUV && filter != null && !(filter instanceof NoFilter)) {
+        if(filter != null) {
             //需要做滤镜处理，将原始camera数据进行相应的处理
             LogPrinter.i("test", "orientation : " + file.getFileOrientation());
             fileProcessed = filter.getFilterImage(data, file.getFileWidth(), file.getFileHeight(),

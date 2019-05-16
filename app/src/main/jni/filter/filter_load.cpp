@@ -115,10 +115,32 @@ jboolean do_filter_relief(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h,
     return success;
 }
 
+jboolean do_yuv2rgb(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
+    LOGI("do_yuv2rgb");
+    jbyte *cbuf;
+    cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
+    if (cbuf == NULL) {
+        return 0;
+    }
+
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV420p2BGRA);
+    Mat result;
+    result = rotate_mat(imgData, orientation);
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    bool success = imwrite(file_Path, result);
+
+    env->ReleaseByteArrayElements(buf, cbuf, 0);
+    env->ReleaseStringUTFChars(file, file_Path);
+    result.release();
+    imgData.release();
+    return success;
+}
+
 static JNINativeMethod gMethods[] = {
         {"doFilterGray",   "([BIIILjava/lang/String;)Z",  (void *) do_filter_gray},
         {"doFilterMosaic", "([BIIIILjava/lang/String;)Z", (void *) do_filter_mosaic},
         {"doFilterRelief", "([BIIILjava/lang/String;)Z",  (void *) do_filter_relief},
+        {"doYuv2RGB", "([BIIILjava/lang/String;)Z",  (void *) do_yuv2rgb},
 };
 
 static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods,

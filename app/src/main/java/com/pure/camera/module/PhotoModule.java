@@ -1,6 +1,7 @@
 package com.pure.camera.module;
 
 import android.content.Context;
+import android.graphics.Camera;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -32,6 +33,7 @@ import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.data.PhotoFile;
 import com.pure.camera.filter.BaseFilter;
+import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.filter.engine.NoFilter;
 import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.view.CameraPhotoView;
@@ -57,7 +59,8 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
 
     private int cameraOrientation;
     private Size screenSize;
-    private BaseFilter currentFilter;
+    private BaseFilter currentFilter = CameraFilterManager.getInstance()
+            .getFilter(CameraFilterManager.FILTER_NAME_ORIGINAL);
 
     public PhotoModule(CameraActivity ctx, CameraView view) {
         super(ctx, view);
