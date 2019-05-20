@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <opencv2/opencv.hpp>
 #include "convert.h"
+#include "imageproc.h"
 
 #define DEBUG
 #define LOG_TAG "filter"
@@ -27,25 +28,29 @@ jboolean do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, i
         return 0;
     }
 
-    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV420p2BGRA);
+    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV2BGR_I420);
 
-    uchar *ptr = bgr.ptr(0);
+    /*uchar *ptr = bgr.ptr(0);
     for (int i = 0; i < w * h; i++) {
         int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
                                ptr[4 * i + 0] * 0.114);
         ptr[4 * i + 1] = grayScale;
         ptr[4 * i + 2] = grayScale;
         ptr[4 * i + 0] = grayScale;
-    }
+    }*/
+
+    Mat gray;
+    cvtColor(bgr, gray, CV_BGR2GRAY);
 
     char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
-    Mat result = rotate_mat(bgr, orientation);
+    Mat result = rotate_mat(gray, orientation);
     bool success = imwrite(file_Path, result);;
 
     env->ReleaseByteArrayElements(buf, cbuf, 0);
     env->ReleaseStringUTFChars(file, file_Path);
     bgr.release();
     result.release();
+    gray.release();
 
     return success;
 }
@@ -58,26 +63,25 @@ jboolean do_filter_mosaic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h,
         return 0;
     }
 
-    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV420p2BGRA);
+    Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV2BGR_I420);
     LOGI("do_filter_mosaic  1");
-    Mat tmp;
-    if(square % 2 == 0)
-        square += 1;
+    //Mat tmp;
 
-
+    //if(square % 2 == 0)
+    //    square += 1;
     //GaussianBlur(bgr, tmp, Size(square, square), 0, 0);
-    blur(bgr, tmp, Size(square, square), Point(-1, -1), BORDER_CONSTANT);
-    LOGI("do_filter_mosaic  2");
+    //blur(bgr, tmp, Size(square, square), Point(-1, -1), BORDER_CONSTANT);
+
+    mosaic(bgr, square, 0);
 
     Mat result;
     result = rotate_mat(bgr, orientation);
-    LOGI("do_filter_mosaic  3");
     char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
     bool success = imwrite(file_Path, result);
 
     result.release();
     bgr.release();
-    tmp.release();
+    //tmp.release();
 
     env->ReleaseByteArrayElements(buf, cbuf, 0);
     env->ReleaseStringUTFChars(file, file_Path);
@@ -92,26 +96,20 @@ jboolean do_filter_relief(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h,
         return 0;
     }
 
-    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV420p2BGRA);
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV2BGR_I420);
 
-    uchar *ptr = imgData.ptr(0);
-    for (int i = 0; i < w * h; i++) {
-        int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
-                               ptr[4 * i + 0] * 0.114);
-        ptr[4 * i + 1] = grayScale;
-        ptr[4 * i + 2] = grayScale;
-        ptr[4 * i + 0] = grayScale;
-    }
+    Mat tmp;
+    tmp = rotate_mat(imgData, orientation);
+    Mat result = relief(tmp);
 
-    Mat result;
-    result = rotate_mat(imgData, orientation);
     char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
     bool success = imwrite(file_Path, result);
 
     env->ReleaseByteArrayElements(buf, cbuf, 0);
     env->ReleaseStringUTFChars(file, file_Path);
-    result.release();
+    tmp.release();
     imgData.release();
+    result.release();
     return success;
 }
 

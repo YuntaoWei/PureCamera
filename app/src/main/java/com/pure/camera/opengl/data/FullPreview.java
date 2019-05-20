@@ -60,9 +60,9 @@ public class FullPreview {
 
         if(null != cameraFilter) {
             cameraFilter.doFilter(shaderProgram);
-            LogPrinter.i(TAG, "do filter : " + cameraFilter.toString());
-            shaderProgram.setUniform(shaderProgram.getTextureWidthHandler(), previewSize.width);
-            shaderProgram.setUniform(shaderProgram.getTextureHeightHandler(), previewSize.height);
+            LogPrinter.i(TAG, "do filter : " + cameraFilter.toString() + "  " + previewSize);
+            shaderProgram.setUniform(shaderProgram.getTextureWidthHandler(), (float)previewSize.width);
+            shaderProgram.setUniform(shaderProgram.getTextureHeightHandler(), (float)previewSize.height);
         }
 
         glDrawArrays(GL_TRIANGLES, 0, 6);

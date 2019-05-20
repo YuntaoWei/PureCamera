@@ -6,6 +6,7 @@ add_library(
         SHARED
 
         util/convert.cpp
+        filter/imageproc.cpp
         filter/filter_load.cpp)
 
 set(OpencvSdk ${PROJECT_SOURCE_DIR}/src/main/jni)

@@ -3,11 +3,11 @@ precision mediump float;
 
 uniform samplerExternalOES v_Texture;
 varying vec2 ft_Position;
-
 uniform int filter_Type;
 
-vec2 tex_Size = vec2(400.0, 400.0);
-vec2 mosaicSize = vec2(8.0, 8.0);
+uniform float texture_Width;
+uniform float texture_Height;
+uniform float mosaic_Size;
 
 vec4 get_original_Color() {
     return texture2D(v_Texture, ft_Position);
@@ -20,7 +20,7 @@ vec4 get_gray_filter_color(vec4 original_color) {
 
 vec4 get_relief_filter_color(vec4 original_color) {
     vec2 tex = ft_Position;
-    vec2 upLeftUV = vec2(tex.x - 1.0 / tex_Size.x, tex.y - 1.0 / tex_Size.y);
+    vec2 upLeftUV = vec2(tex.x - 1.0 / texture_Width, tex.y - 1.0 / texture_Height);
     vec4 curColor = original_color;
     vec4 upLeftColor = texture2D(v_Texture, upLeftUV);
     vec4 delColor = curColor - upLeftColor;
@@ -30,9 +30,9 @@ vec4 get_relief_filter_color(vec4 original_color) {
 }
 
 vec4 get_mosaic_filter_color(vec4 original_color) {
-    vec2 intXY = vec2(ft_Position.x * tex_Size.x, ft_Position.y * tex_Size.y);
-    vec2 XYMosaic = vec2(floor(intXY.x / mosaicSize.x) * mosaicSize.x, floor(intXY.y / mosaicSize.y) * mosaicSize.y);
-    vec2 UVMosaic = vec2(XYMosaic.x / tex_Size.x, XYMosaic.y / tex_Size.y);
+    vec2 intXY = vec2(ft_Position.x * texture_Width, ft_Position.y * texture_Height);
+    vec2 XYMosaic = vec2(floor(intXY.x / mosaic_Size) * mosaic_Size, floor(intXY.y / mosaic_Size) * mosaic_Size);
+    vec2 UVMosaic = vec2(XYMosaic.x / texture_Width, XYMosaic.y / texture_Height);
     return texture2D(v_Texture, UVMosaic);
 }
 

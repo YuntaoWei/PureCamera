@@ -5,6 +5,8 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import com.pure.camera.common.LogPrinter;
+
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.glActiveTexture;
 import static android.opengl.GLES20.glBindTexture;
@@ -50,9 +52,14 @@ public class CameraShaderProgram extends Program {
         vMatrixHandler = glGetUniformLocation(mProgram, V_MATRIX);
         vTextureHandler = glGetUniformLocation(mProgram, V_TEXTURE);
         filterHandler = glGetUniformLocation(mProgram, FILTER_TYPE);
+
         textureWidthHandler = glGetUniformLocation(mProgram, TEXTURE_WIDTH);
         textureHeightHandler = glGetUniformLocation(mProgram, TEXTURE_HEIGHT);
         mosaicSizeHandler = glGetUniformLocation(mProgram, MOSAIC_SIZE);
+
+        LogPrinter.i("test", vPositionHandler + " " + vtPositionHandler + "  " + vMatrixHandler + "  "
+                + vTextureHandler + "  " + filterHandler + "  " + textureWidthHandler
+                + "  " + textureHeightHandler + "  " + mosaicSizeHandler);
     }
 
     @Override

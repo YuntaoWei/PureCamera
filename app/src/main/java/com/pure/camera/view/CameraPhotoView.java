@@ -1,6 +1,7 @@
 package com.pure.camera.view;
 
 import android.content.Context;
+import android.graphics.Camera;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -44,8 +45,7 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
 
     @Override
     protected void onOpenGLPrepared() {
-        //TODO 测试先行把拍照模式的滤镜设置为gray
-        setFilter(null);
+        setFilter(CameraFilterManager.FILTER_NAME_ORIGINAL);
     }
 
     @Override
