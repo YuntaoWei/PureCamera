@@ -30,28 +30,16 @@ jboolean do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, i
 
     Mat bgr = yuv420_to_bgr_mat((unsigned char *)cbuf, w, h, CV_YUV2BGR_I420);
 
-    /*uchar *ptr = bgr.ptr(0);
-    for (int i = 0; i < w * h; i++) {
-        int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
-                               ptr[4 * i + 0] * 0.114);
-        ptr[4 * i + 1] = grayScale;
-        ptr[4 * i + 2] = grayScale;
-        ptr[4 * i + 0] = grayScale;
-    }*/
-
-    Mat gray;
-    cvtColor(bgr, gray, CV_BGR2GRAY);
+    gray(bgr);
 
     char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
-    Mat result = rotate_mat(gray, orientation);
+    Mat result = rotate_mat(bgr, orientation);
     bool success = imwrite(file_Path, result);;
 
     env->ReleaseByteArrayElements(buf, cbuf, 0);
     env->ReleaseStringUTFChars(file, file_Path);
     bgr.release();
     result.release();
-    gray.release();
-
     return success;
 }
 

@@ -44,3 +44,34 @@ Mat relief(Mat bgr) {
 
     return gray;
 }
+
+void gray(Mat bgr) {
+    int channel = bgr.channels();
+    if(channel < 3)
+        return;
+
+    switch(channel) {
+        case 3: {
+            //bgr
+            MatIterator_<Vec3b> it, end;
+            for( it = bgr.begin<Vec3b>(), end = bgr.end<Vec3b>(); it != end; ++it) {
+                int gray = ((*it)[0] * 15 + (*it)[1] * 75 + (*it)[2] * 38) >> 7;
+                (*it)[0] = gray;
+                (*it)[1] = gray;
+                (*it)[2] = gray;
+            }
+            break;
+        }
+        case 4:
+            //bgra
+            MatIterator_<Vec4b> it, end;
+            for( it = bgr.begin<Vec4b>(), end = bgr.end<Vec4b>(); it != end; ++it) {
+                int gray = ((*it)[0] * 15 + (*it)[1] * 75 + (*it)[2] * 38) >> 7;
+                (*it)[0] = gray;
+                (*it)[1] = gray;
+                (*it)[2] = gray;
+            }
+            break;
+    }
+
+}

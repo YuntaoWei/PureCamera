@@ -13,5 +13,7 @@ void mosaic(Mat bgr, int square, int center);
 
 Mat relief(Mat bgr);
 
+void gray(Mat bgr);
+
 
 #endif //PURECAMERA_IMAGEPROC_H
