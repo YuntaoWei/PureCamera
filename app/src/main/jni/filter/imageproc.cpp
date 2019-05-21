@@ -75,3 +75,35 @@ void gray(Mat bgr) {
     }
 
 }
+
+void wb(Mat bgr) {
+    int channel = bgr.channels();
+    if(channel < 3)
+        return;
+
+    if(channel == 3) {
+        MatIterator_<Vec3b> it, end;
+        for( it = bgr.begin<Vec3b>(), end = bgr.end<Vec3b>(); it != end; ++it) {
+            int average = ((*it)[0] + (*it)[1] + (*it)[2]) / 3;
+            if(average > 100)
+                average = 255;
+            else
+                average = 0;
+            (*it)[0] = average;
+            (*it)[1] = average;
+            (*it)[2] = average;
+        }
+    } else if(channel == 4) {
+        MatIterator_<Vec4b> it, end;
+        for( it = bgr.begin<Vec4b>(), end = bgr.end<Vec4b>(); it != end; ++it) {
+            int average = ((*it)[0] + (*it)[1] + (*it)[2]) / 3;
+            if(average > 100)
+                average = 255;
+            else
+                average = 0;
+            (*it)[0] = average;
+            (*it)[1] = average;
+            (*it)[2] = average;
+        }
+    }
+}

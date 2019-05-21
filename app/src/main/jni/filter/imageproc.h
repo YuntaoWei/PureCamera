@@ -15,5 +15,7 @@ Mat relief(Mat bgr);
 
 void gray(Mat bgr);
 
+void wb(Mat bgr);
+
 
 #endif //PURECAMERA_IMAGEPROC_H

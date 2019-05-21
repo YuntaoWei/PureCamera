@@ -7,7 +7,8 @@ add_library(
 
         util/convert.cpp
         filter/imageproc.cpp
-        filter/filter_load.cpp)
+        filter/filter_load.cpp
+        filter/filter.cpp)
 
 set(OpencvSdk ${PROJECT_SOURCE_DIR}/src/main/jni)
 
