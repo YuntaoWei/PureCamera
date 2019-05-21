@@ -36,6 +36,15 @@ vec4 get_mosaic_filter_color(vec4 original_color) {
     return texture2D(v_Texture, UVMosaic);
 }
 
+vec4 get_wb_filter_color(vec4 original_color) {
+    float average = (original_color.r + original_color.g + original_color.b) * 255.0 / 3.0;
+    if(average > 100.0) {
+        return vec4(1.0, 1.0, 1.0, 1.0);
+    } else {
+        return vec4(0.0, 0.0, 0.0, 1.0);
+    }
+}
+
 void main() {
     vec4 color = get_original_Color();
     if(filter_Type == 1) {
@@ -44,6 +53,8 @@ void main() {
         color = get_relief_filter_color(color);
     } else if(filter_Type == 3) {
         color = get_mosaic_filter_color(color);
+    } else if(filter_Type == 4) {
+        color = get_wb_filter_color(color);
     }
 
     gl_FragColor = color;

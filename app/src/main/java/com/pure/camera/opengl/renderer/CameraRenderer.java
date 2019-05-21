@@ -32,8 +32,8 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
         mListener = l;
     }
 
-    public void updateFilter(BaseFilter filter) {
-        previewController.setFilter(filter);
+    public void updateFilter(BaseFilter filter, int index) {
+        previewController.setFilter(filter, index);
     }
 
     public void showFilterPreview(boolean flag) {

@@ -7,6 +7,7 @@ import com.pure.camera.filter.engine.GrayFilter;
 import com.pure.camera.filter.engine.MosaicFilter;
 import com.pure.camera.filter.engine.NoFilter;
 import com.pure.camera.filter.engine.ReliefFilter;
+import com.pure.camera.filter.engine.WBFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,12 +21,14 @@ public class CameraFilterManager {
     public static final String FILTER_NAME_RELIF = ReliefFilter.NAME;
     public static final String FILTER_NAME_MOSAIC = MosaicFilter.NAME;
     public static final String FILTER_NAME_ORIGINAL = NoFilter.NAME;
+    public static final String FILTER_NAME_WB = WBFilter.NAME;
 
     public static final String[] ALL_FILTER_NAME = {
+            FILTER_NAME_ORIGINAL,
             FILTER_NAME_GRAY,
             FILTER_NAME_RELIF,
             FILTER_NAME_MOSAIC,
-            FILTER_NAME_ORIGINAL
+            FILTER_NAME_WB
     };
 
     Map<String, BaseFilter> filters = new HashMap<>();
@@ -70,6 +73,15 @@ public class CameraFilterManager {
         }
 
         return filter;
+    }
+
+    public int getFilterIndex(String name) {
+        for(int i = 0; i < ALL_FILTER_NAME.length; i++) {
+            if(ALL_FILTER_NAME[i].equals(name))
+                return i;
+        }
+
+        return -1;
     }
 
     private BaseFilter createFilter(String name) {

@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pure.camera.R;
+import com.pure.camera.filter.CameraFilterManager;
 
 public class CameraVideoView extends CameraView implements View.OnClickListener {
 
@@ -17,7 +18,7 @@ public class CameraVideoView extends CameraView implements View.OnClickListener 
     @Override
     protected void onOpenGLPrepared() {
         //TODO 录像模式默认不设置任何滤镜效果
-        setFilter(null);
+        setFilter(CameraFilterManager.FILTER_NAME_ORIGINAL);
     }
 
     /**

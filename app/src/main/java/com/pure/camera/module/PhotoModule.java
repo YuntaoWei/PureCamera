@@ -292,8 +292,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
             @Override
             public void onImageAvailable(ImageReader reader) {
                 long t = System.currentTimeMillis();
-                LogPrinter.i(TAG, "onImageAvailable : " + t +
-                        "  " + Thread.currentThread().getName() + "  " + reader.getWidth() + "x" + reader.getHeight());
+                LogPrinter.i(TAG, "onImageAvailable : " + currentFilter + "---" + reader.getWidth() + "x" + reader.getHeight());
                 try (Image image = reader.acquireLatestImage()) {
                     if(defaultFormat == ImageFormat.JPEG) {
                         Image.Plane p[] = image.getPlanes();

@@ -89,8 +89,10 @@ public class CameraView extends BaseView implements TextureListener,
      * @param filterName 更新的滤镜的名字.
      */
     protected void setFilter(String filterName) {
+        CameraFilterManager instance = CameraFilterManager.getInstance();
         cameraGLView.getCameraRenderer().updateFilter(
-                CameraFilterManager.getInstance().getFilter(filterName));
+                instance.getFilter(filterName),
+                instance.getFilterIndex(filterName));
     }
 
     /**

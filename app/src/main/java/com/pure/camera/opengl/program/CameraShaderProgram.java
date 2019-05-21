@@ -116,6 +116,10 @@ public class CameraShaderProgram extends Program {
         setUniform(filterHandler, value);
     }
 
+    public void disablePointer() {
+        disablePointer(vPositionHandler);
+    }
+
     @Override
     public String toString() {
         return "CameraShaderProgram{" +

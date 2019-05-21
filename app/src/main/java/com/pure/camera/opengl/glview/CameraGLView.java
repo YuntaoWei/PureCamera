@@ -80,7 +80,8 @@ public class CameraGLView extends GLSurfaceView implements View.OnTouchListener 
                     int index = cameraRenderer.isCovered(downX, downY);
                     if(index != -1) {
                         BaseFilter filter = CameraFilterManager.getInstance().getFilterByIndex(index);
-                        cameraRenderer.updateFilter(filter);
+                        LogPrinter.i("test", "CurrentFilter : " + filter);
+                        cameraRenderer.updateFilter(filter, index);
                         if(null != filterChangeListener) {
                             filterChangeListener.onFilterChange(filter);
                         }

@@ -7,6 +7,10 @@
 
 #include <opencv2/opencv.hpp>
 
+#define DEBUG
+#define LOG_TAG "imgproc"
+#include "jni_log.h"
+
 using namespace cv;
 
 void mosaic(Mat bgr, int square, int center);

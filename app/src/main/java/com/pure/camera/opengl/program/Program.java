@@ -6,6 +6,7 @@ import android.opengl.Matrix;
 import com.pure.camera.opengl.glutil.ShaderHelper;
 import com.pure.camera.opengl.glutil.TextResourceReader;
 
+import static android.opengl.GLES20.glDisableVertexAttribArray;
 import static android.opengl.GLES20.glUniform1f;
 import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniformMatrix4fv;
@@ -45,6 +46,10 @@ public abstract class Program {
 
     public void setUniform(int handler, float value) {
         glUniform1f(handler, value);
+    }
+
+    protected void disablePointer(int pointer) {
+        glDisableVertexAttribArray(pointer);
     }
 
     public abstract void initOpenGLEnvironment();

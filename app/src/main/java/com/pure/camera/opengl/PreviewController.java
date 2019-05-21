@@ -10,6 +10,7 @@ import com.pure.camera.opengl.data.SmallFilterPreview;
 import com.pure.camera.opengl.glutil.TextureHelper;
 import com.pure.camera.opengl.program.CameraFilterShaderProgram;
 import com.pure.camera.opengl.program.CameraShaderProgram;
+import com.pure.camera.opengl.program.FilterBorderProgram;
 
 /**
  * 预览画面绘制主题类，滤镜效果的应用，都封装在内部，外部调用切换即可实现滤镜的无缝切换
@@ -40,13 +41,18 @@ public class PreviewController {
      * @param mListener
      */
     public void onDrawPrepare(Context mContext, TextureListener mListener) {
-        CameraShaderProgram previewShaderProgram = new CameraShaderProgram(mContext, R.raw.camera_preview_vertex,
+        CameraShaderProgram previewShaderProgram = new CameraShaderProgram(mContext,
+                R.raw.camera_preview_vertex,
                 R.raw.camera_preview_fragment);
         fullPreview = new FullPreview(previewShaderProgram);
 
-        CameraFilterShaderProgram filterShaderProgram = new CameraFilterShaderProgram(mContext, R.raw.small_camera_preview_vertex,
+        CameraFilterShaderProgram filterShaderProgram = new CameraFilterShaderProgram(mContext,
+                R.raw.small_camera_preview_vertex,
                 R.raw.small_camera_preview_fragment);
-        smallFilterPreview = new SmallFilterPreview(filterShaderProgram);
+        FilterBorderProgram border = new FilterBorderProgram(mContext,
+                R.raw.filter_border_vertex,
+                R.raw.filter_border_fragment);
+        smallFilterPreview = new SmallFilterPreview(filterShaderProgram, border);
 
         textureID = TextureHelper.generateOESExternalTexture();
         if (null != mListener && textureID > 0) {
@@ -55,8 +61,9 @@ public class PreviewController {
         }
     }
 
-    public void setFilter(BaseFilter filter) {
+    public void setFilter(BaseFilter filter, int index) {
         fullPreview.setCameraPreviewFilter(filter);
+        smallFilterPreview.updateCurrentIndex(index);
     }
 
     public void updateTextureSize(int w, int h) {

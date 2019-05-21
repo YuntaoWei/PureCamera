@@ -17,8 +17,6 @@ using namespace cv;
 
 extern "C"
 
-#define JAVA_CLASS "com/pure/camera/filter/engine/NativeFilter"
-
 jboolean do_filter_gray(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
     LOGI("do_filter_gray!");
     jbyte *cbuf;

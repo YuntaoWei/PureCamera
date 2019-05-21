@@ -8,8 +8,8 @@ static JNINativeMethod gMethods[] = {
         {"doFilterGray",   "([BIIILjava/lang/String;)Z",  (void *) do_filter_gray},
         {"doFilterMosaic", "([BIIIILjava/lang/String;)Z", (void *) do_filter_mosaic},
         {"doFilterRelief", "([BIIILjava/lang/String;)Z",  (void *) do_filter_relief},
-        {"doFilterWB", "([BIIILjava/lang/String;)Z",  (void *) do_yuv2rgb},
         {"doYuv2RGB", "([BIIILjava/lang/String;)Z",  (void *) do_yuv2rgb},
+        {"doFilterWB", "([BIIILjava/lang/String;)Z",  (void *) do_filter_wb},
 };
 
 static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods,

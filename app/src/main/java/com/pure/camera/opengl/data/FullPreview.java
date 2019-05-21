@@ -66,5 +66,6 @@ public class FullPreview {
         }
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        shaderProgram.disablePointer();
     }
 }
