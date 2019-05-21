@@ -21,5 +21,7 @@ void gray(Mat bgr);
 
 void wb(Mat bgr);
 
+void positive(Mat bgr);
+
 
 #endif //PURECAMERA_IMAGEPROC_H

@@ -135,3 +135,25 @@ jboolean do_yuv2rgb(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int o
     return success;
 }
 
+jboolean do_filter_positive(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
+    LOGI("do_filter_positive");
+    jbyte *cbuf;
+    cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
+    if (cbuf == NULL) {
+        return 0;
+    }
+
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV2BGR_I420);
+    Mat result;
+    result = rotate_mat(imgData, orientation);
+    positive(result);
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    bool success = imwrite(file_Path, result);
+
+    env->ReleaseByteArrayElements(buf, cbuf, 0);
+    env->ReleaseStringUTFChars(file, file_Path);
+    result.release();
+    imgData.release();
+    return success;
+}
+

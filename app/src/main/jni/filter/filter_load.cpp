@@ -10,6 +10,7 @@ static JNINativeMethod gMethods[] = {
         {"doFilterRelief", "([BIIILjava/lang/String;)Z",  (void *) do_filter_relief},
         {"doYuv2RGB", "([BIIILjava/lang/String;)Z",  (void *) do_yuv2rgb},
         {"doFilterWB", "([BIIILjava/lang/String;)Z",  (void *) do_filter_wb},
+        {"doFilterPositive", "([BIIILjava/lang/String;)Z",  (void *) do_filter_positive}
 };
 
 static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods,

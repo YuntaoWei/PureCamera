@@ -45,6 +45,10 @@ vec4 get_wb_filter_color(vec4 original_color) {
     }
 }
 
+vec4 get_positive_filter_color(vec4 original_color) {
+    return vec4(1.0 - original_color.r, 1.0 - original_color.g, 1.0 - original_color.b, original_color.a);
+}
+
 void main() {
     vec4 color = get_original_Color();
     if(filter_Type == 1) {
@@ -55,6 +59,8 @@ void main() {
         color = get_mosaic_filter_color(color);
     } else if(filter_Type == 4) {
         color = get_wb_filter_color(color);
+    } else if(filter_Type == 5) {
+        color = get_positive_filter_color(color);
     }
 
     gl_FragColor = color;

@@ -73,7 +73,6 @@ void gray(Mat bgr) {
             }
             break;
     }
-
 }
 
 void wb(Mat bgr) {
@@ -106,4 +105,42 @@ void wb(Mat bgr) {
             (*it)[2] = average;
         }
     }
+}
+
+void positive(Mat bgr) {
+    int channle = bgr.channels();
+    int width = bgr.cols;
+    int height = bgr.rows;
+    switch(channle) {
+        case 1: {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    uchar *a = bgr.at<uchar *>(i, j);
+                    *a = 255 - *a;
+                }
+            }
+            break;
+        }
+
+        case 3: {
+            MatIterator_<Vec3b> it, end;
+            for (it = bgr.begin<Vec3b>(), end = bgr.end<Vec3b>(); it != end; ++it) {
+                (*it)[0] = 255 - (*it)[0];
+                (*it)[1] = 255 - (*it)[1];
+                (*it)[2] = 255 - (*it)[2];
+            }
+            break;
+        }
+
+        case 4: {
+            MatIterator_<Vec4b> it1, end1;
+            for (it1 = bgr.begin<Vec4b>(), end1 = bgr.end<Vec4b>(); it1 != end1; ++it1) {
+                (*it1)[0] = 255 - (*it1)[0];
+                (*it1)[1] = 255 - (*it1)[1];
+                (*it1)[2] = 255 - (*it1)[2];
+            }
+            break;
+        }
+    }
+
 }

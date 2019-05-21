@@ -128,7 +128,7 @@ public class SmallFilterPreview {
         coords[6] = rect.left;
         coords[7] = rect.bottom;
         coords[8] = rect.left;
-        coords[8] = rect.top;
+        coords[9] = rect.top;
 
         if(null == borderVertex) {
             borderVertex = new VertexArray(coords);
