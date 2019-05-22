@@ -3,6 +3,7 @@ package com.pure.camera.filter;
 import android.text.TextUtils;
 
 import com.pure.camera.common.LogPrinter;
+import com.pure.camera.filter.engine.ComicFilter;
 import com.pure.camera.filter.engine.GrayFilter;
 import com.pure.camera.filter.engine.MosaicFilter;
 import com.pure.camera.filter.engine.NoFilter;
@@ -24,6 +25,7 @@ public class CameraFilterManager {
     public static final String FILTER_NAME_ORIGINAL = NoFilter.NAME;
     public static final String FILTER_NAME_WB = WBFilter.NAME;
     public static final String FILTER_NAME_POSITIVE = PositiveColorFilter.NAME;
+    public static final String FILTER_NAME_COMIC = ComicFilter.NAME;
 
     public static final String[] ALL_FILTER_NAME = {
             FILTER_NAME_ORIGINAL,
@@ -31,7 +33,8 @@ public class CameraFilterManager {
             FILTER_NAME_RELIF,
             FILTER_NAME_MOSAIC,
             FILTER_NAME_WB,
-            FILTER_NAME_POSITIVE
+            FILTER_NAME_POSITIVE,
+            FILTER_NAME_COMIC
     };
 
     Map<String, BaseFilter> filters = new HashMap<>();

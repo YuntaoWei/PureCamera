@@ -22,4 +22,6 @@ jboolean do_filter_wb(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int
 
 jboolean do_filter_positive(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file);
 
+jboolean do_filter_comic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file);
+
 jboolean do_yuv2rgb(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file);

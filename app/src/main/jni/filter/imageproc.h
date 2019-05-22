@@ -23,5 +23,9 @@ void wb(Mat bgr);
 
 void positive(Mat bgr);
 
+void comic(Mat bgr);
+
+Mat comic1(Mat bgr);
+
 
 #endif //PURECAMERA_IMAGEPROC_H

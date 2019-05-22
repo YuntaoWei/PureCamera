@@ -157,3 +157,26 @@ jboolean do_filter_positive(JNIEnv *env, jclass obj, jbyteArray buf, int w, int 
     return success;
 }
 
+jboolean do_filter_comic(JNIEnv *env, jclass obj, jbyteArray buf, int w, int h, int orientation, jstring file) {
+    LOGI("do_filter_comic");
+    jbyte *cbuf;
+    cbuf = env->GetByteArrayElements(buf, JNI_FALSE);
+    if (cbuf == NULL) {
+        return 0;
+    }
+
+    Mat imgData = yuv420_to_bgr_mat((unsigned char *) cbuf, w, h, CV_YUV2BGR_I420);
+    Mat tmp, result;
+    tmp = rotate_mat(imgData, orientation);
+    result = comic1(tmp);
+    char* file_Path =(char*) env->GetStringUTFChars(file, JNI_FALSE);
+    bool success = imwrite(file_Path, result);
+
+    env->ReleaseByteArrayElements(buf, cbuf, 0);
+    env->ReleaseStringUTFChars(file, file_Path);
+    tmp.release();
+    result.release();
+    imgData.release();
+    return success;
+}
+

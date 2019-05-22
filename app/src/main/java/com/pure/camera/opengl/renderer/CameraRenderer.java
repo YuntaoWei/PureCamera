@@ -10,9 +10,11 @@ import com.pure.camera.opengl.TextureListener;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.opengl.GLES20.GL_ALPHA;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
+import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glViewport;
 
 public class CameraRenderer implements GLSurfaceView.Renderer {

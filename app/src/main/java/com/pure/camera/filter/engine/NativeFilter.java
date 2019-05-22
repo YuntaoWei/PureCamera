@@ -23,6 +23,7 @@ public class NativeFilter {
     public native boolean doFilterRelief(byte[] pixels, int w, int h, int orientation, String savePath);
     public native boolean doFilterWB(byte[] pixels, int w, int h, int orientation, String savePath);
     public native boolean doFilterPositive(byte[] pixels, int w, int h, int orientation, String savePath);
+    public native boolean doFilterComic(byte[] pixels, int w, int h, int orientation, String savePath);
 
     public native boolean doYuv2RGB(byte[] yuv, int w, int h, int orientation, String savePath);
 
