@@ -1,10 +1,9 @@
 package com.pure.camera.common;
 
 import android.graphics.ImageFormat;
-import android.graphics.YuvImage;
 import android.media.Image;
 
-import com.pure.camera.data.MediaFile;
+import com.pure.camera.bean.MediaFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;

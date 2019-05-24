@@ -4,9 +4,8 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 import com.pure.camera.CameraApp;
-import com.pure.camera.data.MediaFile;
+import com.pure.camera.bean.MediaFile;
 import com.pure.camera.filter.BaseFilter;
-import com.pure.camera.filter.engine.NoFilter;
 
 import java.io.File;
 import java.io.FileNotFoundException;

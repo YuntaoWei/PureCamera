@@ -1,5 +1,6 @@
 package com.pure.camera.view;
 
+import android.content.ContentResolver;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,10 @@ public abstract class BaseView {
 
     public <T extends AppCompatActivity>T getContext() {
         return (T) rootView.getContext();
+    }
+
+    public ContentResolver getContentResolver() {
+        return getContext().getContentResolver();
     }
 
     public LayoutInflater getLayoutInflater() {

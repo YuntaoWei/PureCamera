@@ -1,11 +1,8 @@
 package com.pure.camera.module;
 
 import android.content.Context;
-import android.graphics.Camera;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.YuvImage;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -31,7 +28,7 @@ import com.pure.camera.CameraActivity;
 import com.pure.camera.common.ImageUtil;
 import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
-import com.pure.camera.data.PhotoFile;
+import com.pure.camera.bean.PhotoFile;
 import com.pure.camera.filter.BaseFilter;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.filter.engine.NoFilter;
@@ -39,9 +36,6 @@ import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.view.CameraPhotoView;
 import com.pure.camera.view.CameraView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class PhotoModule extends BaseCameraModule implements OnFilterChangeListener {

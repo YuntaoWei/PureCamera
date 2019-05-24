@@ -22,8 +22,9 @@ import android.util.Size;
 import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
+import com.pure.camera.common.FileOperatorHelper;
 import com.pure.camera.common.LogPrinter;
-import com.pure.camera.data.VideoFile;
+import com.pure.camera.bean.VideoFile;
 import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.ui.VideoTipsView;
 import com.pure.camera.view.CameraVideoView;
@@ -334,6 +335,7 @@ public class VideoModule extends BaseCameraModule {
         mMediaRecorder.stop();
         releaseRecorder();
         isRecording = false;
+        FileOperatorHelper.getInstance().updateDataBase(currentFile);
         if (null != mActivity) {
             cameraView.toast(currentFile.getFilePath());
         }

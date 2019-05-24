@@ -1,4 +1,4 @@
-package com.pure.camera.opengl.glview;
+package com.pure.camera.opengl;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -12,8 +12,6 @@ import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.OnFilterChangeListener;
 import com.pure.camera.opengl.data.PreviewSize;
 import com.pure.camera.opengl.glutil.NormalizeUtil;
-import com.pure.camera.opengl.renderer.CameraRenderer;
-import com.pure.camera.opengl.TextureListener;
 
 public class CameraGLView extends GLSurfaceView implements View.OnTouchListener {
 

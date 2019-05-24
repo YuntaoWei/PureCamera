@@ -1,7 +1,6 @@
-package com.pure.camera.data;
+package com.pure.camera.bean;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.provider.MediaStore;
 
 public class VideoFile extends MediaFile {

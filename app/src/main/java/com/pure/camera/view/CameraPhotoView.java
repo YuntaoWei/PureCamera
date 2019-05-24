@@ -1,10 +1,8 @@
 package com.pure.camera.view;
 
 import android.content.Context;
-import android.graphics.Camera;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;

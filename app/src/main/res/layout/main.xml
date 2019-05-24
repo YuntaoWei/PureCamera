@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="1px"/>
 
-        <ImageView
+        <com.pure.camera.ui.CircleImageView
             android:id="@+id/recent_thumbnail"
             android:visibility="invisible"
             android:layout_width="50dp"

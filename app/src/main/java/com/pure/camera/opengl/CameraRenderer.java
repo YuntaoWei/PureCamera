@@ -1,4 +1,4 @@
-package com.pure.camera.opengl.renderer;
+package com.pure.camera.opengl;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;

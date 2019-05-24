@@ -1,15 +1,12 @@
-package com.pure.camera.data;
+package com.pure.camera.bean;
 
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 
 import java.io.File;
-import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class MediaFile {
@@ -22,6 +19,8 @@ public class MediaFile {
     public static final String DEFAUT_STORAGE_LOCATION =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() +
                     File.separator + DIR_NAME;
+
+    public static final int BUCKET_ID = DEFAUT_STORAGE_LOCATION.toLowerCase().hashCode();
 
     public static final Uri URI_IMAGE = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     public static final Uri URI_VIDEO = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;

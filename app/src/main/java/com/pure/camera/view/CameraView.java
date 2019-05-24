@@ -1,29 +1,38 @@
 package com.pure.camera.view;
 
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
+import android.util.Size;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.pure.camera.R;
+import com.pure.camera.async.Future;
+import com.pure.camera.async.FutureListener;
+import com.pure.camera.async.ThreadPool;
 import com.pure.camera.common.Assert;
+import com.pure.camera.common.LogPrinter;
+import com.pure.camera.data.DataChangeListener;
+import com.pure.camera.data.PhotoDataManager;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.CameraOperation;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
-import com.pure.camera.opengl.glview.CameraGLView;
+import com.pure.camera.opengl.CameraGLView;
+import com.pure.camera.task.UpdateThumbnail;
 
 public class CameraView extends BaseView implements TextureListener,
-        SurfaceTexture.OnFrameAvailableListener {
+        SurfaceTexture.OnFrameAvailableListener, DataChangeListener {
 
     protected CameraGLView cameraGLView;
     private UIStateListener uiStateListener;
     private boolean cameraGLViewAttached;
     private FrameLayout cameraGroupView;
-    private SurfaceTexture surfaceTexture;
-    private int textureID;
-
     protected CameraOperation cameraOperation;
+    protected UpdateThumbnail updateThumbnailTask;
 
     /**
      * 添加CameraGLView，用于预览显示Camera画面
@@ -100,15 +109,6 @@ public class CameraView extends BaseView implements TextureListener,
      */
     protected void showFilterPreview(boolean flag) {
         cameraGLView.getCameraRenderer().showFilterPreview(flag);
-
-        /*if(null == cameraFilterGLView) {
-            cameraFilterGLView = new CameraFilterGLView(getContext());
-            cameraFilterGLView.setTexture(surfaceTexture, textureID);
-        }
-
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(760, 360);
-        addViewIfNeed(cameraFilterGLView, lp);
-        cameraFilterGLView.onResume();*/
     }
 
     /**
@@ -129,8 +129,6 @@ public class CameraView extends BaseView implements TextureListener,
 
     @Override
     public void onTexturePrepared(SurfaceTexture texture, int id) {
-        //surfaceTexture = texture;
-        //textureID = id;
         texture.setOnFrameAvailableListener(this);
         if(null != uiStateListener)
             uiStateListener.onUIPrepare(texture);
@@ -147,14 +145,12 @@ public class CameraView extends BaseView implements TextureListener,
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
         cameraGLView.requestRender();
-
-        //if(null != cameraFilterGLView)
-        //    cameraFilterGLView.requestRender();
     }
 
     @Override
     public void resume() {
         cameraGLView.onResume();
+        PhotoDataManager.getInstance().resume(this);
     }
 
     @Override
@@ -162,10 +158,54 @@ public class CameraView extends BaseView implements TextureListener,
         cameraGLView.onPause();
         if(null != mainHandler)
             mainHandler.removeCallbacksAndMessages(null);
+
+        PhotoDataManager.getInstance().pause();
     }
 
     public void destroy() {
         super.destroy();
         cameraGLViewAttached = false;
+    }
+
+    protected void updateThumbnail(final Bitmap bm) {
+        if(null == bm)
+            return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ImageView view = getView(R.id.recent_thumbnail);
+                view.setImageBitmap(bm);
+                view.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onDataChange(boolean selfChange, Uri uri) {
+        if(null == uri) {
+            LogPrinter.w("CameraView", "onDataChange unbelieveable!");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getView(R.id.recent_thumbnail).setVisibility(View.INVISIBLE);
+                }
+            });
+            return;
+        }
+
+        if(null == updateThumbnailTask) {
+            int width = getView(R.id.recent_thumbnail).getWidth();
+            int height = getView(R.id.recent_thumbnail).getHeight();
+            updateThumbnailTask = new UpdateThumbnail(uri, new Size(width, height));
+        } else {
+            updateThumbnailTask.update(uri);
+        }
+
+        ThreadPool.getDefaultPool().submit(updateThumbnailTask, new FutureListener<Bitmap>() {
+            @Override
+            public void onFutureDone(Future<Bitmap> future) {
+                updateThumbnail(future.get());
+            }
+        });
     }
 }

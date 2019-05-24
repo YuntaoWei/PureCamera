@@ -4,19 +4,15 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.SparseIntArray;
 import android.view.Surface;
-import android.view.View;
 
 import com.pure.camera.CameraActivity;
-import com.pure.camera.R;
-import com.pure.camera.data.MediaFile;
+import com.pure.camera.bean.MediaFile;
 import com.pure.camera.view.CameraView;
 
 public class BaseCameraModule extends AbstractCameraModule implements CameraOperation {
