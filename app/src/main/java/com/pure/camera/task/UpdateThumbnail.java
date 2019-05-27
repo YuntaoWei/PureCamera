@@ -11,6 +11,7 @@ import android.util.Size;
 
 import com.pure.camera.CameraApp;
 import com.pure.camera.async.ThreadPool;
+import com.pure.camera.common.LogPrinter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -21,10 +22,15 @@ public class UpdateThumbnail implements ThreadPool.Job {
     private Uri uri;
     private Size pictureSize;
     private ContentResolver contentResolver;
+    private int scale;
 
     public UpdateThumbnail(Uri u, Size size) {
         uri = u;
-        pictureSize = size;
+        if(size.getHeight() == 0 || size.getWidth() == 0) {
+            scale = 10;
+        } else {
+            pictureSize = size;
+        }
         contentResolver = CameraApp.getGlobalContext().getContentResolver();
     }
 
@@ -35,6 +41,10 @@ public class UpdateThumbnail implements ThreadPool.Job {
     public void update(Uri u, Size size) {
         uri = u;
         pictureSize = size;
+    }
+
+    public Uri getCurrentData() {
+        return uri;
     }
 
     private boolean isImage() {
@@ -50,6 +60,7 @@ public class UpdateThumbnail implements ThreadPool.Job {
     }
 
     private Bitmap decodePhoto() {
+        LogPrinter.i("test", "decodePhoto");
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         try (InputStream ips = contentResolver.openInputStream(uri)) {
@@ -66,12 +77,17 @@ public class UpdateThumbnail implements ThreadPool.Job {
             BitmapFactory.decodeByteArray(picData, 0, picData.length, options);
             int originalWidth = options.outWidth;
             int originalHeight = options.outHeight;
+            LogPrinter.i("test", "original : " + originalWidth + "x" + originalHeight + "  " + pictureSize);
 
-            int scaleX = originalWidth / pictureSize.getWidth();
-            int scaleY = originalHeight / pictureSize.getHeight();
-            options.inSampleSize = scaleX > scaleY ? scaleY : scaleX;
+            if(null != pictureSize) {
+                int scaleX = originalWidth / pictureSize.getWidth();
+                int scaleY = originalHeight / pictureSize.getHeight();
+                scale = scaleX > scaleY ? scaleY : scaleX;
+            }
+            options.inSampleSize = scale;
             options.inJustDecodeBounds = false;
             options.inScaled = true;
+
             Bitmap bm = BitmapFactory.decodeByteArray(picData, 0, picData.length, options);
             return bm;
         } catch (FileNotFoundException e) {

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.android.picshow.app.PicShowActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            >
+
+            <Button
+                android:id="@+id/back"
+                android:layout_width="11dp"
+                android:layout_height="20dp"
+                android:background="@drawable/back_black_n"
+                android:visibility="invisible"
+                />
+
+            <TextView
+                android:id="@+id/album_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="#333333"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/btn_photo"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/search_photo"
+                android:background="@drawable/search_n"
+                android:visibility="invisible"
+                android:layout_width="18dp"
+                android:layout_height="20dp"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CCCCCC"
+        />
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+    </android.support.v4.view.ViewPager>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CCCCCC"
+
+        />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toobar_height"
+        app:title="@null"
+        >
+        <Button
+            android:id="@+id/btn_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:textSize="@dimen/small_size"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/select_text_color"
+            android:drawableTop="@drawable/photo_n"
+            android:layout_marginTop="10dp"
+            android:text="@string/btn_photo"/>
+
+        <Button
+            android:layout_width="@dimen/topbar_padding"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="@dimen/small_size"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:text="@null"/>
+
+        <Button
+            android:id="@+id/btn_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:textSize="@dimen/small_size"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:drawableTop="@drawable/album_gray_n"
+            android:layout_marginTop="10dp"
+            android:text="@string/btn_album"/>
+    </android.support.v7.widget.Toolbar>
+
+</LinearLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.trustyapp.gridheaders.TrustyGridGridView
+        android:layout_marginTop="@dimen/row_spaceing"
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="@integer/col_num"
+        android:listSelector="@drawable/course_list_selector"
+        android:layout_weight="1"
+        android:verticalSpacing="@dimen/row_spaceing"
+        android:horizontalSpacing="5dp"
+        android:layout_marginLeft="@dimen/row_spaceing"
+        android:layout_marginEnd="@dimen/row_spaceing"
+        android:layout_marginStart="@dimen/row_spaceing"
+        android:layout_marginRight="@dimen/row_spaceing"
+        />
+
+    <include
+        android:id="@+id/bottom_layout"
+        layout="@layout/bottom_controls"
+        />
+
+</LinearLayout>

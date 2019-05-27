@@ -150,6 +150,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
 
     @Override
     protected void startPreview() {
+        LogPrinter.i(TAG, "startPreview : camera prepare = " + cameraPrepared + "   uiPrepared = " + uiPrepared);
         if (!cameraPrepared || !uiPrepared || null == cameraDevice)
             return;
 

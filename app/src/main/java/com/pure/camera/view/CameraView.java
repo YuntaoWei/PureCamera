@@ -19,9 +19,9 @@ import com.pure.camera.data.DataChangeListener;
 import com.pure.camera.data.PhotoDataManager;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.CameraOperation;
+import com.pure.camera.opengl.CameraGLView;
 import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
-import com.pure.camera.opengl.CameraGLView;
 import com.pure.camera.task.UpdateThumbnail;
 
 public class CameraView extends BaseView implements TextureListener,
@@ -144,6 +144,7 @@ public class CameraView extends BaseView implements TextureListener,
 
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+        LogPrinter.i("CameraView", "onFrameAvailable");
         cameraGLView.requestRender();
     }
 
@@ -167,6 +168,10 @@ public class CameraView extends BaseView implements TextureListener,
         cameraGLViewAttached = false;
     }
 
+    public Uri getCurrentUri() {
+        return updateThumbnailTask == null ? null : updateThumbnailTask.getCurrentData();
+    }
+
     protected void updateThumbnail(final Bitmap bm) {
         if(null == bm)
             return;
@@ -182,6 +187,7 @@ public class CameraView extends BaseView implements TextureListener,
 
     @Override
     public void onDataChange(boolean selfChange, Uri uri) {
+        LogPrinter.i("test", "onDataChange : " + uri);
         if(null == uri) {
             LogPrinter.w("CameraView", "onDataChange unbelieveable!");
             runOnUiThread(new Runnable() {
@@ -204,7 +210,9 @@ public class CameraView extends BaseView implements TextureListener,
         ThreadPool.getDefaultPool().submit(updateThumbnailTask, new FutureListener<Bitmap>() {
             @Override
             public void onFutureDone(Future<Bitmap> future) {
-                updateThumbnail(future.get());
+                Bitmap bm = future.get();
+                LogPrinter.i("test", "onFutureDone! : " + bm);
+                updateThumbnail(bm);
             }
         });
     }

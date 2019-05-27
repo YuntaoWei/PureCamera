@@ -6,6 +6,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.SparseIntArray;
@@ -13,6 +14,7 @@ import android.view.Surface;
 
 import com.pure.camera.CameraActivity;
 import com.pure.camera.bean.MediaFile;
+import com.pure.camera.common.ActivityStarter;
 import com.pure.camera.view.CameraView;
 
 public class BaseCameraModule extends AbstractCameraModule implements CameraOperation {
@@ -130,5 +132,10 @@ public class BaseCameraModule extends AbstractCameraModule implements CameraOper
     @Override
     public void startToGallery() {
         //打开最近拍摄的图片
+        Uri u = cameraView.getCurrentUri();
+        if(null == u)
+            return;
+
+        ActivityStarter.startToGallery(u);
     }
 }

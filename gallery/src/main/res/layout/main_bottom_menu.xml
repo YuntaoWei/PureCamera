@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_alignParentBottom="true"
+    android:orientation="horizontal"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:background="@color/common_bg"
+    >
+
+
+    <Button
+        android:id="@+id/edit_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/filter_white_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/color"
+        android:background="@null"
+        />
+
+    <Button
+        android:id="@+id/edit_beatuty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/beauty_face_white_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/beautify"
+        android:background="@null"
+        />
+
+    <Button
+        android:id="@+id/edit_crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/crop_main_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/crop"
+        android:background="@null"
+        />
+
+    <Button
+        android:id="@+id/edit_enhance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/enhance_white_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/enhance"
+        android:background="@null"
+        />
+
+    <Button
+        android:id="@+id/edit_mosatic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/mosatic_white_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/mosaic"
+        android:background="@null"
+        />
+
+    <Button
+        android:id="@+id/edit_draw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/small_size"
+        android:textColor="@color/default_text_color"
+        android:drawableTop="@drawable/draw_white_n"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/draw"
+        android:background="@null"
+        />
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_time_header"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/timeline_title_height"
+        android:layout_marginLeft="@dimen/timeline_title_margin"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="@dimen/smaller_front_size" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/timeline_title_height"
+        android:layout_gravity="center"
+        android:textColor="#000000"
+        android:textSize="@dimen/smaller_front_size"
+        android:layout_marginRight="@dimen/timeline_title_margin"
+        />
+</LinearLayout>

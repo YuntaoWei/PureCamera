@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:id="@+id/topPanel"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:visibility="invisible"
+        >
+
+        <TextView
+            android:id="@+id/none"
+            android:textColor="#007AFF"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/aspect"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/one_per_one"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect1to1_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/four_per_three"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect4to3_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/three_per_four"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect3to4_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/five_per_seven"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect5to7_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/seven_per_five"
+            android:textColor="#D5D5D8"
+            android:textSize="@dimen/small_size"
+            android:layout_weight="1"
+            android:text="@string/aspect7to5_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/centerPanel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:id="@+id/crop_menu"
+            android:background="@drawable/crop_white_n"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.android.picshow.editor.crop.HorizontalDial
+            android:id="@+id/seek"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="top"
+            />
+
+        <TextView
+            android:id="@+id/rotate_menu"
+            android:background="@drawable/rotate_white_n"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        >
+
+        <Button
+            android:id="@+id/cancel"
+            android:background="@drawable/close_white_n"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/revocation"
+            android:background="@drawable/revocation_white_n"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/cancel_revocation"
+            android:background="@drawable/cacel_revocation_white_n"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/save"
+            android:background="@drawable/save_white_n"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

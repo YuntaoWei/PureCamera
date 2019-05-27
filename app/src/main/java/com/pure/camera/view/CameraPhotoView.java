@@ -62,6 +62,7 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
             filterPreviewButton.setImageResource(R.mipmap.ic_launcher);
             filterPreviewButton.setOnClickListener(this);
         }
+
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
         addViewIfNeed(filterPreviewButton, lp);

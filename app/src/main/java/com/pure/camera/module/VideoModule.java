@@ -224,7 +224,6 @@ public class VideoModule extends BaseCameraModule {
      */
     private class PreviewSessionCallBack extends CameraCaptureSession.StateCallback {
 
-
         @Override
         public void onConfigured(CameraCaptureSession session) {
             if (cameraDevice == null)
@@ -238,7 +237,7 @@ public class VideoModule extends BaseCameraModule {
                 //if (mCaptureCallBack == null)
                 //    mCaptureCallBack = new CaptureCallBack();
                 //previewSession.setRepeatingRequest(mCaptureRequest, mCaptureCallBack, cameraHandler);
-                previewSession.setRepeatingRequest(mCaptureRequest, null, cameraHandler);
+                session.setRepeatingRequest(mCaptureRequest, null, cameraHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/photo_pager"
+        android:layout_below="@+id/photo_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/photo_toolbar"
+        android:background="@color/photopage_toolbar_color"
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/padding_status_bar_height"
+        android:layout_height="@dimen/photopage_tool_bar"></android.support.v7.widget.Toolbar>
+
+    <include
+        layout="@layout/photopage_bottom_controls"
+        />
+
+</FrameLayout>

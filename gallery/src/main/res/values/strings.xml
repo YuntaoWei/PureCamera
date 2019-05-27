@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">PicShow</string>
+    <string name="btn_photo">Photo</string>
+    <string name="btn_album">Album</string>
+    <string name="timeline_title_format">"yyyy-MM-dd"</string>
+
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="more">More</string>
+
+    <string name="rename">Rename</string>
+    <string name="set_as">Set as</string>
+    <string name="detail">Detail</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="saving_image">Save current image</string>
+
+    <string name="none">None</string>
+    <string name="aspect">Aspect</string>
+    <string name="aspect1to1_effect">1:1</string>
+    <string name="aspect4to3_effect">4:3</string>
+    <string name="aspect3to4_effect">3:4</string>
+    <string name="aspect5to7_effect">5:7</string>
+    <string name="aspect7to5_effect">7:5</string>
+    <string name="save">Save</string>
+    <string name="compare_original">Compare</string>
+    <string name="paint_size">Paint size</string>
+    <string name="editor_grad_brightness">Brightness</string>
+    <string name="editor_grad_contrast">Contrast</string>
+    <string name="editor_grad_color_temperature">Color temperature</string>
+    <string name="editor_grad_saturation">Saturation</string>
+    <string name="color">Color</string>
+    <string name="beautify">Beautify</string>
+    <string name="crop">Crop</string>
+    <string name="enhance">Enhance</string>
+    <string name="mosaic">Mosaic</string>
+    <string name="draw">Paint</string>
+
+    <!-- for filter start-->
+    <string name="filter_gray">Gray</string>
+    <string name="filter_lomo">LOMO</string>
+    <string name="filter_no_stalgia">Nostalgia</string>
+    <string name="filter_brown">Brown</string>
+    <string name="filter_comic">Comic</string>
+    <string name="filter_mosaic">Mosaic</string>
+    <string name="filter_sketch_pencil">Sketchpencil</string>
+    <string name="filter_nenon">Nenon</string>
+
+    <string name="filter_test">Filter Test</string>
+    <!-- for filter end-->
+
+    <!-- for new filter start-->
+    <!--<string name="new_filter_gray">灰色</string>-->
+    <string name="new_filter_gauss">Blur</string>
+    <string name="new_filter_gauss_select">Select Blur</string>
+    <string name="new_filter_sobel_edge">Comic</string>
+    <string name="new_filter_brightness">Brightness</string>
+    <string name="new_filter_mosaic">Mosaic</string>
+    <string name="new_filter_sketch_pencil">Sketch</string>
+    <string name="new_filter_toon">Cartoom1</string>
+    <string name="new_filter_smooth_toon">Cartoon2</string>
+    <!-- for filter end-->
+
+</resources>

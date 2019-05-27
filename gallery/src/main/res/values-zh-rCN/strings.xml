@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">"相册"</string>
+    <string name="btn_photo">"照片"</string>
+    <string name="btn_album">"相册"</string>
+    <string name="timeline_title_format">"yyyy年MM月dd日"</string>
+
+    <string name="share">"分享"</string>
+    <string name="edit">"编辑"</string>
+    <string name="delete">"删除"</string>
+    <string name="more">"更多"</string>
+
+    <string name="rename">"重命名"</string>
+    <string name="set_as">"设置为"</string>
+    <string name="detail">"详细信息"</string>
+
+    <string name="confirm">"确定"</string>
+    <string name="cancel">"取消"</string>
+
+    <string name="saving_image">"保存当前图片"</string>
+    <string name="none">"无"</string>
+    <string name="aspect">"宽高比"</string>
+    <string name="aspect1to1_effect">"1:1"</string>
+    <string name="aspect4to3_effect">"4:3"</string>
+    <string name="aspect3to4_effect">"3:4"</string>
+    <string name="aspect5to7_effect">"5:7"</string>
+    <string name="aspect7to5_effect">"7:5"</string>
+    <string name="save">"保存"</string>
+    <string name="compare_original">"对比"</string>
+    <string name="paint_size">"画笔大小"</string>
+    <string name="editor_grad_brightness">"亮度"</string>
+    <string name="editor_grad_contrast">"对比度"</string>
+    <string name="editor_grad_color_temperature">"色温"</string>
+    <string name="editor_grad_saturation">"饱和度"</string>
+    <string name="color">"滤镜"</string>
+    <string name="beautify">"美颜"</string>
+    <string name="crop">"剪裁"</string>
+    <string name="enhance">"调整"</string>
+    <string name="mosaic">"马赛克"</string>
+    <string name="draw">"涂鸦"</string>
+
+    <!-- for filter start-->
+    <string name="filter_gray">灰色</string>
+    <string name="filter_lomo">LOMO</string>
+    <string name="filter_no_stalgia">怀旧</string>
+    <string name="filter_brown">褐色</string>
+    <string name="filter_comic">漫画</string>
+    <string name="filter_mosaic">马赛克</string>
+    <string name="filter_sketch_pencil">铅笔画</string>
+    <string name="filter_nenon">霓虹</string>
+    <string name="filter_test">滤镜效果测试</string>
+    <!-- for filter end-->
+
+    <!-- for new filter start-->
+    <!--<string name="new_filter_gray">灰色</string>-->
+    <string name="new_filter_gauss">模糊</string>
+    <string name="new_filter_gauss_select">区域模糊</string>
+    <string name="new_filter_sobel_edge">漫画反色</string>
+    <string name="new_filter_brightness">加亮</string>
+    <string name="new_filter_mosaic">马赛克</string>
+    <string name="new_filter_sketch_pencil">铅笔画</string>
+    <string name="new_filter_toon">卡通1</string>
+    <string name="new_filter_smooth_toon">卡通2</string>
+    <!-- for filter end-->
+</resources>

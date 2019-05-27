@@ -11,5 +11,4 @@
     <style name="CameraTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
     </style>
-
 </resources>

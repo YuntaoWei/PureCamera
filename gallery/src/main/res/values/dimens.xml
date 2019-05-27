@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="max_front_size">22sp</dimen>
+    <dimen name="bigger_front_size">20sp</dimen>
+    <dimen name="smaller_front_size">16sp</dimen>
+    <dimen name="toobar_height">54dp</dimen>
+    <dimen name="topbar_padding">40dp</dimen>
+
+    <dimen name="photopage_tool_bar">74dp</dimen>
+    <dimen name="bottom_menu_elevation">2dp</dimen>
+    <dimen name="bottom_menu_margin">51dp</dimen>
+    <integer name="edittext_max_char_length">50</integer>
+
+    <integer name="col_num">4</integer>
+    <dimen name="col_spaceing">5dp</dimen>
+    <dimen name="row_spaceing">10dp</dimen>
+
+
+    <dimen name="album_title_left_padding">10dp</dimen>
+    <integer name="album_col_num">2</integer>
+    <dimen name="album_col_spaceing">20dp</dimen>
+    <dimen name="album_name_count_spacing">40dp</dimen>
+
+    <dimen name="padding_status_bar_height">20dp</dimen>
+
+    <dimen name="timeline_title_height">34dp</dimen>
+    <dimen name="timeline_title_margin">17dp</dimen>
+
+    <dimen name="contactListItemView_adjust_height">5dp</dimen>
+    <dimen name="popup_min_line_item_height">54dp</dimen>
+    <dimen name="popup_min_title_height">65dp</dimen>
+    <dimen name="popup_margin_start">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

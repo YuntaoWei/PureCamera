@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:layout_marginTop="@dimen/row_spaceing"
+        android:verticalSpacing="@dimen/row_spaceing"
+        android:layout_marginLeft="@dimen/col_spaceing"
+        android:layout_marginRight="@dimen/col_spaceing"
+        android:scrollbars="none"
+        android:horizontalSpacing="@dimen/col_spaceing"
+        android:listSelector="@drawable/course_list_selector"
+    />
+
+</LinearLayout>

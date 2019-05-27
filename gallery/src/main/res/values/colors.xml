@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#f9f9f9</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorTopbar">#000000</color>
+    <color name="colorTitle">#FFFFFF</color>
+
+    <color name="select_background">#E3E3E3</color>
+
+    <color name="photopage_toolbar_color">#80000000</color>
+    <color name="photopage_background">#1A1A1A</color>
+    <color name="bottom_menu_color">#666666</color>
+    <color name="bottom_menu_color_white">#ffffff</color>
+
+    <color name="background_primary">#f9f9f9</color>
+    <color name="boder_color">#44888888</color>
+    <color name="accent_color">#52c7ff</color>
+    <color name="primary_text_color">#363636</color>
+    <color name="space_color">#CCCCCC</color>
+    <color name="bottom_bg_color">#CCCC99</color>
+    <color name="list_divider_color">#CCCCCC</color>
+    <color name="top_btn_text_select_color">#ff333333</color>
+
+</resources>
