@@ -21,7 +21,7 @@ import java.util.concurrent.Semaphore;
 public class AlbumDataLoader implements DataLoader {
 
     private static final String TAG = "AlbumDataLoader";
-    private PictureShowApplication mContext;
+    private Application mContext;
     private LoadListener mListener;
     private Semaphore mSemaphore;
     private LoadThread loadTask;
@@ -30,7 +30,7 @@ public class AlbumDataLoader implements DataLoader {
 
 
     public AlbumDataLoader(Application context, LoadListener l, int bucket) {
-        mContext = (PictureShowApplication)context;
+        mContext = context;
         mListener = l;
         bucketID = bucket;
         notifier = new ChangeNotify(this, new Uri[] {

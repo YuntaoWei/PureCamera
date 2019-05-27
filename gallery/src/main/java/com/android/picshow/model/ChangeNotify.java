@@ -1,5 +1,6 @@
 package com.android.picshow.model;
 
+import android.app.Application;
 import android.net.Uri;
 
 import com.android.picshow.app.PictureShowApplication;
@@ -16,16 +17,16 @@ public class ChangeNotify {
     private DataLoader mLoader;
     private AtomicBoolean mContentDirty = new AtomicBoolean(true);
 
-    public ChangeNotify(DataLoader set, Uri uri, PictureShowApplication app) {
+    public ChangeNotify(DataLoader set, Uri uri, Application app) {
         mLoader = set;
-        app.getDataManager().registerObServer(uri, this);
+        DataManager.getDataManager(app).registerObServer(uri, this);
     }
 
-    public ChangeNotify(DataLoader set, Uri[] uris, PictureShowApplication app) {
+    public ChangeNotify(DataLoader set, Uri[] uris, Application app) {
         mLoader = set;
         for (Uri u:uris
              ) {
-            app.getDataManager().registerObServer(u, this);
+            DataManager.getDataManager(app).registerObServer(u, this);
         }
     }
 

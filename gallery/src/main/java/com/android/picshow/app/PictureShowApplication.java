@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.StrictMode;
 
 import com.android.picshow.model.DataManager;
+import com.android.picshow.utils.LogPrinter;
 
 /**
  * Created by yuntao.wei on 2017/11/28.
@@ -36,11 +37,10 @@ public class PictureShowApplication extends Application {
                     .build());
         }
         super.onCreate();
-        mDataManager = new DataManager(this);
+        mDataManager = DataManager.getDataManager(this);
     }
 
     public DataManager getDataManager() {
         return mDataManager;
     }
-
 }

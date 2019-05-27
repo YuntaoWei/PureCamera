@@ -20,7 +20,7 @@ public class AlbumSetDataLoader implements DataLoader {
 
     private static final String TAG = "AlbumSetDataLoader";
 
-    private PictureShowApplication mContext;
+    private Application mContext;
     private LoadListener mListener;
     private Semaphore mSemaphore;
     private LoadThread loadTask;
@@ -28,7 +28,7 @@ public class AlbumSetDataLoader implements DataLoader {
 
 
     public AlbumSetDataLoader(Application context, LoadListener l) {
-        mContext = (PictureShowApplication)context;
+        mContext = context;
         mListener = l;
         notifier = new ChangeNotify(this, new Uri[] {
                 MediaSetUtils.VIDEO_URI,

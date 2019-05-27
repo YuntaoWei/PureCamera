@@ -22,14 +22,14 @@ public class TimeLinePageDataLoader implements DataLoader {
 
     private static final String TAG = "TimeLinePageDataLoader";
 
-    private PictureShowApplication mContext;
+    private Application mContext;
     private LoadListener mListener;
     private Semaphore mSemaphore;
     private LoadThread loadTask;
     private ChangeNotify notifier;
 
     public TimeLinePageDataLoader(Application context, LoadListener l) {
-        mContext = (PictureShowApplication)context;
+        mContext = context;
         mListener = l;
         notifier = new ChangeNotify(this, new Uri[] {
                 MediaSetUtils.VIDEO_URI,

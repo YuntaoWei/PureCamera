@@ -1,5 +1,7 @@
 package com.android.picshow.model;
 
+import android.app.Application;
+import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
@@ -17,14 +19,24 @@ import java.util.WeakHashMap;
 
 public class DataManager {
 
+    private static DataManager INSTANCE;
     private HashMap<Uri, NotifyBroker> mNotifierMap =
             new HashMap<Uri, NotifyBroker>();
-    private PictureShowApplication mApp;
+    private Application mApp;
     private Handler mDefaultMainHandler;
 
-    public DataManager(PictureShowApplication app) {
+    private DataManager(Application app) {
         mApp = app;
         mDefaultMainHandler = new Handler();
+    }
+
+    public static DataManager getDataManager(Application app) {
+        if(null == INSTANCE) {
+            synchronized (DataManager.class) {
+                INSTANCE = new DataManager(app);
+            }
+        }
+        return INSTANCE;
     }
 
     public void registerObServer(Uri uri, ChangeNotify notify) {
@@ -39,7 +51,15 @@ public class DataManager {
             }
         }
         broker.registerNotifier(notify);
+    }
 
+    public void releaseAllObserver() {
+        ContentResolver cr = mApp.getContentResolver();
+        for (DataManager.NotifyBroker broker : mNotifierMap.values()
+             ) {
+            cr.unregisterContentObserver(broker);
+            broker.clear();
+        }
     }
 
     private class NotifyBroker extends ContentObserver {
@@ -65,6 +85,10 @@ public class DataManager {
             for(ChangeNotify notifier : mNotifiers.keySet()) {
                 notifier.onChange(selfChange);
             }
+        }
+
+        public void clear() {
+            mNotifiers.clear();
         }
     }
 

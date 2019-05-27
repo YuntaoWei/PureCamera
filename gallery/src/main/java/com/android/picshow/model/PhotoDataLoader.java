@@ -22,7 +22,7 @@ public class PhotoDataLoader implements DataLoader {
     private LoadThread loadTask;
     private int bucketID;
     private PhotoLoadListener loadCallBack;
-    private PictureShowApplication mApp;
+    private Application mApp;
     private ChangeNotify notifier;
 
     public interface PhotoLoadListener {
@@ -32,17 +32,23 @@ public class PhotoDataLoader implements DataLoader {
     }
 
     public PhotoDataLoader(Application app, int bucket, PhotoLoadListener listener) {
-        mApp = (PictureShowApplication)app;
+        mApp = app;
         bucketID = bucket;
         semaphore = new Semaphore(1);
         loadCallBack = listener;
-        notifier = new ChangeNotify(this, new Uri[] {
-                MediaSetUtils.VIDEO_URI,
-                MediaSetUtils.IMAGE_URI
-        }, (PictureShowApplication)app);
     }
 
     public void resume() {
+        if(null == notifier) {
+            notifier = new ChangeNotify(this, new Uri[]{
+                    MediaSetUtils.VIDEO_URI,
+                    MediaSetUtils.IMAGE_URI
+            }, mApp);
+        } else {
+            DataManager.getDataManager(mApp).registerObServer(MediaSetUtils.VIDEO_URI, notifier);
+            DataManager.getDataManager(mApp).registerObServer(MediaSetUtils.IMAGE_URI, notifier);
+        }
+
         if(semaphore == null)
             semaphore = new Semaphore(1);
         if(loadTask == null)
@@ -58,6 +64,8 @@ public class PhotoDataLoader implements DataLoader {
         if(semaphore != null)
             semaphore.release();
         semaphore = null;
+
+        DataManager.getDataManager(mApp).releaseAllObserver();
     }
 
     private void reloadData() {
