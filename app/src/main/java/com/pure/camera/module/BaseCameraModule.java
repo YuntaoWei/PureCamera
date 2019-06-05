@@ -91,7 +91,6 @@ public class BaseCameraModule extends AbstractCameraModule implements CameraOper
     @Override
     public void resume() {
         cameraView.resume();
-
         initModule();
         openCamera();
     }
@@ -99,7 +98,7 @@ public class BaseCameraModule extends AbstractCameraModule implements CameraOper
     @Override
     public void pause() {
         cameraView.pause();
-        cameraPrepared = false;
+        stopPreivew();
         closeCamera();
         cameraHandler.getLooper().quitSafely();
     }
@@ -113,6 +112,11 @@ public class BaseCameraModule extends AbstractCameraModule implements CameraOper
 
     @Override
     protected void startPreview() {}
+
+    @Override
+    protected void stopPreivew() {
+
+    }
 
     @Override
     public void capture() {}

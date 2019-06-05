@@ -12,5 +12,7 @@ public abstract class AbstractCameraModule implements CameraModule {
 
     //开始预览
     protected abstract void startPreview();
+    //关闭预览
+    protected abstract void stopPreivew();
 
 }

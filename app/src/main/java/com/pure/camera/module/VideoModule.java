@@ -150,25 +150,9 @@ public class VideoModule extends BaseCameraModule {
 
     @Override
     protected void closeCamera() {
-        if (isRecording) {
-            stopVideoRecord();
-        } else {
-            releaseRecorder();
-        }
-
-        if (null != previewSession) {
-            previewSession.close();
-            previewSession = null;
-        }
-
         if (null != cameraDevice) {
             cameraDevice.close();
             cameraDevice = null;
-        }
-
-        cameraPrepared = false;
-        if(null != videoTipsView) {
-            ((CameraVideoView)cameraView).removeRecordTips(videoTipsView.getTipsView());
         }
     }
 
@@ -304,6 +288,24 @@ public class VideoModule extends BaseCameraModule {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void stopPreivew() {
+        if (isRecording) {
+            stopVideoRecord();
+        } else {
+            releaseRecorder();
+        }
+
+        if (null != previewSession) {
+            previewSession.close();
+            previewSession = null;
+        }
+        if(null != videoTipsView) {
+            ((CameraVideoView)cameraView).removeRecordTips(videoTipsView.getTipsView());
+        }
+        cameraPrepared = false;
     }
 
     @Override

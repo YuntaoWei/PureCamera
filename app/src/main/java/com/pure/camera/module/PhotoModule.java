@@ -130,11 +130,6 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
 
     @Override
     protected void closeCamera() {
-        if (null != previewSession) {
-            previewSession.close();
-            previewSession = null;
-        }
-
         if (null != cameraDevice) {
             cameraDevice.close();
             cameraDevice = null;
@@ -144,7 +139,6 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
             captureImageReader.close();
             captureImageReader = null;
         }
-
         cameraPrepared = false;
     }
 
@@ -179,6 +173,23 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void stopPreivew() {
+        if (null != previewSession) {
+            previewSession.close();
+            previewSession = null;
+        }
+
+        //不重建previewBuilder就需要移除所有的surface，避免在重新startPreivew的时候再次添加新的surface
+        //导致以前的surface状态异常，预览或拍摄失败
+        if(null != previewBuilder) {
+            previewBuilder.removeTarget(previewSurface);
+            previewSurface.release();
+            previewBuilder.removeTarget(captureImageReader.getSurface());
+        }
+        uiPrepared = false;
     }
 
     @Override
