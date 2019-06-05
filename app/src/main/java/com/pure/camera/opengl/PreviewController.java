@@ -25,14 +25,18 @@ public class PreviewController {
     private FullPreview fullPreview;
     private SmallFilterPreview smallFilterPreview;
 
-    private boolean showFilter;
+    private boolean showFilter = false;
 
     public PreviewController() {
         textureMatrix = new float[16];
     }
 
-    public void showFilter(boolean show) {
-        showFilter = show;
+    public void switchFilter() {
+        showFilter = !showFilter;
+    }
+
+    public void hideFilter() {
+        showFilter = false;
     }
 
     /**

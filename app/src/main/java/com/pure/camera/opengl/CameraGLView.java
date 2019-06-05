@@ -89,6 +89,7 @@ public class CameraGLView extends GLSurfaceView implements View.OnTouchListener 
                 break;
         }
 
+        cameraRenderer.hideFilterView();
         return true;
     }
 

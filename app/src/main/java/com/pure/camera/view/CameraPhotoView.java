@@ -20,7 +20,6 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
     private static final String TAG = "CameraPhotoView";
     private static final int FILTER_PREVIEW_BUTTON = 0x123;
     private ImageView filterPreviewButton;
-    private boolean showFilter;
     private PreviewSize screenSize;
 
     @Override
@@ -59,12 +58,13 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
         if(null == filterPreviewButton) {
             filterPreviewButton = new ImageView(getContext());
             filterPreviewButton.setId(FILTER_PREVIEW_BUTTON);
-            filterPreviewButton.setImageResource(R.mipmap.ic_launcher);
+            filterPreviewButton.setImageResource(R.mipmap.ic_filter_128);
             filterPreviewButton.setOnClickListener(this);
         }
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        lp.rightMargin = 50;
         addViewIfNeed(filterPreviewButton, lp);
     }
 
@@ -100,8 +100,7 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
                 break;
 
             case FILTER_PREVIEW_BUTTON:
-                showFilter = !showFilter;
-                showFilterPreview(showFilter);
+                switchFilterPreview();
                 break;
         }
     }

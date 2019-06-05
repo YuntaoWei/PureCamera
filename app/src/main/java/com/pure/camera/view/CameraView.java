@@ -107,8 +107,8 @@ public class CameraView extends BaseView implements TextureListener,
     /**
      * 显示所有filter的预览
      */
-    protected void showFilterPreview(boolean flag) {
-        cameraGLView.getCameraRenderer().showFilterPreview(flag);
+    protected void switchFilterPreview() {
+        cameraGLView.getCameraRenderer().switchFilterPreview();
     }
 
     /**

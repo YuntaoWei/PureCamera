@@ -38,8 +38,12 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
         previewController.setFilter(filter, index);
     }
 
-    public void showFilterPreview(boolean flag) {
-        previewController.showFilter(flag);
+    public void switchFilterPreview() {
+        previewController.switchFilter();
+    }
+
+    public void hideFilterView() {
+        previewController.hideFilter();
     }
 
     public void updateTexture(int w, int h) {
