@@ -2,17 +2,19 @@ package com.pure.camera.view;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.pure.camera.R;
+import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.CameraFilterManager;
 
-public class CameraVideoView extends CameraView implements View.OnClickListener {
+public class CameraVideoView extends CameraView {
 
     @Override
     public void addCameraGLView() {
         super.addCameraGLView();
-
-        setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher);
     }
 
     @Override
@@ -49,22 +51,21 @@ public class CameraVideoView extends CameraView implements View.OnClickListener 
     }
 
     @Override
-    public void onClick(View v) {
-        if(null == cameraOperation)
-            return;
-
-        switch (v.getId()) {
-            case R.id.shutter:
-                cameraOperation.onShutterClicked();
-                break;
-
-            case R.id.switcher:
-                cameraOperation.onSwitchCamera();
-                break;
-
-            case R.id.recent_thumbnail:
-                cameraOperation.startToGallery();
-                break;
+    protected void showSettingView() {
+        LogPrinter.i("ttt", "showSettingView");
+        if(null == settingWindow) {
+            ListView menuList = new ListView(getContext());
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                    R.layout.layout_setting, R.id.tv_name);
+            adapter.add("test1");
+            adapter.add("test2");
+            adapter.add("test3");
+            adapter.add("test4");
+            menuList.setAdapter(adapter);
+            settingWindow = new PopupWindow(menuList, 200, 300);
+            settingWindow.showAsDropDown(getView(R.id.img_setting));
+        } else {
+            settingWindow.showAsDropDown(getView(R.id.img_setting));
         }
     }
 }

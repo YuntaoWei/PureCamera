@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Photo Module setting items -->
+    <string name="photo_setting_location">位置信息</string>
+    <string name="photo_setting_preview_size">预览尺寸</string>
+    <string name="photo_setting_photo_size">拍照尺寸</string>
+    <string name="photo_setting_anti_banding">入光频率</string>
+    <string name="photo_setting_countdown">倒计时拍照</string>
+
+    <!--Video Module setting items -->
+    <string name="video_setting_preview_size">预览尺寸</string>
+    <string name="video_setting_video_size">拍摄尺寸</string>
+</resources>

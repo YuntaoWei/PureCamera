@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="photo_setting">
+        <item>@string/photo_setting_location</item>
+        <item>@string/photo_setting_preview_size</item>
+        <item>@string/photo_setting_photo_size</item>
+        <item>@string/photo_setting_anti_banding</item>
+        <item>@string/photo_setting_countdown</item>
+    </string-array>
+
+    <string-array name="video_setting">
+        <item>@string/video_setting_preview_size</item>
+        <item>@string/video_setting_video_size</item>
+    </string-array>
+</resources>

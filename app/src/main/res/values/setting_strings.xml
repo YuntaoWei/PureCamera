@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Photo Module setting items -->
+    <string name="photo_setting_location">Save Location</string>
+    <string name="photo_setting_preview_size">Preview Size</string>
+    <string name="photo_setting_photo_size">Photo Size</string>
+    <string name="photo_setting_anti_banding">Anti Banding</string>
+    <string name="photo_setting_countdown">Counting Down</string>
+
+    <!--Video Module setting items -->
+    <string name="video_setting_preview_size">Preview Size</string>
+    <string name="video_setting_video_size">Video Size</string>
+</resources>

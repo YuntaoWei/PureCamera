@@ -17,7 +17,7 @@ public class Assert {
                 return false;
         }
 
-        return true;
+        return object != null;
     }
 
 }

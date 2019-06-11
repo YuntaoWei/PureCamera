@@ -105,6 +105,14 @@ public abstract class BaseView {
         }
     }
 
+    public String getString(int id) {
+        return getContext().getString(id);
+    }
+
+    public String[] getStringArray(int id) {
+        return getContext().getResources().getStringArray(id);
+    }
+
     public abstract void resume();
 
     public abstract void pause();

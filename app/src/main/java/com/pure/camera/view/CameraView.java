@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.pure.camera.R;
 import com.pure.camera.async.Future;
@@ -24,8 +26,8 @@ import com.pure.camera.opengl.TextureListener;
 import com.pure.camera.opengl.UIStateListener;
 import com.pure.camera.task.UpdateThumbnail;
 
-public class CameraView extends BaseView implements TextureListener,
-        SurfaceTexture.OnFrameAvailableListener, DataChangeListener {
+public abstract class CameraView extends BaseView implements TextureListener,
+        SurfaceTexture.OnFrameAvailableListener, DataChangeListener, View.OnClickListener {
 
     protected CameraGLView cameraGLView;
     private UIStateListener uiStateListener;
@@ -33,6 +35,8 @@ public class CameraView extends BaseView implements TextureListener,
     private FrameLayout cameraGroupView;
     protected CameraOperation cameraOperation;
     protected UpdateThumbnail updateThumbnailTask;
+    protected PopupWindow settingWindow;
+    protected ListView menuList;
 
     /**
      * 添加CameraGLView，用于预览显示Camera画面
@@ -48,6 +52,8 @@ public class CameraView extends BaseView implements TextureListener,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
         cameraGLViewAttached = true;
+
+        setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher, R.id.img_setting);
     }
 
     /**
@@ -216,4 +222,31 @@ public class CameraView extends BaseView implements TextureListener,
             }
         });
     }
+
+    @Override
+    public void onClick(View v) {
+        if(null == cameraOperation)
+            return;
+
+        switch (v.getId()) {
+            case R.id.shutter:
+                cameraOperation.onShutterClicked();
+                break;
+
+            case R.id.switcher:
+                cameraOperation.onSwitchCamera();
+                break;
+
+            case R.id.recent_thumbnail:
+                cameraOperation.startToGallery();
+                break;
+
+            case R.id.img_setting:
+                showSettingView();
+                break;
+        }
+    }
+
+    protected abstract void showSettingView();
+
 }

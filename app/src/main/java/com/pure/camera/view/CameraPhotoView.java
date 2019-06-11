@@ -1,21 +1,25 @@
 package com.pure.camera.view;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.pure.camera.R;
 import com.pure.camera.common.LogPrinter;
+import com.pure.camera.common.SizeUtil;
 import com.pure.camera.filter.CameraFilterManager;
 import com.pure.camera.module.OnFilterChangeListener;
 import com.pure.camera.opengl.data.PreviewSize;
 
-public class CameraPhotoView extends CameraView implements View.OnClickListener {
+public class CameraPhotoView extends CameraView {
 
     private static final String TAG = "CameraPhotoView";
     private static final int FILTER_PREVIEW_BUTTON = 0x123;
@@ -25,7 +29,6 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
     @Override
     public void addCameraGLView() {
         super.addCameraGLView();
-        setOnClickListener(this, R.id.shutter, R.id.recent_thumbnail, R.id.switcher);
     }
 
     @Override
@@ -66,6 +69,13 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
         lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
         lp.rightMargin = 50;
         addViewIfNeed(filterPreviewButton, lp);
+
+        filterPreviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchFilterPreview();
+            }
+        });
     }
 
     /**
@@ -82,26 +92,64 @@ public class CameraPhotoView extends CameraView implements View.OnClickListener 
     }
 
     @Override
-    public void onClick(View v) {
-        if(null == cameraOperation)
-            return;
+    protected void showSettingView() {
+        LogPrinter.i("ttt", "showSettingView");
+        /*if(null == settingWindow) {
+            ListView menuList = new ListView(getContext());
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                    R.layout.layout_setting, R.id.tv_name);
+            String[] photo = getStringArray(R.array.photo_setting);
+            adapter.addAll(photo);
+            menuList.setAdapter(adapter);
+            settingWindow = new PopupWindow(menuList, 200, 300);
+            //settingWindow.showAsDropDown(getView(R.id.img_setting), Gravity.NO_GRAVITY, 0, 0);
+            settingWindow.showAtLocation(getView(R.id.img_setting), Gravity.START | Gravity.TOP, 0, 0);
+        } else {
+            settingWindow.showAsDropDown(getView(R.id.img_setting));
+        }*/
 
-        switch (v.getId()) {
-            case R.id.shutter:
-                cameraOperation.onShutterClicked();
-                break;
+        if(null == menuList) {
+            menuList = getView(R.id.menu_list);
+            final String[] photo = getStringArray(R.array.photo_setting);
+            menuList.setAdapter(new BaseAdapter() {
+                @Override
+                public int getCount() {
+                    return photo.length;
+                }
 
-            case R.id.switcher:
-                cameraOperation.onSwitchCamera();
-                break;
+                @Override
+                public String getItem(int position) {
+                    return photo[position];
+                }
 
-            case R.id.recent_thumbnail:
-                cameraOperation.startToGallery();
-                break;
+                @Override
+                public long getItemId(int position) {
+                    return 0;
+                }
 
-            case FILTER_PREVIEW_BUTTON:
-                switchFilterPreview();
-                break;
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    TextView textView;
+                    if(null == convertView) {
+                        convertView = getLayoutInflater().inflate(R.layout.layout_setting, null);
+                        textView = convertView.findViewById(R.id.tv_name);
+                        convertView.setTag(textView);
+                    } else {
+                        textView = (TextView) convertView.getTag();
+                    }
+
+                    textView.setText(getItem(position));
+                    return convertView;
+                }
+            });
         }
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) menuList.getLayoutParams();
+        if(lp.endToStart == 0)
+            lp.endToStart = -1;
+        else
+            lp.endToStart = 0;
+        lp.topMargin = SizeUtil.dpToPixel(getContext(), 26);
+        menuList.setLayoutParams(lp);
     }
+
 }
