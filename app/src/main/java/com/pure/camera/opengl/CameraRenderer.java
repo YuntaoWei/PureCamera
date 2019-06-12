@@ -23,6 +23,7 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
 
     private Context mContext;
     private TextureListener mListener;
+    private int viewWidth, viewHeight;
 
     private PreviewController previewController;
     public CameraRenderer(Context ctx) {
@@ -58,6 +59,8 @@ public class CameraRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
+        viewWidth = width;
+        viewHeight = height;
         glViewport(0, 0, width, height);
     }
 

@@ -10,4 +10,5 @@ package com.pure.camera;
 
 public class Constants {
     public static final int BYTES_PER_FLOAT = 4;
+    public static final boolean HIGH_PERFORMANCE_DRAW = true;
 }

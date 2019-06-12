@@ -44,6 +44,11 @@ public class VertexArray {
         floatBuffer.position(0);
     }
 
+    public void setVertexAttribPointer2(int attributeLocation, int componentCount, int stride, int dataOffset) {
+        glVertexAttribPointer(attributeLocation, componentCount, GL_FLOAT, false, stride, dataOffset);
+        glEnableVertexAttribArray(attributeLocation);
+    }
+
     public int getSizePerByte() {
         return floatBuffer.capacity() * Constants.BYTES_PER_FLOAT;
     }

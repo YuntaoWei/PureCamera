@@ -1,5 +1,7 @@
 package com.pure.camera.opengl.data;
 
+import android.util.AndroidRuntimeException;
+
 import com.pure.camera.Constants;
 import com.pure.camera.common.LogPrinter;
 import com.pure.camera.filter.BaseFilter;
@@ -10,10 +12,18 @@ import com.pure.camera.opengl.program.FilterBorderProgram;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.opengl.GLES20.GL_ARRAY_BUFFER;
+import static android.opengl.GLES20.GL_DYNAMIC_DRAW;
 import static android.opengl.GLES20.GL_LINE_STRIP;
-import static android.opengl.GLES20.GL_TRIANGLE_FAN;
+import static android.opengl.GLES20.GL_STATIC_DRAW;
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
+import static android.opengl.GLES20.glBindBuffer;
+import static android.opengl.GLES20.glBufferData;
+import static android.opengl.GLES20.glBufferSubData;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glGenBuffers;
+import static android.opengl.GLES30.glBindVertexArray;
+import static android.opengl.GLES30.glGenVertexArrays;
 
 public class SmallFilterPreview {
 
@@ -31,12 +41,51 @@ public class SmallFilterPreview {
     PreviewSize previewSize = new PreviewSize(1520, 720);
     int currentSelectFilterIndex = 0;
     float[] borderColor = {1.0f, 0f, 0f, 1.0f};
+    int filterVAO, borderVAO, borderVBO;
 
     public SmallFilterPreview(CameraFilterShaderProgram program, FilterBorderProgram borderProgram) {
         filterShaderProgram = program;
         this.borderProgram = borderProgram;
         allFilters = CameraFilterManager.getInstance().getAllFilter();
         initialVertex();
+
+        if(Constants.HIGH_PERFORMANCE_DRAW) {
+            createVAOForFilter();
+        }
+    }
+
+    private void createVAOForFilter() {
+        int[] vbo = new int[1];
+        int[] vao = new int[1];
+
+        glGenBuffers(1, vbo, 0);
+        if(vbo[0] == 0) {
+            throw new AndroidRuntimeException("SmallFilterPreview Create VBO failed!");
+        }
+
+        glGenVertexArrays(1, vao, 0);
+        if(vao[0] == 0) {
+            throw new AndroidRuntimeException("SmallFilterPreview Create VAO failed!");
+        }
+        //for filter
+        glBindVertexArray(vao[0]);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, filterVertex.getSizePerByte(), filterVertex.getBuffer(), GL_STATIC_DRAW);
+        filterVertex.setVertexAttribPointer2(filterShaderProgram.getVPositionHandler(), 2, 16, 0);
+        filterVertex.setVertexAttribPointer2(filterShaderProgram.getVtPositionHandler(), 2, 16, 8);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+        filterVAO = vao[0];
+
+        //for border
+        /*glBindVertexArray(vao[1]);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+        glBufferData(GL_ARRAY_BUFFER, borderVertex.getSizePerByte(), borderVertex.getBuffer(), GL_DYNAMIC_DRAW);
+        borderVertex.setVertexAttribPointer2(borderProgram.getVertexPositionHandler(), 2, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+        borderVAO = vao[1];
+        borderVBO = vbo[1];*/
     }
 
     private void initialVertex() {
@@ -110,6 +159,16 @@ public class SmallFilterPreview {
         currentSelectFilterIndex = index;
 
         reCreateBorderVertex();
+        //submitNewBorderBuffer();
+    }
+
+    private void submitNewBorderBuffer() {
+        glBindVertexArray(borderVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, borderVBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, borderVertex.getSizePerByte(), borderVertex.getBuffer());
+        borderVertex.setVertexAttribPointer2(borderProgram.getVertexPositionHandler(), 2, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     /**
@@ -138,6 +197,36 @@ public class SmallFilterPreview {
     }
 
     public void draw(int textureID, float[] textureMatrix) {
+        if(Constants.HIGH_PERFORMANCE_DRAW) {
+            drawHighPerformance(textureID, textureMatrix);
+        } else {
+            drawNormal(textureID, textureMatrix);
+        }
+        drawBorder();
+    }
+
+    private void drawHighPerformance(int textureID, float[] textureMatrix) {
+        filterShaderProgram.useProgram();
+        int i = 0;
+        glBindVertexArray(filterVAO);
+        for (BaseFilter filter : allFilters
+                ) {
+            filterShaderProgram.setMatrixUniform(textureMatrix);
+            filterShaderProgram.setTextureUniformExternal(textureID);
+            filterShaderProgram.setUniform(filterShaderProgram.getTextureWidthHandler(), previewSize.width);
+            filterShaderProgram.setUniform(filterShaderProgram.getTextureHeightHandler(), previewSize.height);
+
+            if (null != filter) {
+                filter.doFilter(filterShaderProgram);
+            }
+
+            glDrawArrays(GL_TRIANGLE_STRIP, i, 4);
+            i += 4;
+        }
+        glBindVertexArray(0);
+    }
+
+    private void drawNormal(int textureID, float[] textureMatrix) {
         filterShaderProgram.useProgram();
 
         filterVertex.setVertexAttribPointer(0, filterShaderProgram.getVPositionHandler(),
@@ -160,15 +249,22 @@ public class SmallFilterPreview {
             glDrawArrays(GL_TRIANGLE_STRIP, i, 4);
             i += 4;
         }
+        filterShaderProgram.disablePointer();
+    }
 
+    private void drawBorder() {
         //绘制选中的边框
         borderProgram.useProgram();
-        borderVertex.setVertexAttribPointer(0, borderProgram.getVertexPositionHandler(), 2, 0);
         borderProgram.setUniformColor(borderColor);
-        glDrawArrays(GL_LINE_STRIP, 0, 5);
-
-        filterShaderProgram.disablePointer();
-        borderProgram.disablePointer();
+        /*if(Constants.HIGH_PERFORMANCE_DRAW) {
+            glBindVertexArray(borderVAO);
+            glDrawArrays(GL_LINE_STRIP, 0, 5);
+            glBindVertexArray(0);
+        } else {*/
+            borderVertex.setVertexAttribPointer(0, borderProgram.getVertexPositionHandler(), 2, 0);
+            glDrawArrays(GL_LINE_STRIP, 0, 5);
+            borderProgram.disablePointer();
+        //}
     }
 
     public int isCovered(float x, float y) {

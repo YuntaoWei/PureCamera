@@ -37,14 +37,18 @@ public class TextureHelper {
         }
 
         glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureID[0]);
+
         glTexParameterf(GL_TEXTURE_EXTERNAL_OES,
                 GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameterf(GL_TEXTURE_EXTERNAL_OES,
                 GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
         glTexParameterf(GL_TEXTURE_EXTERNAL_OES,
                 GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                //GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
         glTexParameterf(GL_TEXTURE_EXTERNAL_OES,
                 GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                //GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
         glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
         return textureID[0];
