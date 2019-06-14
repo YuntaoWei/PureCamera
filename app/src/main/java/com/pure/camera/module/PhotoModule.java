@@ -154,6 +154,7 @@ public class PhotoModule extends BaseCameraModule implements OnFilterChangeListe
             }
 
             cameraDevice.createCaptureSession(Arrays.asList(previewSurface, captureImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
+
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     try {

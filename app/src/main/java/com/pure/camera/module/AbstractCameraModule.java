@@ -15,4 +15,8 @@ public abstract class AbstractCameraModule implements CameraModule {
     //关闭预览
     protected abstract void stopPreivew();
 
+    protected abstract void initModule();
+
+    public abstract void capture();
+
 }
