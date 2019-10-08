@@ -3,6 +3,7 @@ package com.android.picshow.app;
 import android.app.Application;
 import android.os.StrictMode;
 
+import com.android.picshow.BuildConfig;
 import com.android.picshow.model.DataManager;
 import com.android.picshow.utils.LogPrinter;
 
@@ -15,11 +16,10 @@ import com.android.picshow.utils.LogPrinter;
 public class PictureShowApplication extends Application {
 
     DataManager mDataManager;
-    boolean DEBUG_MODE = true;
 
     @Override
     public void onCreate() {
-        if(DEBUG_MODE) {
+        if(BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectCustomSlowCalls()
                     .detectDiskReads()

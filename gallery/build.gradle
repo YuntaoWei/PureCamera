@@ -1,15 +1,31 @@
-apply plugin: 'com.android.library'
+if(isModule.toBoolean()) {
+    apply plugin: 'com.android.library'
+} else {
+    apply plugin: 'com.android.application'
+}
 
 android {
     compileSdkVersion 28
     defaultConfig {
+        if (!isModule.toBoolean()) {
+            applicationId "com.android.picshow"
+        }
+
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 28i
         versionCode 1
         versionName "1.0"
 
+        buildConfigField("boolean", "isModule", String.valueOf(isModule.toBoolean()))
+        buildConfigField("boolean", "DEBUG", String.valueOf(debug.toBoolean()))
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
     }
 
     buildTypes {
@@ -17,6 +33,64 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            if (!isModule.toBoolean()) {
+                manifest.srcFile 'src/main/module/AndroidManifest.xml'
+                res.srcDirs = ['src/main/module/res', 'src/main/res']
+                assets.srcDirs = ['src/main/module/assets', 'src/main/assets']
+            } else {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                res.srcDirs = ['src/main/res']
+                assets.srcDirs = ['src/main/assets']
+                java {
+                    // 集成模式，debug中所有的代码都不打包进apk
+                    exclude '**/debug/**'
+                }
+
+                resources {
+                    // 集成模式，module中所有资源都不打包apk
+                    exclude '**/module/**'
+                }
+
+                assets {
+                    exclude '**/module/**'
+                }
+            }
+
+            sourceSets.all { set ->
+                println "${set.name}的文件是 ${set.java.srcDirs}"
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
     }
 
 }

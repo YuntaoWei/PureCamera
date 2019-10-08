@@ -1,0 +1,4 @@
+ext {
+    isModule = true
+    debug = true
+}
