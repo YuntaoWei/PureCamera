@@ -8,6 +8,6 @@ package com.android.picshow.model;
 
 public interface DataLoader {
 
-    public void notifyContentChanged();
+    void notifyContentChanged();
 
 }

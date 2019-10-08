@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.android.picshow.R;
 import com.android.picshow.presenter.BaseActivity;
 import com.android.picshow.utils.PageFactory;
+import com.android.picshow.utils.PathHelper;
 import com.android.picshow.view.activity.PicShowActivityDelegate;
 
-
+@Route(path = PathHelper.PATH_MAIN)
 public class PicShowActivity extends BaseActivity<PicShowActivityDelegate> implements View.OnClickListener, ViewPager.OnPageChangeListener{
 
     int currentPageIndex = 0;

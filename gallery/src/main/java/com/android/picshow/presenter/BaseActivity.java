@@ -33,7 +33,7 @@ public abstract class BaseActivity<T extends IDelegate> extends PermissionActivi
         super.onCreate(savedInstanceState);
         viewDelegate.create(getLayoutInflater(), null, savedInstanceState);
         setContentView(viewDelegate.getRootView());
-        if(isPermissionGranted()) {
+        if (isPermissionGranted()) {
             initView();
         }
     }
@@ -51,7 +51,7 @@ public abstract class BaseActivity<T extends IDelegate> extends PermissionActivi
         Toolbar toolbar = viewDelegate.getToolbar();
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            if(icBlack) {
+            if (icBlack) {
                 toolbar.setNavigationIcon(R.drawable.back_black_n);
             } else {
                 toolbar.setNavigationIcon(R.mipmap.ic_back);

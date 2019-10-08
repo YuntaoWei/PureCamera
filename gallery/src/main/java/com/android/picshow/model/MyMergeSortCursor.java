@@ -26,8 +26,7 @@ import android.database.DataSetObserver;
  * github:https://github.com/YuntaoWei
  * blog:http://blog.csdn.net/qq_17541215
  */
-public class MyMergeSortCursor extends AbstractCursor
-{
+public class MyMergeSortCursor extends AbstractCursor {
     private DataSetObserver mObserver = new DataSetObserver() {
 
         @Override
@@ -43,8 +42,7 @@ public class MyMergeSortCursor extends AbstractCursor
         }
     };
 
-    public MyMergeSortCursor(Cursor[] cursors)
-    {
+    public MyMergeSortCursor(Cursor[] cursors) {
         mCursors = cursors;
         mCursor = cursors[0];
 
@@ -56,11 +54,10 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         int count = 0;
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 count += mCursors[i].getCount();
             }
@@ -69,13 +66,12 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public boolean onMove(int oldPosition, int newPosition)
-    {
+    public boolean onMove(int oldPosition, int newPosition) {
         /* Find the right cursor */
         mCursor = null;
         int cursorStartPos = 0;
         int length = mCursors.length;
-        for (int i = 0 ; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] == null) {
                 continue;
             }
@@ -97,38 +93,32 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public String getString(int column)
-    {
+    public String getString(int column) {
         return mCursor.getString(column);
     }
 
     @Override
-    public short getShort(int column)
-    {
+    public short getShort(int column) {
         return mCursor.getShort(column);
     }
 
     @Override
-    public int getInt(int column)
-    {
+    public int getInt(int column) {
         return mCursor.getInt(column);
     }
 
     @Override
-    public long getLong(int column)
-    {
+    public long getLong(int column) {
         return mCursor.getLong(column);
     }
 
     @Override
-    public float getFloat(int column)
-    {
+    public float getFloat(int column) {
         return mCursor.getFloat(column);
     }
 
     @Override
-    public double getDouble(int column)
-    {
+    public double getDouble(int column) {
         return mCursor.getDouble(column);
     }
 
@@ -138,20 +128,17 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public boolean isNull(int column)
-    {
+    public boolean isNull(int column) {
         return mCursor.isNull(column);
     }
 
     @Override
-    public byte[] getBlob(int column)
-    {
+    public byte[] getBlob(int column) {
         return mCursor.getBlob(column);
     }
 
     @Override
-    public String[] getColumnNames()
-    {
+    public String[] getColumnNames() {
         if (mCursor != null) {
             return mCursor.getColumnNames();
         } else {
@@ -160,10 +147,9 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public void deactivate()
-    {
+    public void deactivate() {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 mCursors[i].deactivate();
             }
@@ -174,7 +160,7 @@ public class MyMergeSortCursor extends AbstractCursor
     @Override
     public void close() {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] == null) continue;
             mCursors[i].close();
         }
@@ -184,16 +170,17 @@ public class MyMergeSortCursor extends AbstractCursor
     @Override
     public void registerContentObserver(ContentObserver observer) {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 mCursors[i].registerContentObserver(observer);
             }
         }
     }
+
     @Override
     public void unregisterContentObserver(ContentObserver observer) {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 mCursors[i].unregisterContentObserver(observer);
             }
@@ -203,7 +190,7 @@ public class MyMergeSortCursor extends AbstractCursor
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 mCursors[i].registerDataSetObserver(observer);
             }
@@ -213,7 +200,7 @@ public class MyMergeSortCursor extends AbstractCursor
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] != null) {
                 mCursors[i].unregisterDataSetObserver(observer);
             }
@@ -221,10 +208,9 @@ public class MyMergeSortCursor extends AbstractCursor
     }
 
     @Override
-    public boolean requery()
-    {
+    public boolean requery() {
         int length = mCursors.length;
-        for (int i = 0 ; i < length ; i++) {
+        for (int i = 0; i < length; i++) {
             if (mCursors[i] == null) {
                 continue;
             }

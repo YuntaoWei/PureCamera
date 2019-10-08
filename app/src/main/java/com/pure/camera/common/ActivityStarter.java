@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.picshow.app.PhotoActivity;
-import com.android.picshow.utils.BucketHelper;
-import com.android.picshow.utils.MediaSetUtils;
 import com.pure.camera.CameraApp;
 import com.pure.camera.bean.MediaFile;
+import com.pure.commonbase.BucketHelper;
+import com.pure.commonbase.MediaSetData;
 
 public class ActivityStarter {
 
@@ -18,9 +19,13 @@ public class ActivityStarter {
         Intent gallery = new Intent(ctx, PhotoActivity.class);
 
         long id = ContentUris.parseId(data);
-        gallery.putExtra(MediaSetUtils.PHOTO_ID, id);
-        gallery.putExtra(MediaSetUtils.BUCKET, BucketHelper.getBucketID(MediaFile.DEFAUT_STORAGE_LOCATION));
+        gallery.putExtra(MediaSetData.PHOTO_ID, id);
+        gallery.putExtra(MediaSetData.BUCKET, BucketHelper.getBucketID(MediaFile.DEFAUT_STORAGE_LOCATION));
         ctx.startActivity(gallery);
-    }
 
+        ARouter.getInstance().build("/gallery/photo")
+                .withLong(MediaSetData.PHOTO_ID, id)
+                .withInt(MediaSetData.BUCKET, BucketHelper.getBucketID(MediaFile.DEFAUT_STORAGE_LOCATION))
+                .navigation();
+    }
 }

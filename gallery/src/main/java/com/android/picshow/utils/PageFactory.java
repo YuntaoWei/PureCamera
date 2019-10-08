@@ -23,8 +23,10 @@ public class PageFactory {
     public static final int INDEX_ALBUM = 2;
 
     static enum PageEnum {
-        PAGE_TIMELINE,PAGE_ALBUMSET,PAGE_ALBUM
-    };
+        PAGE_TIMELINE, PAGE_ALBUMSET, PAGE_ALBUM
+    }
+
+    ;
 
     public static Fragment loadPage(int pos) {
         if (frg.get(pos) == null) {

@@ -54,24 +54,25 @@ public class TimeLinePageDelegate extends AppDelegate {
     }
 
     public void disableDetailAndEdit() {
-        if(btnEdit != null) {
+        if (btnEdit != null) {
             btnEdit.setClickable(false);
             btnEdit.setAlpha(0.3f);
         }
-        if(btnDetail != null) {
+        if (btnDetail != null) {
             btnDetail.setClickable(false);
             btnDetail.setAlpha(0.3f);
         }
     }
 
     public void setBottomViewVisiblity(boolean visiable) {
-        ((PicShowActivity)getActivity()).setBottombarVisibility(!visiable);
+        ((PicShowActivity) getActivity()).setBottombarVisibility(!visiable);
         bottomView.setVisibility(visiable ? View.VISIBLE : View.GONE);
     }
 
     private ProgressDialog dialog;
+
     public void showProgreeDialog() {
-        if(dialog == null) {
+        if (dialog == null) {
             dialog = new ProgressDialog(getActivity());
             dialog.setCancelable(false);
         }
@@ -79,7 +80,7 @@ public class TimeLinePageDelegate extends AppDelegate {
     }
 
     public void dimissDialog() {
-        if(dialog != null) {
+        if (dialog != null) {
             dialog.dismiss();
         }
     }

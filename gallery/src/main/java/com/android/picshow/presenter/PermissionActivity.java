@@ -25,6 +25,7 @@ public abstract class PermissionActivity extends AppCompatActivity {
 
 
     protected abstract void onGetPermissionsSuccess();
+
     protected abstract void onGetPermissionsFailure();
 
 

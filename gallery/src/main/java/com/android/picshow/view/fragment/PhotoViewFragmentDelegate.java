@@ -28,7 +28,7 @@ public class PhotoViewFragmentDelegate extends AppDelegate {
         GlideApp.with(getActivity())
                 .load(picPath)
                 .format(DecodeFormat.PREFER_ARGB_8888)
-                .into((PhotoView)getView(R.id.photo));
+                .into((PhotoView) getView(R.id.photo));
     }
 
     public void freeSource(Fragment f) {

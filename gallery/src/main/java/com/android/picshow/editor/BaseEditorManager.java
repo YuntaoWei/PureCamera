@@ -48,8 +48,6 @@ public class BaseEditorManager {
     public static final int FILTER_THUMB_SIZE = 150;
 
 
-
-
     public static int getLayoutByType(int type) {
 
         int layout = -1;
@@ -82,7 +80,7 @@ public class BaseEditorManager {
                 break;
 
             default:
-                throw new UnsupportedOperationException("Not supported " + type +" edit operation.");
+                throw new UnsupportedOperationException("Not supported " + type + " edit operation.");
 
         }
 
@@ -131,7 +129,7 @@ public class BaseEditorManager {
     }
 
     public static void decodeBitmapAsync(final String src, final LoadListener l) {
-        new Thread(){
+        new Thread() {
 
             @Override
             public void run() {
@@ -141,7 +139,7 @@ public class BaseEditorManager {
 
                 Bitmap bm = BitmapFactory.decodeFile(src, option);
 
-                if(l != null) {
+                if (l != null) {
                     l.onLoadSuccess(bm);
                 }
             }
@@ -166,14 +164,14 @@ public class BaseEditorManager {
                 if (width > height) {
                     if (width > maxSize) {
                         scale = width / maxSize;
-                        option.outWidth = (int)maxSize;
+                        option.outWidth = (int) maxSize;
                         option.outHeight /= scale;
                         Log.i(TAG, "scale 1 : " + scale + " " + option.outWidth + " x " + option.outHeight);
                     }
                 } else {
                     if (height > maxSize) {
                         scale = height * 1.0f / maxSize;
-                        option.outHeight = (int)maxSize;
+                        option.outHeight = (int) maxSize;
                         option.outWidth /= scale;
                         Log.i(TAG, "scale 2 : " + scale + " " + option.outWidth + " x " + option.outHeight);
                     }
@@ -184,7 +182,7 @@ public class BaseEditorManager {
                 bm = BitmapFactory.decodeFile(src, option);
 
                 Bitmap resizeBitmap = BaseEditorManager.resize(bm, 1 / scale, 1 / scale);
-                if(l != null) {
+                if (l != null) {
                     l.onLoadSuccess(resizeBitmap);
                 }
             }

@@ -8,7 +8,7 @@ import com.android.picshow.editor.filters.FilterType;
 import com.android.picshow.editor.filters.Filters;
 import com.android.picshow.editor.filters.NativeFilter;
 import com.android.picshow.editor.filters.NewFilters;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 
 public class ImageUtils {

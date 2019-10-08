@@ -3,7 +3,7 @@ package com.android.picshow.editor.filters;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;

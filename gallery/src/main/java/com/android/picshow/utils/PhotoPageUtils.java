@@ -23,7 +23,7 @@ public class PhotoPageUtils {
     public static ArrayList<Uri> mediaItem2Uris(List<SimpleMediaItem> items) {
         ArrayList<Uri> uris = new ArrayList<>(items.size());
         for (SimpleMediaItem item : items
-             ) {
+        ) {
             uris.add(item.itemUrl);
         }
         return uris;

@@ -11,7 +11,8 @@ public class Path {
     public int ID;
     public int mType;
 
-    public Path() {}
+    public Path() {
+    }
 
     public Path(int id, int type) {
         ID = id;

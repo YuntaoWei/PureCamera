@@ -30,7 +30,7 @@ import com.android.picshow.editor.graffti.GraffitiSelectableItem;
 import com.android.picshow.editor.graffti.GraffitiText;
 import com.android.picshow.editor.graffti.GraffitiView;
 import com.android.picshow.editor.scrawl.PaintUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 /**
  * Created by yuntao.wei on 2018/5/21.
@@ -58,7 +58,7 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (EditActivity)context;
+        mActivity = (EditActivity) context;
     }
 
     @Nullable
@@ -82,7 +82,7 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
                 mGraffitiParams.mEraserPath, mGraffitiParams.mEraserImageIsResizeable, new GraffitiListener() {
 
             @Override
-            public void onSaved(Bitmap bitmap, Bitmap bitmapEraser){
+            public void onSaved(Bitmap bitmap, Bitmap bitmapEraser) {
 
 
                 if (bitmapEraser != null) {
@@ -227,7 +227,7 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void onColorPickerClicked(boolean show) {
-        if(colorPanel != null) {
+        if (colorPanel != null) {
             colorPanel.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
     }
@@ -368,9 +368,10 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
     }
 
 
-
-    /** color pick button **/
-    private Button btnColorWhite, btnColorGray, btnColorBlack,btnColorOrange,
+    /**
+     * color pick button
+     **/
+    private Button btnColorWhite, btnColorGray, btnColorBlack, btnColorOrange,
             btnColorYellow, btnColorGreen, btnColorBlue, btnColorRed;
 
     private SeekBar paintSize;
@@ -379,10 +380,14 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
 
     private Button btnCancel, btnRevocation, btnCancelRevocation, btnSave;
 
-    /** the paint style **/
+    /**
+     * the paint style
+     **/
     private Button btnText, btnCurve, btnLine, btnArrow, btnCircle, btnRectangle;
 
-    /** color picker view, it shows when color picker clicked.**/
+    /**
+     * color picker view, it shows when color picker clicked.
+     **/
     private View colorPanel;
 
     @Override
@@ -476,7 +481,7 @@ public class DrawBaseFragment extends Fragment implements View.OnClickListener, 
 
     private void release() {
         mActivity = null;
-        if(srcPicture != null) {
+        if (srcPicture != null) {
             srcPicture.recycle();
             srcPicture = null;
         }

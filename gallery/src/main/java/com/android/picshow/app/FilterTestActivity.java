@@ -11,9 +11,11 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.android.picshow.R;
 import com.android.picshow.editor.filters.NewFilters;
 import com.android.picshow.utils.MediaSetUtils;
+import com.android.picshow.utils.PathHelper;
 
 /**
  * Created by yuntao.wei on 2018/5/24.
@@ -21,6 +23,7 @@ import com.android.picshow.utils.MediaSetUtils;
  * blog:http://blog.csdn.net/qq_17541215
  */
 
+@Route(path = PathHelper.PATH_FILTER)
 public class FilterTestActivity extends Activity {
 
     private ImageView filterShow;

@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.android.picshow.R;
 import com.android.picshow.adapter.PhotoPageAdapter;
 import com.android.picshow.model.GlideApp;
@@ -22,6 +23,7 @@ import com.android.picshow.ui.MenuExecutor;
 import com.android.picshow.ui.PicPopupWindow;
 import com.android.picshow.utils.LogPrinter;
 import com.android.picshow.utils.MediaSetUtils;
+import com.android.picshow.utils.PathHelper;
 import com.android.picshow.utils.PhotoPageUtils;
 import com.android.picshow.utils.PicShowUtils;
 import com.android.picshow.utils.QuickSortUtil;
@@ -36,6 +38,7 @@ import java.util.List;
  * blog:http://blog.csdn.net/qq_17541215
  */
 
+@Route(path = PathHelper.PATH_PHOTO)
 public class PhotoActivity extends BaseActivity<PhotoActivityDelegate> implements PhotoDataLoader.PhotoLoadListener, View.OnClickListener {
 
     private static final String TAG = "PhotoActivity";

@@ -29,7 +29,7 @@ public class PicShowActivityDelegate extends AppDelegate {
     public void initWidget() {
         viewPager = getView(R.id.vpager);
         viewPager.setAdapter(
-                new PageControlAdapter(((FragmentActivity)getActivity()).getSupportFragmentManager(), PageFactory.getMainPage()));
+                new PageControlAdapter(((FragmentActivity) getActivity()).getSupportFragmentManager(), PageFactory.getMainPage()));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PicShowActivityDelegate extends AppDelegate {
     }
 
     public void switchPage(int index) {
-        if(viewPager == null)
+        if (viewPager == null)
             viewPager = getView(R.id.vpager);
 
 
@@ -46,7 +46,7 @@ public class PicShowActivityDelegate extends AppDelegate {
     }
 
     public void setTitleVisibility(boolean album) {
-        if(album) {
+        if (album) {
             getView(R.id.album_title).setVisibility(View.INVISIBLE);
         } else {
             getView(R.id.album_title).setVisibility(View.VISIBLE);
@@ -54,15 +54,16 @@ public class PicShowActivityDelegate extends AppDelegate {
     }
 
     public void setTitle(String s) {
-        ((TextView)getView(R.id.album_title)).setText(s);
+        ((TextView) getView(R.id.album_title)).setText(s);
     }
 
     public void setTitle(int res) {
-        ((TextView)getView(R.id.album_title)).setText(res);
+        ((TextView) getView(R.id.album_title)).setText(res);
     }
 
     /**
      * change the focus button style
+     *
      * @param index
      */
     public void changeButtonSelectedStatus(int index) {
@@ -74,16 +75,16 @@ public class PicShowActivityDelegate extends AppDelegate {
                 albumSelectDrawable.setBounds(0, 0,
                         albumSelectDrawable.getMinimumWidth(), albumSelectDrawable.getMinimumHeight());
 
-                ((Button)getView(R.id.btn_album)).setTextColor(res.getColor(R.color.select_text_color));
-                ((Button)getView(R.id.btn_album)).setCompoundDrawables(null, albumSelectDrawable, null, null);
+                ((Button) getView(R.id.btn_album)).setTextColor(res.getColor(R.color.select_text_color));
+                ((Button) getView(R.id.btn_album)).setCompoundDrawables(null, albumSelectDrawable, null, null);
 
                 //photo button display default status.
                 Drawable photoDefaultDrawable = res.getDrawable(R.drawable.photo_gray_n);
                 photoDefaultDrawable.setBounds(0, 0,
                         photoDefaultDrawable.getMinimumWidth(), photoDefaultDrawable.getMinimumHeight());
 
-                ((Button)getView(R.id.btn_photo)).setTextColor(res.getColor(R.color.default_text_color));
-                ((Button)getView(R.id.btn_photo)).setCompoundDrawables(null, photoDefaultDrawable, null, null);
+                ((Button) getView(R.id.btn_photo)).setTextColor(res.getColor(R.color.default_text_color));
+                ((Button) getView(R.id.btn_photo)).setCompoundDrawables(null, photoDefaultDrawable, null, null);
                 return;
 
             case PageFactory.INDEX_TIMELINE:
@@ -92,8 +93,8 @@ public class PicShowActivityDelegate extends AppDelegate {
                 albumDefaultDrawable.setBounds(0, 0,
                         albumDefaultDrawable.getMinimumWidth(), albumDefaultDrawable.getMinimumHeight());
 
-                ((Button)getView(R.id.btn_album)).setTextColor(res.getColor(R.color.default_text_color));
-                ((Button)getView(R.id.btn_album)).setCompoundDrawables(null, albumDefaultDrawable, null, null);
+                ((Button) getView(R.id.btn_album)).setTextColor(res.getColor(R.color.default_text_color));
+                ((Button) getView(R.id.btn_album)).setCompoundDrawables(null, albumDefaultDrawable, null, null);
 
 
                 //photo button selected,should display high light status.
@@ -101,8 +102,8 @@ public class PicShowActivityDelegate extends AppDelegate {
                 photoSelectDrawable.setBounds(0, 0,
                         photoSelectDrawable.getMinimumWidth(), photoSelectDrawable.getMinimumHeight());
 
-                ((Button)getView(R.id.btn_photo)).setTextColor(res.getColor(R.color.select_text_color));
-                ((Button)getView(R.id.btn_photo)).setCompoundDrawables(null, photoSelectDrawable, null, null);
+                ((Button) getView(R.id.btn_photo)).setTextColor(res.getColor(R.color.select_text_color));
+                ((Button) getView(R.id.btn_photo)).setCompoundDrawables(null, photoSelectDrawable, null, null);
                 return;
 
             default:
@@ -117,8 +118,8 @@ public class PicShowActivityDelegate extends AppDelegate {
     public boolean onBackPressed(int current) {
         PageControlAdapter adapter = (PageControlAdapter) viewPager.getAdapter();
         Fragment f = adapter.getItem(current);
-        if(f instanceof TimeLinePage) {
-            return ((TimeLinePage)f).onBackPressed();
+        if (f instanceof TimeLinePage) {
+            return ((TimeLinePage) f).onBackPressed();
         }
         return false;
     }

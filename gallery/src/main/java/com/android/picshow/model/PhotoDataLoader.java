@@ -4,7 +4,6 @@ import android.app.Application;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.android.picshow.app.PictureShowApplication;
 import com.android.picshow.utils.MediaSetUtils;
 
 import java.util.concurrent.Semaphore;
@@ -28,6 +27,7 @@ public class PhotoDataLoader implements DataLoader {
     public interface PhotoLoadListener {
 
         public void startLoad();
+
         public void loadFinish(Cursor cursor);
     }
 
@@ -39,7 +39,7 @@ public class PhotoDataLoader implements DataLoader {
     }
 
     public void resume() {
-        if(null == notifier) {
+        if (null == notifier) {
             notifier = new ChangeNotify(this, new Uri[]{
                     MediaSetUtils.VIDEO_URI,
                     MediaSetUtils.IMAGE_URI
@@ -49,19 +49,19 @@ public class PhotoDataLoader implements DataLoader {
             DataManager.getDataManager(mApp).registerObServer(MediaSetUtils.IMAGE_URI, notifier);
         }
 
-        if(semaphore == null)
+        if (semaphore == null)
             semaphore = new Semaphore(1);
-        if(loadTask == null)
+        if (loadTask == null)
             loadTask = new LoadThread();
         loadTask.start();
         semaphore.release();
     }
 
     public void pause() {
-        if(loadTask != null)
+        if (loadTask != null)
             loadTask.stopTask();
         loadTask = null;
-        if(semaphore != null)
+        if (semaphore != null)
             semaphore.release();
         semaphore = null;
 
@@ -69,7 +69,7 @@ public class PhotoDataLoader implements DataLoader {
     }
 
     private void reloadData() {
-        if(semaphore != null)
+        if (semaphore != null)
             semaphore.release();
     }
 
@@ -82,7 +82,8 @@ public class PhotoDataLoader implements DataLoader {
 
         private boolean stop = false;
 
-        public LoadThread() {}
+        public LoadThread() {
+        }
 
         public void stopTask() {
             stop = true;
@@ -92,16 +93,16 @@ public class PhotoDataLoader implements DataLoader {
         public void run() {
             while (true) {
                 try {
-                    if(semaphore == null)
+                    if (semaphore == null)
                         continue;
                     semaphore.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(stop)
+                if (stop)
                     return;
 
-                if(!notifier.isDirty())
+                if (!notifier.isDirty())
                     continue;
 
                 Cursor c = MediaSetUtils.queryAllItemByBucketID(mApp.getContentResolver(), bucketID);

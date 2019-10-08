@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.pure.camera.base.BaseCameraActivity;
 import com.pure.camera.module.PhotoModule;
 import com.pure.camera.module.VideoModule;
@@ -11,6 +12,7 @@ import com.pure.camera.view.CameraPhotoView;
 import com.pure.camera.view.CameraVideoView;
 import com.pure.camera.view.CameraView;
 
+@Route(path = "/camera/main")
 public class CameraActivity extends BaseCameraActivity implements View.OnClickListener {
 
     @Override

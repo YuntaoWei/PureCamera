@@ -1,4 +1,4 @@
-package com.android.picshow.utils;
+package com.pure.commonbase;
 
 import android.os.Environment;
 

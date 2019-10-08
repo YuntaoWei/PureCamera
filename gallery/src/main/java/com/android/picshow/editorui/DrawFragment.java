@@ -22,7 +22,7 @@ import com.android.picshow.editor.scrawl.DrawingBoardView;
 import com.android.picshow.editor.scrawl.PaintUtils;
 import com.android.picshow.editor.scrawl.ScrawlTools;
 import com.android.picshow.editor.utils.FileUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 /**
  * Created by yuntao.wei on 2018/5/16.
@@ -45,7 +45,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Base
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (EditActivity)context;
+        mActivity = (EditActivity) context;
     }
 
     @Nullable
@@ -80,8 +80,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Base
             public void onLoadSuccess(Object o) {
                 OperateUtils operateUtils = new OperateUtils(mActivity);
                 //final Bitmap resizeBmp = operateUtils.compressionFiller((Bitmap)o, drawLayout);
-                final Bitmap resizeBmp = (Bitmap)o;
-                if(resizeBmp == null) {
+                final Bitmap resizeBmp = (Bitmap) o;
+                if (resizeBmp == null) {
                     LogPrinter.i(TAG, "some thing error occurs!");
                     return;
                 }
@@ -155,7 +155,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Base
     }
 
     public void onColorPickerClicked(boolean show) {
-        if(colorPanel != null) {
+        if (colorPanel != null) {
             colorPanel.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
     }
@@ -180,11 +180,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Base
 
     private Button btnColorPicker;
 
-    /** color picker view, it shows when color picker clicked.**/
+    /**
+     * color picker view, it shows when color picker clicked.
+     **/
     private View colorPanel;
 
     /**
      * init draw fragment bottom panel,it called by activity when fragment view created and bottom panel inflate success.
+     *
      * @param v see layout:draw_bottom_operation.xml
      */
     @Override
@@ -266,8 +269,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Base
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         int size = seekBar.getProgress() / 20;
-        LogPrinter.i(TAG,"onStopTrackingTouch : " + size);
-        if(size == 0)
+        LogPrinter.i(TAG, "onStopTrackingTouch : " + size);
+        if (size == 0)
             size = 1;
         setPaint(-1, size);
     }

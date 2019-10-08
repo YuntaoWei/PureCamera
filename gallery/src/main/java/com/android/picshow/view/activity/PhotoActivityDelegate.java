@@ -7,9 +7,9 @@ import android.view.View;
 import com.android.picshow.R;
 import com.android.picshow.adapter.PhotoPageAdapter;
 import com.android.picshow.ui.PicPopupWindow;
-import com.android.picshow.utils.ApiHelper;
 import com.android.picshow.utils.PicShowUtils;
 import com.android.picshow.view.AppDelegate;
+import com.pure.commonbase.ApiHelper;
 
 public class PhotoActivityDelegate extends AppDelegate {
 
@@ -38,30 +38,31 @@ public class PhotoActivityDelegate extends AppDelegate {
     }
 
     public void setToolbarNavigationClickListener(View.OnClickListener cl, int toolbarID) {
-        ((Toolbar)getView(toolbarID)).setNavigationOnClickListener(cl);
+        ((Toolbar) getView(toolbarID)).setNavigationOnClickListener(cl);
     }
 
     public void setPagerAdapter(PhotoPageAdapter adapter) {
-        if(mPager == null) {
+        if (mPager == null) {
             mPager = getView(R.id.photo_pager);
         }
         mPager.setAdapter(adapter);
     }
 
     public void switchPage(int id) {
-        if(mPager == null) {
+        if (mPager == null) {
             mPager = getView(R.id.photo_pager);
         }
         mPager.setCurrentItem(id);
     }
 
     public void enterFullScreen() {
-        if(fullScreen || getToolbar() == null || rootView == null || getBottomView() == null) return;
+        if (fullScreen || getToolbar() == null || rootView == null || getBottomView() == null)
+            return;
 
         //bottomView.setVisibility(View.GONE);
 
         int flag = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        if(ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE)
+        if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE)
             flag = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 
         getToolbar().setVisibility(View.INVISIBLE);
@@ -70,7 +71,8 @@ public class PhotoActivityDelegate extends AppDelegate {
     }
 
     public void exitFullScreen() {
-        if(!fullScreen || getToolbar() == null || rootView == null || getBottomView() == null) return;
+        if (!fullScreen || getToolbar() == null || rootView == null || getBottomView() == null)
+            return;
 
         //bottomView.setVisibility(View.VISIBLE);
 
@@ -80,7 +82,7 @@ public class PhotoActivityDelegate extends AppDelegate {
     }
 
     public void toggleFullScreen() {
-        if(fullScreen) {
+        if (fullScreen) {
             exitFullScreen();
         } else {
             enterFullScreen();
@@ -90,23 +92,23 @@ public class PhotoActivityDelegate extends AppDelegate {
     }
 
     private void toggleBottomView() {
-        if(getBottomView() == null)
+        if (getBottomView() == null)
             return;
 
-        if(getBottomView().getVisibility() == View.VISIBLE)
+        if (getBottomView().getVisibility() == View.VISIBLE)
             getBottomView().setVisibility(View.GONE);
         else
             getBottomView().setVisibility(View.VISIBLE);
     }
 
     public void showMoreMenu(PicPopupWindow.PicPopupWindowListener itemListener) {
-        if(moreMenu == null) {
+        if (moreMenu == null) {
             moreMenu = getActivity().getResources().getStringArray(R.array.more_menu);
         }
 
         PicPopupWindow moreMenuWindow = PicPopupWindow.getPicPopupWindow(getActivity());
-        for (String item: moreMenu
-                ) {
+        for (String item : moreMenu
+        ) {
             moreMenuWindow.addPopupWindowItem(item, item, itemListener);
         }
 

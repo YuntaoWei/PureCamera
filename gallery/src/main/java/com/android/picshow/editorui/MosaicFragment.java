@@ -17,7 +17,7 @@ import com.android.picshow.editor.filters.BaseEditor;
 import com.android.picshow.editor.mosaic.DrawMosaicView;
 import com.android.picshow.editor.mosaic.MosaicUtil;
 import com.android.picshow.editor.utils.FileUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 /**
  * Created by yuntao.wei on 2018/5/17.
@@ -50,7 +50,7 @@ public class MosaicFragment extends Fragment implements View.OnClickListener, Ba
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (EditActivity)context;
+        mActivity = (EditActivity) context;
     }
 
     @Nullable
@@ -78,7 +78,7 @@ public class MosaicFragment extends Fragment implements View.OnClickListener, Ba
             @Override
             public void onLoadSuccess(Object o) {
 
-                srcBitmap = (Bitmap)o;
+                srcBitmap = (Bitmap) o;
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -177,11 +177,11 @@ public class MosaicFragment extends Fragment implements View.OnClickListener, Ba
     }
 
     private void setSelectStatus() {
-        if(topPanel.getVisibility() != View.VISIBLE) {
+        if (topPanel.getVisibility() != View.VISIBLE) {
             topPanel.setVisibility(View.VISIBLE);
         }
 
-        if(seek != null) {
+        if (seek != null) {
             seek.setProgress(DEFAULT_PROGRESS);
         }
 
@@ -236,7 +236,7 @@ public class MosaicFragment extends Fragment implements View.OnClickListener, Ba
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         size = seekBar.getProgress();
-        if(size == 0)
+        if (size == 0)
             size = 5;
         mosaic.setMosaicBrushWidth(size);
     }

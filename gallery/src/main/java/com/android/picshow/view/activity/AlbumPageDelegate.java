@@ -41,10 +41,10 @@ public class AlbumPageDelegate extends AppDelegate {
     }
 
     public void setGridViewClickListener(AdapterView.OnItemClickListener l, AdapterView.OnItemLongClickListener ll) {
-        if(l != null)
+        if (l != null)
             gridView.setOnItemClickListener(l);
 
-        if(ll != null)
+        if (ll != null)
             gridView.setOnItemLongClickListener(ll);
     }
 
@@ -73,8 +73,9 @@ public class AlbumPageDelegate extends AppDelegate {
     }
 
     private ProgressDialog dialog;
+
     public void showProgreeDialog() {
-        if(dialog == null) {
+        if (dialog == null) {
             dialog = new ProgressDialog(getActivity());
             dialog.setCancelable(false);
         }
@@ -83,20 +84,20 @@ public class AlbumPageDelegate extends AppDelegate {
     }
 
     public void dimissDialog() {
-        if(dialog != null) {
+        if (dialog != null) {
             dialog.dismiss();
         }
     }
 
     public void updateItem(View v, boolean select) {
-        TimeLineAdapter.ViewHolder vh = (TimeLineAdapter.ViewHolder)v.getTag();
-        if(vh != null) {
+        TimeLineAdapter.ViewHolder vh = (TimeLineAdapter.ViewHolder) v.getTag();
+        if (vh != null) {
             vh.selectIcon.setChecked(select);
         }
     }
 
     public void setTitle(String s) {
-        ((TextView)getView(R.id.title)).setText(s);
+        ((TextView) getView(R.id.title)).setText(s);
     }
 
 }

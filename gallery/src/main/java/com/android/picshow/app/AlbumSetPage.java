@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.picshow.R;
 import com.android.picshow.model.Album;
 import com.android.picshow.model.AlbumSetDataLoader;
@@ -21,6 +22,7 @@ import com.android.picshow.model.LoadListener;
 import com.android.picshow.presenter.BaseFragment;
 import com.android.picshow.utils.LogPrinter;
 import com.android.picshow.utils.MediaSetUtils;
+import com.android.picshow.utils.PathHelper;
 import com.android.picshow.utils.PicShowUtils;
 import com.android.picshow.view.fragment.AlbumSetPageDelegate;
 import com.bumptech.glide.load.DecodeFormat;
@@ -170,10 +172,14 @@ public class AlbumSetPage extends BaseFragment<AlbumSetPageDelegate> {
     }
 
     private void startAlbumPage(int bucket, String name) {
-        Intent intent = new Intent(getContext(),AlbumPage.class);
+        ARouter.getInstance().build(PathHelper.PATH_ALBUM)
+                .withInt(MediaSetUtils.BUCKET, bucket)
+                .withString(MediaSetUtils.SET_NAME, name)
+                .navigation();
+        /*Intent intent = new Intent(getContext(),AlbumPage.class);
         intent.putExtra(MediaSetUtils.BUCKET,bucket);
         intent.putExtra(MediaSetUtils.SET_NAME, name);
-        getContext().startActivity(intent);
+        getContext().startActivity(intent);*/
     }
 
     private class GridAdapter extends BaseAdapter {

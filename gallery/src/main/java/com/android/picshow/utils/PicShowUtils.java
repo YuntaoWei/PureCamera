@@ -25,12 +25,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.picshow.R;
 import com.android.picshow.editor.BaseEditorManager;
-import com.android.picshow.editorui.EditActivity;
 import com.android.picshow.model.Album;
 import com.android.picshow.model.PhotoItem;
 import com.android.picshow.model.SimpleMediaItem;
+import com.pure.commonbase.PathHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,8 @@ public class PicShowUtils {
     };
 
     /**
-     *Get the TimeLine page thumbnail size from xml configuration.
+     * Get the TimeLine page thumbnail size from xml configuration.
+     *
      * @param ctx
      * @return
      */
@@ -66,13 +68,14 @@ public class PicShowUtils {
 
     /**
      * Get the AlbumSet Page thumbnail size from the xml configuration.
+     *
      * @param ctx
      * @return
      */
     public static int getAlbumImageWidth(Context ctx) {
         int screenWidth = ctx.getResources().getDisplayMetrics().widthPixels;
         int colNumbers = ctx.getResources().getInteger(R.integer.album_col_num);
-        int allSpaceing = (int)ctx.getResources().getDimension(R.dimen.album_col_spaceing);
+        int allSpaceing = (int) ctx.getResources().getDimension(R.dimen.album_col_spaceing);
         return (screenWidth - allSpaceing) / colNumbers;
     }
 
@@ -83,13 +86,13 @@ public class PicShowUtils {
     private static final int PERMISSION_DENIED = -1;
 
     public static boolean checkPermissions(Context ctx) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return true;
 
         ArrayList<String> needRequest = new ArrayList<>();
-        for (String permission:PERMISSIONS
-             ) {
-            if(ContextCompat.checkSelfPermission(ctx,permission) == PERMISSION_DENIED) {
+        for (String permission : PERMISSIONS
+        ) {
+            if (ContextCompat.checkSelfPermission(ctx, permission) == PERMISSION_DENIED) {
                 return false;
             }
         }
@@ -98,11 +101,12 @@ public class PicShowUtils {
 
     /**
      * Hide the toolbar
+     *
      * @param toolbar
      * @param needTitle
      */
     private static void setNoTitle(Toolbar toolbar, boolean needTitle) {
-        if(needTitle)  {
+        if (needTitle) {
             toolbar.setVisibility(View.VISIBLE);
         } else {
             toolbar.setVisibility(View.INVISIBLE);
@@ -115,6 +119,7 @@ public class PicShowUtils {
 
     /**
      * Set display full screen options.
+     *
      * @param toolbar
      */
     public static void enterFullScreen(Toolbar toolbar) {
@@ -123,6 +128,7 @@ public class PicShowUtils {
 
     /**
      * Exit the full screen mode.
+     *
      * @param toolbar
      */
     public static void exitFullScreen(Toolbar toolbar) {
@@ -131,10 +137,11 @@ public class PicShowUtils {
 
     /**
      * Use merge sort to sort the datas.
+     *
      * @param original src data.
-     * @param desc use DESC or ASC.
+     * @param desc     use DESC or ASC.
      */
-    public static void sortItem(Album[] original,boolean desc) {
+    public static void sortItem(Album[] original, boolean desc) {
         mergeSort(original, 1);
     }
 
@@ -200,10 +207,13 @@ public class PicShowUtils {
 
     public static void editItem(Context ctx, SimpleMediaItem item) {
 
-        if(item.isImage) {
-            Intent intent = new Intent(ctx, EditActivity.class);
+        if (item.isImage) {
+            /*Intent intent = new Intent(ctx, EditActivity.class);
             intent.putExtra(BaseEditorManager.SRC_PIC_PATH, MediaSetUtils.uriToPath(ctx, item.itemUrl));
-            ctx.startActivity(intent);
+            ctx.startActivity(intent);*/
+            ARouter.getInstance().build(PathHelper.PATH_EDIT)
+                    .withString(BaseEditorManager.SRC_PIC_PATH, MediaSetUtils.uriToPath(ctx, item.itemUrl))
+                    .navigation();
         } else {
             Intent intent = new Intent(Intent.ACTION_EDIT);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -216,17 +226,17 @@ public class PicShowUtils {
         Cursor c = ctx.getContentResolver().query(item.itemUrl,
                 new String[]{}, null, null, null);
         String path = null;
-        if(c != null) {
-            while(c.moveToNext()) {
+        if (c != null) {
+            while (c.moveToNext()) {
                 path = c.getString(0);
             }
             c.close();
             c = null;
         }
         int row = ctx.getContentResolver().delete(item.itemUrl, null, null);
-        if(row > 0 && path != null) {
+        if (row > 0 && path != null) {
             File f = new File(path);
-            if(f.exists())
+            if (f.exists())
                 return f.delete();
         }
         return false;
@@ -234,19 +244,19 @@ public class PicShowUtils {
 
     public static boolean renameItem(Context ctx, Uri uri, boolean image, String newName) {
         Cursor c = ctx.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA},
-                null, null,null);
+                null, null, null);
         String absPath = null;
         String newFilePath = null;
-        if(c != null && c.moveToNext()) {
+        if (c != null && c.moveToNext()) {
             absPath = c.getString(0);
             c.close();
             c = null;
         }
 
         boolean result = false;
-        if(absPath != null) {
+        if (absPath != null) {
             File f = new File(absPath);
-            if(f.exists()) {
+            if (f.exists()) {
                 int index = absPath.lastIndexOf(".");
                 String reg = absPath.substring(index);
                 String newFileName = newName + reg;
@@ -256,7 +266,7 @@ public class PicShowUtils {
                 result = f.renameTo(newFile);
             }
         }
-        if(result) {
+        if (result) {
             ContentValues cv = new ContentValues();
             cv.put(MediaStore.Files.FileColumns.TITLE, newName);
             cv.put(MediaStore.Files.FileColumns.DATA, newFilePath == null ? "" : newFilePath);
@@ -276,7 +286,7 @@ public class PicShowUtils {
 
     public static void showDetailDialog(Context ctx, final List<String> details) {
         //detailDialog
-        final LayoutInflater inflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(ctx, R.style.draw_dialog);
         View dialogView = inflater.inflate(R.layout.detail_layout, null);
         ListView list = dialogView.findViewById(R.id.detail_list);
@@ -300,7 +310,7 @@ public class PicShowUtils {
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewHolder vh = null;
                 String[] info = null;
-                if(position == getCount() - 1) {
+                if (position == getCount() - 1) {
                     String o = details.get(position);
                     int index = o.indexOf('/');
                     info = new String[2];
@@ -310,8 +320,8 @@ public class PicShowUtils {
                     info = details.get(position).split("/");
                 }
 
-                if(convertView != null) {
-                    vh = (ViewHolder)convertView.getTag();
+                if (convertView != null) {
+                    vh = (ViewHolder) convertView.getTag();
                     vh.tvItemName.setText(info[0]);
                     vh.tvDetail.setText(info[1]);
                 } else {
@@ -347,73 +357,73 @@ public class PicShowUtils {
         try {
             ExifInterface ef = new ExifInterface(path);
             detail = ef.getAttribute(ExifInterface.TAG_DATETIME);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_DATETIME + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_IMAGE_WIDTH + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_IMAGE_LENGTH + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_ORIENTATION);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_ORIENTATION + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_MAKE);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_MAKE + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_MODEL);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_MODEL + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_FLASH);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_FLASH + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_FOCAL_LENGTH + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_WHITE_BALANCE + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_APERTURE_VALUE);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_APERTURE_VALUE + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_EXPOSURE_TIME + " : /" + detail);
             }
             detail = null;
 
             detail = ef.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
-            if(detail != null) {
+            if (detail != null) {
                 infos.add(ExifInterface.TAG_ISO_SPEED_RATINGS + " : /" + detail);
             }
             detail = null;

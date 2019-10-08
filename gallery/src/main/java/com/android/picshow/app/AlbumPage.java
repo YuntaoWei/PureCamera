@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.picshow.R;
 import com.android.picshow.adapter.TimeLineAdapter;
 import com.android.picshow.model.AlbumDataLoader;
@@ -22,6 +24,7 @@ import com.android.picshow.ui.MenuExecutor;
 import com.android.picshow.ui.SelectionManager;
 import com.android.picshow.utils.LogPrinter;
 import com.android.picshow.utils.MediaSetUtils;
+import com.android.picshow.utils.PathHelper;
 import com.android.picshow.utils.PicShowUtils;
 import com.android.picshow.view.activity.AlbumPageDelegate;
 
@@ -33,6 +36,7 @@ import java.util.List;
  * blog:http://blog.csdn.net/qq_17541215
  */
 
+@Route(path = PathHelper.PATH_ALBUM)
 public class AlbumPage extends BaseActivity<AlbumPageDelegate> implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
 
@@ -251,11 +255,17 @@ public class AlbumPage extends BaseActivity<AlbumPageDelegate> implements Adapte
     }
 
     private void goToPhotoPage(PhotoItem item, int position) {
-        Intent intent = new Intent(this, PhotoActivity.class);
+        ARouter.getInstance().build(PathHelper.PATH_PHOTO)
+                .withLong(MediaSetUtils.PHOTO_ID, position)
+                .withString(MediaSetUtils.PHOTO_PATH, item.getPath())
+                .withInt(MediaSetUtils.BUCKET, bucketID)
+                .navigation();
+
+        /*Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra(MediaSetUtils.PHOTO_ID, position);
         intent.putExtra(MediaSetUtils.PHOTO_PATH, item.getPath());
         intent.putExtra(MediaSetUtils.BUCKET, bucketID);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 
     @Override

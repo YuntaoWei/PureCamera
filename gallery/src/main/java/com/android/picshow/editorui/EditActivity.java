@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.android.picshow.R;
 import com.android.picshow.editor.BaseEditorManager;
 import com.android.picshow.editor.filters.BaseEditor;
@@ -28,7 +29,8 @@ import com.android.picshow.editor.operate.OperateUtils;
 import com.android.picshow.editor.utils.FileUtils;
 import com.android.picshow.editorui.utils.Constants;
 import com.android.picshow.editorui.utils.FragmentUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
+import com.pure.commonbase.PathHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,6 +43,7 @@ import java.io.IOException;
  * blog:http://blog.csdn.net/qq_17541215
  */
 
+@Route(path = PathHelper.PATH_EDIT)
 public class EditActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
 
     private LinearLayout content_layout;
@@ -152,29 +155,29 @@ public class EditActivity extends Activity implements View.OnClickListener, View
     }
 
     public void showCompare() {
-        if(btnCompare != null)
+        if (btnCompare != null)
             btnCompare.setVisibility(View.VISIBLE);
     }
 
     public void hideCompare() {
-        if(btnCompare != null)
+        if (btnCompare != null)
             btnCompare.setVisibility(View.INVISIBLE);
     }
 
     public void hideTopBar() {
-        if(topLayout != null)
+        if (topLayout != null)
             topLayout.setVisibility(View.GONE);
     }
 
     public void showTopBar() {
-        if(topLayout != null)
+        if (topLayout != null)
             topLayout.setVisibility(View.VISIBLE);
     }
 
     private void addFragment(int type) {
         hideTopBar();
 
-        if(type == BaseEditorManager.PAINT) {
+        if (type == BaseEditorManager.PAINT) {
             GraffitiParams params = new GraffitiParams();
             params.mImagePath = tempPath;
             params.mPaintSize = 20;
@@ -183,19 +186,19 @@ public class EditActivity extends Activity implements View.OnClickListener, View
 
         BaseEditor f = FragmentUtils.getFragment(type, mBundle);
 
-        if(f == null)
+        if (f == null)
             return;
         currentEditor = f;
 
-        if(fragmentManager == null) {
+        if (fragmentManager == null) {
             fragmentManager = getFragmentManager();
             fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
 
                 @Override
                 public void onBackStackChanged() {
-                    if(fragmentManager.getBackStackEntryCount() == 0) {
-                        LogPrinter.i("www","show new pic : " + (editedPic == null ? true : editedPic.isRecycled()));
-                        if(editedPic != null && !editedPic.isRecycled()) {
+                    if (fragmentManager.getBackStackEntryCount() == 0) {
+                        LogPrinter.i("www", "show new pic : " + (editedPic == null ? true : editedPic.isRecycled()));
+                        if (editedPic != null && !editedPic.isRecycled()) {
                             pictureShow.setImageBitmap(editedPic);
                         }
                         pictureShow.setVisibility(View.VISIBLE);
@@ -203,14 +206,15 @@ public class EditActivity extends Activity implements View.OnClickListener, View
                         currentEditor = null;
                         hideCompare();
                         showTopBar();
-                    };
+                    }
+                    ;
                 }
 
             });
         }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.mainLayout, (Fragment)currentEditor);
+        transaction.add(R.id.mainLayout, (Fragment) currentEditor);
         transaction.addToBackStack(null);
         transaction.commit();
 
@@ -339,7 +343,7 @@ public class EditActivity extends Activity implements View.OnClickListener, View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(editedPic != null)
+        if (editedPic != null)
             editedPic.recycle();
         editedPic = null;
     }

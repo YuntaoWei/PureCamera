@@ -8,8 +8,8 @@ package com.android.picshow.model;
 
 public interface LoadListener {
 
-    public void startLoad();
+    void startLoad();
 
-    public void finishLoad(Object[] items);
+    void finishLoad(Object[] items);
 
 }

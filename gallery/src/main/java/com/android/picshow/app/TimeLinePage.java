@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.picshow.R;
 import com.android.picshow.adapter.TimeLineAdapter;
 import com.android.picshow.model.GlideApp;
@@ -21,6 +22,7 @@ import com.android.picshow.ui.MenuExecutor;
 import com.android.picshow.ui.SelectionManager;
 import com.android.picshow.utils.LogPrinter;
 import com.android.picshow.utils.MediaSetUtils;
+import com.android.picshow.utils.PathHelper;
 import com.android.picshow.utils.PicShowUtils;
 import com.android.picshow.view.fragment.TimeLinePageDelegate;
 
@@ -216,11 +218,16 @@ public class TimeLinePage extends BaseFragment<TimeLinePageDelegate> implements 
             String path = gridAdapter.getItem(position).getPath();
             LogPrinter.i("test", "position : " + position + " path : " +
                     path + "   bucket id : " + MediaSetUtils.CAMERA_BUCKET_ID + "  " + "  " + id);
-            Intent intent = new Intent(getActivity(), PhotoActivity.class);
+            ARouter.getInstance().build(PathHelper.PATH_PHOTO)
+                    .withLong(MediaSetUtils.PHOTO_ID, id)
+                    .withString(MediaSetUtils.PHOTO_PATH, path)
+                    .withInt(MediaSetUtils.BUCKET, MediaSetUtils.CAMERA_BUCKET_ID)
+                    .navigation();
+            /*Intent intent = new Intent(getActivity(), PhotoActivity.class);
             intent.putExtra(MediaSetUtils.PHOTO_ID, id);
             intent.putExtra(MediaSetUtils.PHOTO_PATH, path);
             intent.putExtra(MediaSetUtils.BUCKET, MediaSetUtils.CAMERA_BUCKET_ID);
-            startActivity(intent);
+            startActivity(intent);*/
         }
     }
 

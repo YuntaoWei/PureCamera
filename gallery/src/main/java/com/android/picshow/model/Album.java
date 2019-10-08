@@ -14,7 +14,8 @@ public class Album {
     public String absPath;
     public int count;
 
-    public Album() {}
+    public Album() {
+    }
 
     public Album(int id, String name, long date, String path) {
         this(id, name, date, path, 0);

@@ -19,7 +19,7 @@ import com.android.picshow.editor.BaseEditorManager;
 import com.android.picshow.editor.enhance.PhotoEnhance;
 import com.android.picshow.editor.filters.BaseEditor;
 import com.android.picshow.editor.utils.FileUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 
 /**

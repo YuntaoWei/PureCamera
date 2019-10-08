@@ -3,8 +3,6 @@ package com.android.picshow.model;
 import android.app.Application;
 import android.net.Uri;
 
-import com.android.picshow.app.PictureShowApplication;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -24,8 +22,8 @@ public class ChangeNotify {
 
     public ChangeNotify(DataLoader set, Uri[] uris, Application app) {
         mLoader = set;
-        for (Uri u:uris
-             ) {
+        for (Uri u : uris
+        ) {
             DataManager.getDataManager(app).registerObServer(u, this);
         }
     }

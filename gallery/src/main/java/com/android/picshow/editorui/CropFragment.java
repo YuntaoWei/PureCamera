@@ -21,7 +21,7 @@ import com.android.picshow.editor.crop.CropImageView;
 import com.android.picshow.editor.crop.HorizontalDial;
 import com.android.picshow.editor.filters.BaseEditor;
 import com.android.picshow.editor.utils.FileUtils;
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 /**
  * Created by yuntao.wei on 2018/5/16.
@@ -196,11 +196,11 @@ public class CropFragment extends Fragment implements BaseEditor, View.OnClickLi
 
     private void setEditModeStatus(boolean cropMode) {
 
-        if(cropMode) {
+        if (cropMode) {
             btnCrop.setBackgroundResource(R.drawable.crop_blue_n);
 
-            if(topPanel != null) {
-                if(topPanel.getVisibility() != View.VISIBLE) {
+            if (topPanel != null) {
+                if (topPanel.getVisibility() != View.VISIBLE) {
                     topPanel.setVisibility(View.VISIBLE);
                 }
             }
@@ -209,8 +209,8 @@ public class CropFragment extends Fragment implements BaseEditor, View.OnClickLi
 
             btnCrop.setBackgroundResource(R.drawable.crop_white_n);
 
-            if(topPanel != null) {
-                if(topPanel.getVisibility() == View.VISIBLE) {
+            if (topPanel != null) {
+                if (topPanel.getVisibility() == View.VISIBLE) {
                     topPanel.setVisibility(View.INVISIBLE);
                 }
             }
@@ -317,9 +317,9 @@ public class CropFragment extends Fragment implements BaseEditor, View.OnClickLi
             @Override
             public void onProgressChange(float progress) {
                 LogPrinter.i(TAG, "onProgressChange : " + progress);
-                if(progress > 45)
+                if (progress > 45)
                     progress = 45;
-                else if(progress < -45)
+                else if (progress < -45)
                     progress = -45;
                 cropImage.setMode(BaseEditorManager.ROTATE_MODE);
                 cropImage.rotateImage(progress);
@@ -381,7 +381,7 @@ public class CropFragment extends Fragment implements BaseEditor, View.OnClickLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(cropImage != null) {
+        if (cropImage != null) {
             cropImage.recycle();
             cropImage = null;
         }

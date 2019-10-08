@@ -3,7 +3,7 @@ package com.android.picshow.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.android.picshow.utils.LogPrinter;
+import com.pure.commonbase.LogPrinter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +29,8 @@ public class PhotoItem implements Parcelable {
     private long dateAdd;
     private int itemType;
 
-    public PhotoItem() {}
+    public PhotoItem() {
+    }
 
     public PhotoItem(int id, String title, String path, long date, long add, int type) {
         ID = id;
@@ -81,13 +82,13 @@ public class PhotoItem implements Parcelable {
         this.dateToken = dateToken;
     }
 
-    public void setDateAdd(long add ) {
+    public void setDateAdd(long add) {
         dateAdd = add;
     }
 
     public String getDateAdd(String pattern) {
         return new SimpleDateFormat(pattern)
-                .format(new Date(dateAdd*1000L));
+                .format(new Date(dateAdd * 1000L));
     }
 
     public Path toPath() {
@@ -131,9 +132,9 @@ public class PhotoItem implements Parcelable {
 
     @Override
     public String toString() {
-        String s = "ID = "+ID + ", Title = " + mTitle
+        String s = "ID = " + ID + ", Title = " + mTitle
                 + ", Path = " + mPath + ", type = " + itemType;
-        LogPrinter.i(TAG,s);
+        LogPrinter.i(TAG, s);
         return s;
     }
 }

@@ -6,8 +6,6 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 
-import com.android.picshow.app.PictureShowApplication;
-
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -31,7 +29,7 @@ public class DataManager {
     }
 
     public static DataManager getDataManager(Application app) {
-        if(null == INSTANCE) {
+        if (null == INSTANCE) {
             synchronized (DataManager.class) {
                 INSTANCE = new DataManager(app);
             }
@@ -56,7 +54,7 @@ public class DataManager {
     public void releaseAllObserver() {
         ContentResolver cr = mApp.getContentResolver();
         for (DataManager.NotifyBroker broker : mNotifierMap.values()
-             ) {
+        ) {
             cr.unregisterContentObserver(broker);
             broker.clear();
         }
@@ -82,7 +80,7 @@ public class DataManager {
 
         @Override
         public void onChange(boolean selfChange) {
-            for(ChangeNotify notifier : mNotifiers.keySet()) {
+            for (ChangeNotify notifier : mNotifiers.keySet()) {
                 notifier.onChange(selfChange);
             }
         }

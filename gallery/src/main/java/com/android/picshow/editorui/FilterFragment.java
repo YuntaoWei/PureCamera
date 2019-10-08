@@ -172,7 +172,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Ba
                 break;
         }
 
-        if(dataResult == null)
+        if (dataResult == null)
             return;
 
         resultImg = Bitmap.createBitmap(dataResult, srcWidth, srcHeight,

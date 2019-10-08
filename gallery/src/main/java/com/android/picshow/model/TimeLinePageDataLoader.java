@@ -3,9 +3,8 @@ package com.android.picshow.model;
 import android.app.Application;
 import android.net.Uri;
 
-import com.android.picshow.app.PictureShowApplication;
-import com.android.picshow.utils.LogPrinter;
 import com.android.picshow.utils.MediaSetUtils;
+import com.pure.commonbase.LogPrinter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,17 +30,17 @@ public class TimeLinePageDataLoader implements DataLoader {
     public TimeLinePageDataLoader(Application context, LoadListener l) {
         mContext = context;
         mListener = l;
-        notifier = new ChangeNotify(this, new Uri[] {
+        notifier = new ChangeNotify(this, new Uri[]{
                 MediaSetUtils.VIDEO_URI,
                 MediaSetUtils.IMAGE_URI
         }, mContext);
     }
 
     public void resume() {
-        if(mSemaphore == null) {
+        if (mSemaphore == null) {
             mSemaphore = new Semaphore(0);
         }
-        if(loadTask == null) {
+        if (loadTask == null) {
             loadTask = new LoadThread();
         }
         loadTask.start();
@@ -50,18 +49,18 @@ public class TimeLinePageDataLoader implements DataLoader {
     }
 
     public void pause() {
-        if(loadTask != null) {
+        if (loadTask != null) {
             loadTask.stopTask();
             loadTask = null;
         }
-        if(mSemaphore != null) {
+        if (mSemaphore != null) {
             mSemaphore.release();
             mSemaphore = null;
         }
     }
 
     private void reloadData() {
-        if(mSemaphore != null)
+        if (mSemaphore != null)
             mSemaphore.release();
     }
 
@@ -74,7 +73,8 @@ public class TimeLinePageDataLoader implements DataLoader {
 
         private boolean stopTask = false;
 
-        public LoadThread() {}
+        public LoadThread() {
+        }
 
         public void stopTask() {
             stopTask = true;
@@ -84,29 +84,29 @@ public class TimeLinePageDataLoader implements DataLoader {
         public void run() {
             while (true) {
                 try {
-                    if(mSemaphore == null)
+                    if (mSemaphore == null)
                         continue;
                     mSemaphore.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(stopTask) {
+                if (stopTask) {
                     return;
                 }
-                if(!notifier.isDirty())
+                if (!notifier.isDirty())
                     continue;
                 mListener.startLoad();
                 ArrayList<PhotoItem> items = new ArrayList<>();
                 MediaSetUtils.queryImages(mContext, items, MediaSetUtils.CAMERA_BUCKET_ID);
                 MediaSetUtils.queryVideo(mContext, items, MediaSetUtils.CAMERA_BUCKET_ID);
-                LogPrinter.i(TAG,"LoadThread load complete:"+items.size());
+                LogPrinter.i(TAG, "LoadThread load complete:" + items.size());
                 PhotoItem[] allItem = new PhotoItem[items.size()];
                 items.toArray(allItem);
                 Arrays.sort(allItem, new Comparator<PhotoItem>() {
 
                     @Override
                     public int compare(PhotoItem o1, PhotoItem o2) {
-                        return (int)(o2.getDateToken() - o1.getDateToken());
+                        return (int) (o2.getDateToken() - o1.getDateToken());
                     }
                 });
                 mListener.finishLoad(allItem);
